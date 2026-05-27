@@ -1,5 +1,97 @@
 {
-  "placeholder": true,
-  "description": "Zombie types data - to be populated",
-  "zombies": []
+  "normal_zombie": {
+    "id": "normal_zombie",
+    "name": "普通丧尸",
+    "description": "最常见的丧尸，行动缓慢但数量众多。",
+    "hp": 40,
+    "attack": 8,
+    "defense": 2,
+    "speed": 5,
+    "isBoss": false,
+    "rewards": {
+      "exp": 10,
+      "drops": [
+        { "itemId": "cloth", "chance": 0.3 },
+        { "itemId": "screws", "chance": 0.2 }
+      ]
+    }
+  },
+  "fat_zombie": {
+    "id": "fat_zombie",
+    "name": "肥胖丧尸",
+    "description": "生前体重过大的丧尸，皮糙肉厚，行动迟缓但攻击力惊人。",
+    "hp": 100,
+    "attack": 12,
+    "defense": 8,
+    "speed": 3,
+    "isBoss": false,
+    "rewards": {
+      "exp": 25,
+      "drops": [
+        { "itemId": "scrap_metal", "chance": 0.4 },
+        { "itemId": "cloth", "chance": 0.3 },
+        { "itemId": "bandage", "chance": 0.15 }
+      ]
+    }
+  },
+  "runner_zombie": {
+    "id": "runner_zombie",
+    "name": "狂奔者",
+    "description": "变异后速度极快的丧尸，来去如风，是最危险的普通丧尸。",
+    "hp": 30,
+    "attack": 18,
+    "defense": 2,
+    "speed": 15,
+    "isBoss": false,
+    "rewards": {
+      "exp": 30,
+      "drops": [
+        { "itemId": "wire", "chance": 0.25 },
+        { "itemId": "first_aid_kit", "chance": 0.1 }
+      ]
+    }
+  },
+  "zombie_king": {
+    "id": "zombie_king",
+    "name": "丧尸之王",
+    "description": "被病毒彻底改造的恐怖存在，统领丧尸群的王者。",
+    "hp": 300,
+    "attack": 25,
+    "defense": 15,
+    "speed": 8,
+    "isBoss": true,
+    "phases": [
+      {
+        "name": "第一阶段",
+        "hpThreshold": 1.0,
+        "behavior": "attack",
+        "description": "丧尸之王正面进攻。"
+      },
+      {
+        "name": "第二阶段",
+        "hpThreshold": 0.5,
+        "behavior": "summon",
+        "summon": {
+          "zombieType": "normal_zombie",
+          "count": 3,
+          "cooldown": 3
+        },
+        "description": "丧尸之王召唤小弟！每3回合召唤3只普通丧尸。"
+      },
+      {
+        "name": "狂暴阶段",
+        "hpThreshold": 0.2,
+        "behavior": "enrage",
+        "buff": { "attack": 15, "speed": 5 },
+        "description": "丧尸之王陷入狂暴！攻击力和速度大幅提升！"
+      }
+    ],
+    "rewards": {
+      "exp": 200,
+      "drops": [
+        { "itemId": "first_aid_kit", "chance": 1.0 },
+        { "itemId": "old_photo", "chance": 1.0 }
+      ]
+    }
+  }
 }

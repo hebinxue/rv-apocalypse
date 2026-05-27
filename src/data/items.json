@@ -1,5 +1,119 @@
 {
-  "placeholder": true,
-  "description": "Items data - to be populated",
-  "items": []
+  "canned_food": {
+    "id": "canned_food",
+    "name": "罐头",
+    "type": "food",
+    "description": "保质期超长的罐头食品，末日里的硬通货。",
+    "effect": { "hunger": 20 },
+    "value": 15,
+    "rarity": "common"
+  },
+  "instant_noodles": {
+    "id": "instant_noodles",
+    "name": "方便面",
+    "type": "food",
+    "description": "用热水泡开就能吃，没有热水干嚼也行。",
+    "effect": { "hunger": 15 },
+    "value": 8,
+    "rarity": "common"
+  },
+  "water": {
+    "id": "water",
+    "name": "矿泉水",
+    "type": "food",
+    "description": "干净的饮用水，比黄金还珍贵。",
+    "effect": { "hunger": 10 },
+    "value": 10,
+    "rarity": "common"
+  },
+  "wangzai_milk": {
+    "id": "wangzai_milk",
+    "name": "旺仔牛奶",
+    "type": "special",
+    "description": "再看我就把你喝掉！这是旺仔最爱的东西。",
+    "effect": { "affinity": 20, "target": "wangzai" },
+    "value": 50,
+    "rarity": "rare"
+  },
+  "scrap_metal": {
+    "id": "scrap_metal",
+    "name": "废铁",
+    "type": "material",
+    "description": "锈迹斑斑的金属碎片，可以用来修理或制造。",
+    "effect": {},
+    "value": 5,
+    "rarity": "common"
+  },
+  "screws": {
+    "id": "screws",
+    "name": "螺丝",
+    "type": "material",
+    "description": "各种型号的螺丝钉，房车维修必备。",
+    "effect": {},
+    "value": 3,
+    "rarity": "common"
+  },
+  "wire": {
+    "id": "wire",
+    "name": "电线",
+    "type": "material",
+    "description": "一卷铜芯电线，可以用来修理电路。",
+    "effect": {},
+    "value": 8,
+    "rarity": "common"
+  },
+  "cloth": {
+    "id": "cloth",
+    "name": "布料",
+    "type": "material",
+    "description": "撕下来的布条，可以用来包扎或制作。",
+    "effect": {},
+    "value": 4,
+    "rarity": "common"
+  },
+  "bandage": {
+    "id": "bandage",
+    "name": "绷带",
+    "type": "medical",
+    "description": "干净的医用绷带，能止血包扎。",
+    "effect": { "hp": 30 },
+    "value": 20,
+    "rarity": "common"
+  },
+  "first_aid_kit": {
+    "id": "first_aid_kit",
+    "name": "急救包",
+    "type": "medical",
+    "description": "完整的急救包，包含消毒液、纱布和常用药品。",
+    "effect": { "hp": 80 },
+    "value": 60,
+    "rarity": "rare"
+  },
+  "bat": {
+    "id": "bat",
+    "name": "棒球棍",
+    "type": "weapon",
+    "description": "铝合金棒球棍，轻便但威力不俗。",
+    "effect": { "attack": 15 },
+    "value": 25,
+    "rarity": "common"
+  },
+  "iron_pipe": {
+    "id": "iron_pipe",
+    "name": "铁管",
+    "type": "weapon",
+    "description": "粗重的铁管，砸一下够僵尸受的。",
+    "effect": { "attack": 20 },
+    "value": 35,
+    "rarity": "uncommon"
+  },
+  "old_photo": {
+    "id": "old_photo",
+    "name": "朋友的旧照片",
+    "type": "special",
+    "description": "一张泛黄的合影照片，上面有你和几个朋友的笑脸。末日前的记忆……",
+    "effect": {},
+    "value": 0,
+    "rarity": "legendary"
+  }
 }

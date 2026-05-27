@@ -1,5 +1,200 @@
 {
-  "placeholder": true,
-  "description": "Random events data - to be populated",
-  "events": []
+  "stranger_help": {
+    "id": "stranger_help",
+    "name": "幸存者求救",
+    "description": "路边传来微弱的求救声，一个幸存者正被丧尸追赶。",
+    "triggerCondition": { "minDay": 2, "maxDay": 15, "chance": 0.3 },
+    "dialogue": "救……救命！有丧尸在追我！求求你们帮帮我！",
+    "choices": [
+      {
+        "id": "help_stranger",
+        "text": "停车救人",
+        "outcomes": [
+          {
+            "chance": 0.6,
+            "result": "success",
+            "description": "你成功救下了幸存者，他感激地递给你一些物资。",
+            "rewards": [
+              { "itemId": "canned_food", "amount": 2 },
+              { "itemId": "water", "amount": 1 }
+            ]
+          },
+          {
+            "chance": 0.4,
+            "result": "trap",
+            "description": "这是一个陷阱！幸存者突然掏出武器抢走了你的一些物资！",
+            "penalties": [
+              { "resource": "food", "amount": -20 }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "ignore_stranger",
+        "text": "假装没看见，继续赶路",
+        "outcomes": [
+          {
+            "chance": 1.0,
+            "result": "ignore",
+            "description": "你踩下油门离开了。后视镜里，那个人的身影渐渐消失。",
+            "moralityChange": -10
+          }
+        ]
+      },
+      {
+        "id": "observe_stranger",
+        "text": "先观察一下情况",
+        "outcomes": [
+          {
+            "chance": 0.5,
+            "result": "genuine",
+            "description": "确认是真正的幸存者后你出手相救，他送你一些物资表示感谢。",
+            "rewards": [
+              { "itemId": "canned_food", "amount": 1 },
+              { "itemId": "bandage", "amount": 1 }
+            ]
+          },
+          {
+            "chance": 0.5,
+            "result": "suspicious",
+            "description": "你觉得情况不太对劲，选择绕道离开。安全第一。",
+            "moralityChange": -5
+          }
+        ]
+      }
+    ]
+  },
+  "rv_breakdown": {
+    "id": "rv_breakdown",
+    "name": "房车抛锚",
+    "description": "房车突然发出异响，引擎熄火了！",
+    "triggerCondition": { "minDay": 1, "maxDay": 30, "chance": 0.25 },
+    "dialogue": "（嘭！）什么声音？引擎……熄火了！得想办法修好它。",
+    "choices": [
+      {
+        "id": "repair_rv",
+        "text": "自己动手修理",
+        "requiredItems": [
+          { "itemId": "scrap_metal", "amount": 2 },
+          { "itemId": "screws", "amount": 1 }
+        ],
+        "outcomes": [
+          {
+            "chance": 1.0,
+            "result": "repair_success",
+            "description": "你花了几个小时修好了房车，虽然累但值得。",
+            "costs": [
+              { "itemId": "scrap_metal", "amount": 2 },
+              { "itemId": "screws", "amount": 1 }
+            ],
+            "rewards": [
+              { "stat": "rv_condition", "amount": 20 }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "search_parts",
+        "text": "在附近搜索零件",
+        "outcomes": [
+          {
+            "chance": 0.5,
+            "result": "find_parts",
+            "description": "你在附近的废车里找到了一些零件，勉强修好了房车。",
+            "rewards": [
+              { "itemId": "scrap_metal", "amount": 1 },
+              { "stat": "rv_condition", "amount": 10 }
+            ],
+            "timeCost": 2
+          },
+          {
+            "chance": 0.5,
+            "result": "encounter_zombies",
+            "description": "搜索时惊动了丧尸！必须战斗！",
+            "battle": {
+              "zombies": [
+                { "type": "normal_zombie", "count": 3 }
+              ]
+            },
+            "rewards": [
+              { "stat": "rv_condition", "amount": 5 }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "abandon_search",
+        "text": "放弃修理，步行前进",
+        "outcomes": [
+          {
+            "chance": 1.0,
+            "result": "abandon",
+            "description": "你不得不放弃了房车，徒步继续前进。失去了很多物资。",
+            "penalties": [
+              { "resource": "food", "amount": -30 },
+              { "resource": "fuel", "amount": -100 }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "hidden_basement": {
+    "id": "hidden_basement",
+    "name": "隐藏地下室",
+    "description": "你在一栋废弃建筑里发现了一个隐蔽的地下室入口。",
+    "triggerCondition": { "minDay": 3, "maxDay": 20, "chance": 0.2 },
+    "dialogue": "这里有个地下室……门没有锁。要下去看看吗？",
+    "choices": [
+      {
+        "id": "enter_basement",
+        "text": "小心地下去探索",
+        "outcomes": [
+          {
+            "chance": 0.4,
+            "result": "treasure",
+            "description": "地下室里有一个幸存者留下的物资储备！你找到了不少好东西。",
+            "rewards": [
+              { "itemId": "canned_food", "amount": 3 },
+              { "itemId": "first_aid_kit", "amount": 1 },
+              { "itemId": "iron_pipe", "amount": 1 }
+            ]
+          },
+          {
+            "chance": 0.35,
+            "result": "zombie_nest",
+            "description": "这是一个丧尸巢穴！一群丧尸扑了过来！",
+            "battle": {
+              "zombies": [
+                { "type": "normal_zombie", "count": 4 },
+                { "type": "fat_zombie", "count": 1 }
+              ]
+            },
+            "rewards": [
+              { "itemId": "scrap_metal", "amount": 3 },
+              { "itemId": "wire", "amount": 2 }
+            ]
+          },
+          {
+            "chance": 0.25,
+            "result": "empty",
+            "description": "地下室已经被洗劫一空了，什么都没有。",
+            "rewards": []
+          }
+        ]
+      },
+      {
+        "id": "skip_basement",
+        "text": "太危险了，不下去",
+        "outcomes": [
+          {
+            "chance": 1.0,
+            "result": "skip",
+            "description": "你决定不冒险，继续赶路。",
+            "rewards": []
+          }
+        ]
+      }
+    ]
+  }
 }

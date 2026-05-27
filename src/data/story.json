@@ -1,5 +1,261 @@
 {
-  "placeholder": true,
-  "description": "Story progression data - to be populated",
-  "chapters": []
+  "chapter": "zombie_chapter",
+  "chapterName": "丧尸末日篇",
+  "startNode": "intro",
+  "nodes": {
+    "intro": {
+      "id": "intro",
+      "scene": "apartment",
+      "sceneName": "公寓楼",
+      "dialogues": [
+        { "speaker": "旁白", "text": "末日第七天。你躲在公寓楼的顶层，外面是无尽的丧尸嘶吼声。" },
+        { "speaker": "旁白", "text": "食物已经耗尽，水也只剩下最后一瓶。你必须做出选择——继续躲着等死，还是冲出去寻找生机。" },
+        { "speaker": "player", "text": "（看着窗外密密麻麻的丧尸）……不能再等了。" },
+        { "speaker": "旁白", "text": "你收拾好仅有的物资，推开门准备下楼。突然——" },
+        { "speaker": "旁白", "text": "一只黄狗从楼梯间窜了出来，嘴里叼着一把生锈的钥匙。" },
+        { "speaker": "player", "text": "你是……一条狗？" },
+        { "speaker": "wangzai", "text": "汪汪！（旺仔摇着尾巴，把钥匙放在你脚边）" },
+        { "speaker": "旁白", "text": "钥匙上刻着一个地址——'幸福小区B栋地下车库'。也许那里有可以逃跑的车辆。" },
+        { "speaker": "player", "text": "走吧，小家伙。从现在起我们就是搭档了。" },
+        { "speaker": "wangzai", "text": "汪！（旺仔兴奋地叫了一声，仿佛听懂了你的话）" }
+      ],
+      "recruitNPCs": ["wangzai"],
+      "forcedBattle": {
+        "description": "下楼时遭遇丧尸！",
+        "zombies": [
+          { "type": "normal_zombie", "count": 2 }
+        ]
+      },
+      "next": "gas_station"
+    },
+    "gas_station": {
+      "id": "gas_station",
+      "scene": "gas_station",
+      "sceneName": "加油站",
+      "dialogues": [
+        { "speaker": "旁白", "text": "你开着从地下车库找到的房车，沿着公路行驶。油表指针已经快要到底了。" },
+        { "speaker": "player", "text": "前面有个加油站，希望能找到些汽油。" },
+        { "speaker": "旁白", "text": "加油站里一片狼藉，但你注意到角落里有两个人影。" },
+        { "speaker": "caoge", "text": "喂！别过来！再过来我就不客气了！" },
+        { "speaker": "player", "text": "我不是丧尸！我是活人！" },
+        { "speaker": "bingjie", "text": "……是活人。（冰姐放下手中的铁管）不过也快变成死人了，如果你再靠近的话。" },
+        { "speaker": "caoge", "text": "冰姐，别这么凶嘛。看他也是一脸倒霉相，估计跟我们差不多。" },
+        { "speaker": "bingjie", "text": "哼，又是一个拖后腿的。" },
+        { "speaker": "player", "text": "我有房车，可以带你们一起走。" },
+        { "speaker": "caoge", "text": "房车？！兄弟你太够意思了！走走走！" },
+        { "speaker": "bingjie", "text": "……随便。不过我可不会因为坐了你的车就对你客气。" },
+        { "speaker": "旁白", "text": "冰姐和草哥加入了你的队伍。加油站的储油罐还有一些汽油。" }
+      ],
+      "recruitNPCs": ["bingjie", "caoge"],
+      "choices": [
+        {
+          "id": "gas_station_explore",
+          "text": "探索加油站便利店",
+          "next": "gas_station_explore"
+        },
+        {
+          "id": "gas_station_leave",
+          "text": "加满油就走",
+          "next": "supermarket"
+        }
+      ],
+      "next": "supermarket"
+    },
+    "supermarket": {
+      "id": "supermarket",
+      "scene": "supermarket",
+      "sceneName": "废弃超市",
+      "dialogues": [
+        { "speaker": "旁白", "text": "房车沿着公路行驶，你远远看到了一家大型超市。" },
+        { "speaker": "caoge", "text": "超市！里面肯定有吃的！冲！" },
+        { "speaker": "bingjie", "text": "白痴，超市是丧尸聚集最多的地方之一。" },
+        { "speaker": "player", "text": "冰姐说得对，但我们确实需要物资。大家小心点。" },
+        { "speaker": "旁白", "text": "你们小心翼翼地进入超市。货架东倒西歪，地上散落着各种商品。" },
+        { "speaker": "wangzai", "text": "（旺仔突然压低身体，发出低沉的呜咽声）呜……" },
+        { "speaker": "player", "text": "旺仔发现了什么……大家戒备！" },
+        { "speaker": "旁白", "text": "从超市深处传来密集的脚步声——一大波丧尸正在涌来！" },
+        { "speaker": "caoge", "text": "来啊！今天就让你们见识见识草の意志！" },
+        { "speaker": "bingjie", "text": "……白痴。不过这次我同意，打吧。" }
+      ],
+      "forcedBattle": {
+        "description": "超市丧尸围攻！",
+        "zombies": [
+          { "type": "normal_zombie", "count": 5 },
+          { "type": "fat_zombie", "count": 2 },
+          { "type": "runner_zombie", "count": 1 }
+        ]
+      },
+      "next": "apartment_laojing"
+    },
+    "apartment_laojing": {
+      "id": "apartment_laojing",
+      "scene": "apartment",
+      "sceneName": "居民楼",
+      "dialogues": [
+        { "speaker": "旁白", "text": "超市一战后，你们带着物资继续前进。傍晚时分，你们在一栋居民楼前停下休息。" },
+        { "speaker": "player", "text": "今晚就在这里过夜吧。大家轮流守夜。" },
+        { "speaker": "旁白", "text": "深夜，你被一阵微弱的敲击声惊醒。" },
+        { "speaker": "旁白", "text": "隔壁房间里，一个中年男人正用椅子顶着门，外面是丧尸的抓挠声。" },
+        { "speaker": "laojing", "text": "请帮帮我……我一个人实在撑不住了。" },
+        { "speaker": "player", "text": "冰姐、草哥，帮忙清理门口的丧尸！" },
+        { "speaker": "旁白", "text": "你们合力清理了丧尸，救出了这个中年男人。" },
+        { "speaker": "laojing", "text": "谢谢你们。我叫老晶，以前是大学教授。末日后一直躲在这里。" },
+        { "speaker": "bingjie", "text": "教授？在这种世道有什么用？" },
+        { "speaker": "laojing", "text": "也许没有用。但我知道一些关于这场灾难的信息——它不是天灾，是人祸。" },
+        { "speaker": "player", "text": "什么意思？" },
+        { "speaker": "laojing", "text": "医院。市立医院的地下实验室。那里是这一切的源头。如果想结束这场灾难，我们必须去那里。" },
+        { "speaker": "caoge", "text": "医院？那不就是丧尸窝？太刺激了！" },
+        { "speaker": "laojing", "text": "请让我加入你们。我知道怎么进去。" }
+      ],
+      "recruitNPCs": ["laojing"],
+      "choices": [
+        {
+          "id": "accept_laojing",
+          "text": "接受老晶加入",
+          "next": "hospital"
+        }
+      ],
+      "next": "hospital"
+    },
+    "hospital": {
+      "id": "hospital",
+      "scene": "hospital",
+      "sceneName": "市立医院",
+      "dialogues": [
+        { "speaker": "旁白", "text": "市立医院。曾经救死扶伤的地方，如今变成了丧尸的巢穴。" },
+        { "speaker": "laojing", "text": "地下实验室在B栋负二层。我们需要穿过门诊大厅。" },
+        { "speaker": "bingjie", "text": "门诊大厅……那里丧尸最多。" },
+        { "speaker": "caoge", "text": "怕什么！有我在！" },
+        { "speaker": "wangzai", "text": "汪！（旺仔也表示赞同）" },
+        { "speaker": "player", "text": "大家准备好。这次可能是一场硬仗。" },
+        { "speaker": "旁白", "text": "你们推开医院大门，迎面而来的是浓烈的腐臭味和无尽的黑暗。" },
+        { "speaker": "旁白", "text": "大厅深处，一个巨大的身影缓缓站起——" },
+        { "speaker": "旁白", "text": "那是一个身高超过两米的丧尸，全身布满黑色的血管，双眼泛着红光。" },
+        { "speaker": "laojing", "text": "这就是……丧尸之王。实验体零号。" },
+        { "speaker": "caoge", "text": "卧槽……这也太大了吧？" },
+        { "speaker": "bingjie", "text": "……现在跑还来得及吗？" },
+        { "speaker": "player", "text": "没有退路了。所有人，战斗准备！" }
+      ],
+      "forcedBattle": {
+        "description": "BOSS战：丧尸之王！",
+        "zombies": [
+          { "type": "zombie_king", "count": 1 },
+          { "type": "normal_zombie", "count": 3 }
+        ]
+      },
+      "next": "highway"
+    },
+    "highway": {
+      "id": "highway",
+      "scene": "highway",
+      "sceneName": "高速公路",
+      "dialogues": [
+        { "speaker": "旁白", "text": "你们艰难地击败了丧尸之王，从医院逃了出来。" },
+        { "speaker": "laojing", "text": "实验室的数据我已经拿到了。如果能把这些交给安全区的科研人员，也许能研制出解药。" },
+        { "speaker": "player", "text": "安全区在哪里？" },
+        { "speaker": "laojing", "text": "根据我截获的无线电广播，东边有一个军事安全区。但路途遥远，而且有两条路可以走。" },
+        { "speaker": "caoge", "text": "哪条路近走哪条呗！" },
+        { "speaker": "bingjie", "text": "白痴，近的路不一定安全。" },
+        { "speaker": "laojing", "text": "第一条是高速公路，快但丧尸多。第二条是山路，慢但相对安全。" }
+      ],
+      "choices": [
+        {
+          "id": "highway_fast",
+          "text": "走高速公路（高风险高回报）",
+          "next": "highway_fast_path",
+          "description": "路程短但危险，会遭遇更多战斗"
+        },
+        {
+          "id": "highway_mountain",
+          "text": "走山路（低风险）",
+          "next": "highway_mountain_path",
+          "description": "路程长但安全，消耗更多时间和资源"
+        }
+      ],
+      "next": "safe_zone"
+    },
+    "highway_fast_path": {
+      "id": "highway_fast_path",
+      "scene": "highway",
+      "sceneName": "高速公路",
+      "dialogues": [
+        { "speaker": "player", "text": "走高速公路。时间不等人，我们必须尽快到达安全区。" },
+        { "speaker": "caoge", "text": "对！速战速决！" },
+        { "speaker": "旁白", "text": "你们驶上高速公路。到处都是废弃的车辆，不得不频繁停车清理路障。" },
+        { "speaker": "旁白", "text": "突然，一群狂奔者从路边窜出！" },
+        { "speaker": "bingjie", "text": "我说过这条路不安全的。" }
+      ],
+      "forcedBattle": {
+        "description": "高速公路遭遇战！",
+        "zombies": [
+          { "type": "runner_zombie", "count": 4 },
+          { "type": "normal_zombie", "count": 3 }
+        ]
+      },
+      "next": "safe_zone"
+    },
+    "highway_mountain_path": {
+      "id": "highway_mountain_path",
+      "scene": "mountain",
+      "sceneName": "山路",
+      "dialogues": [
+        { "speaker": "player", "text": "走山路。安全第一。" },
+        { "speaker": "bingjie", "text": "难得做了个明智的决定。" },
+        { "speaker": "caoge", "text": "切，无聊。" },
+        { "speaker": "旁白", "text": "山路崎岖难行，房车颠簸得厉害。但好在丧尸确实少了很多。" },
+        { "speaker": "laojing", "text": "看，那边有炊烟。可能有幸存者的营地。" },
+        { "speaker": "旁白", "text": "你们路过一个小型幸存者营地，用物资交换了一些情报和补给。" },
+        { "speaker": "旁白", "text": "经过漫长的跋涉，你们终于看到了安全区的围墙。" }
+      ],
+      "rewards": [
+        { "itemId": "canned_food", "amount": 3 },
+        { "itemId": "water", "amount": 2 }
+      ],
+      "next": "safe_zone"
+    },
+    "safe_zone": {
+      "id": "safe_zone",
+      "scene": "safe_zone",
+      "sceneName": "安全区",
+      "dialogues": [
+        { "speaker": "旁白", "text": "安全区。高大的围墙，巡逻的士兵，还有——活着的人。" },
+        { "speaker": "player", "text": "我们……到了？" },
+        { "speaker": "wangzai", "text": "汪汪！（旺仔兴奋地叫着）" },
+        { "speaker": "旁白", "text": "然而，安全区的大门前，一场意料之外的战斗正在等待你们。" },
+        { "speaker": "旁白", "text": "一个穿着军装的男人站在路中间，身后是一群武装人员。" },
+        { "speaker": "???", "text": "把你们从医院拿到的数据交出来。" },
+        { "speaker": "player", "text": "你是谁？" },
+        { "speaker": "???", "text": "我是这场灾难的……创造者之一。那些数据不能落入外人手中。" },
+        { "speaker": "laojing", "text": "原来如此……你就是那个实验室的人！" },
+        { "speaker": "???", "text": "最后说一次，交出数据。否则——" },
+        { "speaker": "旁白", "text": "他身后的人群中，传来丧尸的嘶吼声。他竟然在控制丧尸！" },
+        { "speaker": "player", "text": "所有人，准备战斗！为了所有还活着的人！" },
+        { "speaker": "caoge", "text": "冲啊！" },
+        { "speaker": "bingjie", "text": "……真是一群麻烦的家伙。不过，我奉陪到底。" },
+        { "speaker": "laojing", "text": "年轻人，谢谢你。让我们结束这一切。" },
+        { "speaker": "wangzai", "text": "汪！！！（旺仔怒吼着冲了上去）" }
+      ],
+      "forcedBattle": {
+        "description": "最终BOSS战！",
+        "zombies": [
+          { "type": "zombie_king", "count": 1 },
+          { "type": "runner_zombie", "count": 3 },
+          { "type": "fat_zombie", "count": 2 },
+          { "type": "normal_zombie", "count": 5 }
+        ]
+      },
+      "ending": {
+        "title": "终章：新的开始",
+        "dialogues": [
+          { "speaker": "旁白", "text": "战斗结束了。那个疯狂的科学家被制服，数据安全地交给了安全区的科研人员。" },
+          { "speaker": "旁白", "text": "三个月后，第一批解药开始分发。丧尸的数量开始减少。" },
+          { "speaker": "旁白", "text": "你站在安全区的围墙上，看着远方逐渐恢复生机的城市。" },
+          { "speaker": "player", "text": "旺仔，我们做到了。" },
+          { "speaker": "wangzai", "text": "汪！（旺仔靠在你脚边，安静地摇着尾巴）" },
+          { "speaker": "旁白", "text": "末日终将过去，而你们的故事，才刚刚开始。" },
+          { "speaker": "旁白", "text": "—— 全剧终 ——" }
+        ]
+      }
+    }
+  }
 }

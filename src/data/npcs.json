@@ -1,5 +1,272 @@
 {
-  "placeholder": true,
-  "description": "NPC companions data - to be populated",
-  "npcs": []
+  "wangzai": {
+    "id": "wangzai",
+    "name": "旺仔",
+    "isPermanent": true,
+    "personality": "忠诚、幽默、有点呆萌",
+    "role": "tank",
+    "description": "一只在末日中存活下来的中华田园犬，是你最忠实的伙伴。",
+    "baseStats": {
+      "hp": 150,
+      "attack": 12,
+      "defense": 18,
+      "speed": 10
+    },
+    "skills": [
+      {
+        "id": "wangzai_feiti",
+        "name": "旺仔飞踢",
+        "unlockAffinity": 0,
+        "type": "attack",
+        "power": 30,
+        "effect": { "damage": 30, "target": "single_enemy" },
+        "description": "旺仔使出全力飞踢！虽然只是一条狗，但这一脚不容小觑。"
+      },
+      {
+        "id": "wangzai_shield",
+        "name": "旺仔护盾",
+        "unlockAffinity": 60,
+        "type": "defense",
+        "power": 0,
+        "effect": { "shield": 50, "target": "self", "duration": 3 },
+        "description": "旺仔挡在你面前，为你承受伤害。忠诚的守护。"
+      },
+      {
+        "id": "wangzai_awaken",
+        "name": "旺仔觉醒",
+        "unlockAffinity": 100,
+        "type": "ultimate",
+        "power": 80,
+        "effect": { "damage": 80, "target": "all_enemies", "buff": { "attack": 10, "duration": 5 } },
+        "description": "旺仔爆发出惊人的力量！眼中闪烁着守护之光，对所有敌人造成巨额伤害。"
+      }
+    ],
+    "dialogues": {
+      "happy": [
+        "汪汪！（旺仔开心地摇尾巴）",
+        "（旺仔蹭了蹭你的腿）汪！",
+        "汪汪汪！（旺仔兴奋地围着你转圈）"
+      ],
+      "neutral": [
+        "（旺仔趴在角落打盹）",
+        "汪。（旺仔抬头看了你一眼）",
+        "（旺仔在嗅什么东西）"
+      ],
+      "angry": [
+        "呜……（旺仔低吼着）",
+        "汪！汪！（旺仔对着什么狂吠）"
+      ],
+      "combat_ready": [
+        "汪汪！（旺仔露出犬齿，做好战斗准备）",
+        "（旺仔压低身体，蓄势待发）"
+      ],
+      "combat_low_hp": [
+        "呜……（旺仔受伤了，但仍然挡在你面前）",
+        "（旺仔拖着伤腿，依然不肯后退）"
+      ]
+    }
+  },
+  "bingjie": {
+    "id": "bingjie",
+    "name": "冰姐",
+    "isPermanent": false,
+    "personality": "冷漠、毒舌、外冷内热",
+    "role": "control",
+    "description": "曾经是急诊科护士，末日后变得更加冷漠，但内心深处仍然在意同伴。",
+    "baseStats": {
+      "hp": 90,
+      "attack": 14,
+      "defense": 10,
+      "speed": 12
+    },
+    "skills": [
+      {
+        "id": "bing_cold_gaze",
+        "name": "冰冷目光",
+        "unlockAffinity": 0,
+        "type": "debuff",
+        "power": 15,
+        "effect": { "damage": 15, "target": "single_enemy", "debuff": { "speed": -5, "duration": 2 } },
+        "description": "冰姐冷冷地盯着敌人，让对方不寒而栗，降低其速度。"
+      },
+      {
+        "id": "bing_sarcasm",
+        "name": "冷嘲热讽",
+        "unlockAffinity": 60,
+        "type": "control",
+        "power": 20,
+        "effect": { "damage": 20, "target": "single_enemy", "stun": 1 },
+        "description": "冰姐的毒舌让敌人愣住——'就这？'，造成伤害并眩晕1回合。"
+      },
+      {
+        "id": "bing_absolute_zero",
+        "name": "绝对零度",
+        "unlockAffinity": 100,
+        "type": "ultimate",
+        "power": 70,
+        "effect": { "damage": 70, "target": "all_enemies", "freeze": 2 },
+        "description": "冰姐释放出冰冷的气场，冻结所有敌人2回合。'都给我冷静一下。'"
+      }
+    ],
+    "dialogues": {
+      "happy": [
+        "哼，别以为我会因为你对我好就改变态度。",
+        "……还行吧。（嘴角微微上扬）",
+        "别得意，我只是今天心情不错。"
+      ],
+      "neutral": [
+        "少废话，赶路吧。",
+        "我可没时间陪你聊天。",
+        "……（冰姐沉默地看着远方）"
+      ],
+      "angry": [
+        "你是不是脑子有问题？",
+        "再废话我就走了，你自己看着办。",
+        "别碰我。"
+      ],
+      "combat_ready": [
+        "速战速决，别拖后腿。",
+        "我来处理，你靠边站。"
+      ],
+      "combat_low_hp": [
+        "……别管我，先顾好你自己。",
+        "这点伤，死不了。"
+      ]
+    }
+  },
+  "caoge": {
+    "id": "caoge",
+    "name": "草哥",
+    "isPermanent": false,
+    "personality": "鲁莽、热血、讲义气",
+    "role": "burst",
+    "description": "曾经是健身房教练，末日后依然保持着锻炼的习惯。和冰姐是老相识。",
+    "baseStats": {
+      "hp": 110,
+      "attack": 20,
+      "defense": 8,
+      "speed": 14
+    },
+    "couplePartner": "bingjie",
+    "skills": [
+      {
+        "id": "cao_rush",
+        "name": "草率出击",
+        "unlockAffinity": 0,
+        "type": "attack",
+        "power": 35,
+        "effect": { "damage": 35, "target": "single_enemy" },
+        "description": "草哥二话不说冲上去就是一拳！简单粗暴。"
+      },
+      {
+        "id": "cao_all_around",
+        "name": "草木皆兵",
+        "unlockAffinity": 60,
+        "type": "attack",
+        "power": 25,
+        "effect": { "damage": 25, "target": "all_enemies", "selfDamage": 10 },
+        "description": "草哥疯狂地攻击周围所有目标，连自己都不放过。造成全体伤害但自己也会受伤。"
+      },
+      {
+        "id": "cao_will",
+        "name": "草の意志",
+        "unlockAffinity": 100,
+        "type": "ultimate",
+        "power": 100,
+        "effect": { "damage": 100, "target": "single_enemy", "buff": { "attack": 15, "duration": 3 } },
+        "description": "草哥燃烧自己的意志，对单体造成毁灭性伤害！'这就是——草の意志！'"
+      }
+    ],
+    "dialogues": {
+      "happy": [
+        "哈哈哈！兄弟你太够意思了！",
+        "走走走，搞事情去！",
+        "有你在，什么都不怕！"
+      ],
+      "neutral": [
+        "今天练了200个俯卧撑，状态不错！",
+        "有没有吃的？我饿了。",
+        "冰姐呢？她在哪？"
+      ],
+      "angry": [
+        "谁敢动我兄弟试试！",
+        "干就完了！别拦我！"
+      ],
+      "combat_ready": [
+        "终于可以大干一场了！冲！",
+        "来啊！谁怕谁！"
+      ],
+      "combat_low_hp": [
+        "还没完呢！我还能打！",
+        "这点伤算什么！继续！"
+      ]
+    }
+  },
+  "laojing": {
+    "id": "laojing",
+    "name": "老晶",
+    "isPermanent": false,
+    "personality": "温柔、理性、善于分析",
+    "role": "support",
+    "description": "曾经是大学教授，末日后依然保持着学者的冷静和理性。",
+    "baseStats": {
+      "hp": 85,
+      "attack": 10,
+      "defense": 12,
+      "speed": 8
+    },
+    "skills": [
+      {
+        "id": "jing_comfort",
+        "name": "轻声安抚",
+        "unlockAffinity": 0,
+        "type": "heal",
+        "power": 0,
+        "effect": { "heal": 25, "target": "single_ally" },
+        "description": "老晶轻声安慰同伴，恢复25点生命值。"
+      },
+      {
+        "id": "jing_analyze",
+        "name": "理性分析",
+        "unlockAffinity": 60,
+        "type": "buff",
+        "power": 0,
+        "effect": { "buff": { "attack": 10, "defense": 10 }, "target": "all_allies", "duration": 3 },
+        "description": "老晶分析战场局势，提升全体攻击力和防御力3回合。"
+      },
+      {
+        "id": "jing_guardian",
+        "name": "温柔守护",
+        "unlockAffinity": 100,
+        "type": "ultimate",
+        "power": 0,
+        "effect": { "heal": 60, "target": "all_allies", "cleanse": true, "shield": 30 },
+        "description": "老晶用温柔的力量守护所有人，全体恢复60HP，清除负面状态，并获得30点护盾。"
+      }
+    ],
+    "dialogues": {
+      "happy": [
+        "年轻人，你们让我看到了希望。",
+        "有你们在，我觉得这个世界还有救。",
+        "来，我给你讲个末日前的故事。"
+      ],
+      "neutral": [
+        "保持冷静，冲动解决不了问题。",
+        "我们需要一个合理的计划。",
+        "资源有限，要合理分配。"
+      ],
+      "angry": [
+        "这不是冲动的时候！冷静下来！",
+        "你们这样会害死所有人的！"
+      ],
+      "combat_ready": [
+        "大家小心，我来支援你们。",
+        "不要慌，按照计划来。"
+      ],
+      "combat_low_hp": [
+        "我没事……先照顾其他人。",
+        "老了，不中用了……但还能坚持。"
+      ]
+    }
+  }
 }
