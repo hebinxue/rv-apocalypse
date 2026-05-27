@@ -36,16 +36,17 @@ class MenuScene extends Phaser.Scene {
 
     // New Game button
     this.createButton(width / 2, height / 2 + 20, '新 游 戏', () => {
-      console.log('New Game clicked - ready for game scene');
-      // Future: this.scene.start('GameScene');
+      SaveLoad.deleteSave();
+      const gameState = SaveLoad.getDefaultState();
+      SaveLoad.save(gameState);
+      this.scene.start('MapScene', { gameState });
     });
 
     // Continue Game button (shown only if save exists)
-    const saveData = localStorage.getItem('rv-apocalypse-save');
-    if (saveData) {
+    if (SaveLoad.hasSave()) {
       this.createButton(width / 2, height / 2 + 70, '继续游戏', () => {
-        console.log('Continue Game clicked - loading save');
-        // Future: load save and start GameScene
+        const gameState = SaveLoad.load();
+        this.scene.start('MapScene', { gameState });
       });
     }
 
