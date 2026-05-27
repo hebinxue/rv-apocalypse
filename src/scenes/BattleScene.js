@@ -379,7 +379,8 @@ class BattleScene extends Phaser.Scene {
     if (!player || player.hp <= 0) { this.advanceTurn(); return; }
     this.showTargetSelection((target) => {
       const damage = this.calculateDamage(player.attack, target.defense);
-      const dead = target.takeDamage(damage);
+      target.hp = Math.max(0, target.hp - damage);
+      const dead = target.hp <= 0;
       this.addLog(`你 攻击了 ${target.name}，造成 ${damage} 点伤害！`);
       this.showDamageNumber(target._displayX, target._displayY, damage);
       this.renderEnemies();
@@ -601,7 +602,8 @@ class BattleScene extends Phaser.Scene {
           if (skill.effect.target === 'all_enemies') {
             for (const enemy of aliveEnemies) {
               const damage = this.calculateDamage(ally.attack + skill.power, enemy.defense);
-              const dead = enemy.takeDamage(damage);
+              enemy.hp = Math.max(0, enemy.hp - damage);
+              const dead = enemy.hp <= 0;
               this.showDamageNumber(enemy._displayX, enemy._displayY, damage);
               if (dead) {
                 this.addLog(`${ally.name} 使用 ${skill.name} 消灭了 ${enemy.name}！`);
@@ -612,7 +614,8 @@ class BattleScene extends Phaser.Scene {
           } else {
             const target = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
             const damage = this.calculateDamage(ally.attack + skill.power, target.defense);
-            const dead = target.takeDamage(damage);
+            target.hp = Math.max(0, target.hp - damage);
+      const dead = target.hp <= 0;
             this.addLog(`${ally.name} 使用 ${skill.name} 攻击 ${target.name}，造成 ${damage} 点伤害！`);
             this.showDamageNumber(target._displayX, target._displayY, damage);
             if (dead) {
@@ -678,7 +681,8 @@ class BattleScene extends Phaser.Scene {
     if (aliveEnemies.length === 0) return;
     const target = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
     const damage = this.calculateDamage(ally.attack, target.defense);
-    const dead = target.takeDamage(damage);
+    target.hp = Math.max(0, target.hp - damage);
+    const dead = target.hp <= 0;
     this.addLog(`${ally.name} 攻击了 ${target.name}，造成 ${damage} 点伤害！`);
     this.showDamageNumber(target._displayX, target._displayY, damage);
     if (dead) {
