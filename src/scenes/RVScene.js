@@ -632,42 +632,43 @@ class RVScene extends Phaser.Scene {
       const upgradeContainer = this.add.container(0, yPos);
       contentContainer.add(upgradeContainer);
 
+      const cardH = 100;
       // Card background
       const cardBg = this.add.graphics();
       cardBg.fillStyle(0x12122a, 0.9);
-      cardBg.fillRoundedRect(0, 0, scrollW, 88, 6);
+      cardBg.fillRoundedRect(0, 0, scrollW, cardH, 6);
       cardBg.lineStyle(1, canAfford ? 0x00c8ff : 0x222244, canAfford ? 0.7 : 0.8);
-      cardBg.strokeRoundedRect(0, 0, scrollW, 88, 6);
+      cardBg.strokeRoundedRect(0, 0, scrollW, cardH, 6);
       upgradeContainer.add(cardBg);
 
-      // Name
-      upgradeContainer.add(this.add.text(12, 8, upgrade.name, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '15px',
+      // Name (left side, top)
+      upgradeContainer.add(this.add.text(14, 10, upgrade.name, {
+        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '16px',
         color: canAfford ? '#00c8ff' : '#ccd6f6', fontStyle: 'bold',
       }));
 
-      // Description
-      upgradeContainer.add(this.add.text(12, 28, upgrade.description, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#8892b0',
+      // Description (below name, left-aligned)
+      upgradeContainer.add(this.add.text(14, 34, upgrade.description, {
+        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px', color: '#8892b0',
         wordWrap: { width: scrollW - 110 },
       }));
 
-      // Cost items (left-aligned, word-wrapped)
+      // Cost items (bottom left)
       const itemsData = this.cache.json.get('itemsData') || {};
       const costArr = Object.entries(upgrade.cost).map(([itemId, qty]) => {
         const def = itemsData[itemId];
         return `${def ? def.name : itemId}x${qty}`;
       });
       const costStr = '需要: ' + costArr.join(' ');
-      upgradeContainer.add(this.add.text(12, 52, costStr, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '10px', color: '#666688',
+      upgradeContainer.add(this.add.text(14, 62, costStr, {
+        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#666688',
         wordWrap: { width: scrollW - 120 },
       }));
 
-      // Upgrade button
-      this.createUpgradeButton(upgradeContainer, scrollW - 90, 30, upgrade, canAfford);
+      // Upgrade button (right side, vertically centered)
+      this.createUpgradeButton(upgradeContainer, scrollW - 90, 36, upgrade, canAfford);
 
-      yPos += 96;
+      yPos += cardH + 8;
     });
 
     this.updateScrollHeight(parentContainer, yPos);
