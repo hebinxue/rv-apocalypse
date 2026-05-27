@@ -139,26 +139,31 @@ class BattleScene extends Phaser.Scene {
   // ============================================================
   initEnemies() {
     const zombiesData = this.cache.json.get('zombiesData') || {};
-    const enemyList = this.battleData.enemies || [];
+    // Support both "enemies" and "zombies" field names, and both "id" and "type"
+    const enemyList = this.battleData.enemies || this.battleData.zombies || [];
 
     for (const entry of enemyList) {
-      const zombieId = typeof entry === 'string' ? entry : entry.id;
+      const zombieId = typeof entry === 'string' ? entry : (entry.id || entry.type);
+      const count = entry.count || 1;
       const zombieData = zombiesData[zombieId];
       if (!zombieData) continue;
 
-      const zombie = new Zombie(zombieData);
-      this.enemies.push({
-        id: zombieId,
-        name: zombie.name,
-        emoji: '🧟',
-        hp: zombie.hp,
-        maxHp: zombie.maxHp,
-        attack: zombie.attack,
-        defense: zombie.defense,
-        speed: zombie.speed,
-        isBoss: zombie.isBoss,
-        zombieRef: zombie,
-      });
+      for (let i = 0; i < count; i++) {
+        const zombie = new Zombie(zombieData);
+        const suffix = count > 1 ? `#${i + 1}` : '';
+        this.enemies.push({
+          id: zombieId + (count > 1 ? '_' + i : ''),
+          name: zombie.name + suffix,
+          emoji: '🧟',
+          hp: zombie.hp,
+          maxHp: zombie.maxHp,
+          attack: zombie.attack,
+          defense: zombie.defense,
+          speed: zombie.speed,
+          isBoss: zombie.isBoss,
+          zombieRef: zombie,
+        });
+      }
     }
   }
 
