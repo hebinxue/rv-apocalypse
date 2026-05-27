@@ -36,6 +36,11 @@ class Dialogue {
         bg.fillRect(20, height - 160, width - 40, 140);
         this.container.add(bg);
 
+        // Transparent clickable overlay covering the entire dialogue box
+        const hitArea = this.scene.add.rectangle(width / 2, height - 90, width - 40, 140, 0x000000, 0.001)
+            .setInteractive({ useHandCursor: true });
+        this.container.add(hitArea);
+
         // Speaker name tag
         const speakerName = line.speaker === 'narrator' ? '' : line.speaker;
         if (speakerName) {
@@ -85,8 +90,8 @@ class Dialogue {
         }).setOrigin(0.5);
         this.container.add(hint);
 
-        // Click to continue
-        this.scene.input.once('pointerdown', () => {
+        // Click to continue - on the hit area, not the scene
+        hitArea.on('pointerdown', () => {
             if (charIndex < fullText.length) {
                 charIndex = fullText.length;
                 text.setText(fullText);
