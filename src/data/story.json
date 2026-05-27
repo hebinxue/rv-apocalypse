@@ -12,12 +12,12 @@
         { "speaker": "旁白", "text": "食物已经耗尽，水也只剩下最后一瓶。你必须做出选择——继续躲着等死，还是冲出去寻找生机。" },
         { "speaker": "player", "text": "（看着窗外密密麻麻的丧尸）……不能再等了。" },
         { "speaker": "旁白", "text": "你收拾好仅有的物资，推开门准备下楼。突然——" },
-        { "speaker": "旁白", "text": "一只黄狗从楼梯间窜了出来，嘴里叼着一把生锈的钥匙。" },
-        { "speaker": "player", "text": "你是……一条狗？" },
-        { "speaker": "wangzai", "text": "汪汪！（旺仔摇着尾巴，把钥匙放在你脚边）" },
-        { "speaker": "旁白", "text": "钥匙上刻着一个地址——'幸福小区B栋地下车库'。也许那里有可以逃跑的车辆。" },
-        { "speaker": "player", "text": "走吧，小家伙。从现在起我们就是搭档了。" },
-        { "speaker": "wangzai", "text": "汪！（旺仔兴奋地叫了一声，仿佛听懂了你的话）" }
+        { "speaker": "旁白", "text": "一个男生从楼梯间冲了出来，手里拿着一根铁棍，身后还拖着一个背包。" },
+        { "speaker": "player", "text": "你是谁？！" },
+        { "speaker": "wangzai", "text": "别怕！我叫旺仔，我不是坏人！我在楼下发现了一辆车，跟我走！" },
+        { "speaker": "旁白", "text": "旺仔把你拉到地下车库，一辆破旧的房车停在那里，钥匙还插在车上。" },
+        { "speaker": "player", "text": "走吧，从现在起我们就是搭档了。" },
+        { "speaker": "wangzai", "text": "好！有我在，不会让你出事的！" }
       ],
       "recruitNPCs": ["wangzai"],
       "forcedBattle": {
@@ -126,7 +126,7 @@
         { "speaker": "laojing", "text": "地下实验室在B栋负二层。我们需要穿过门诊大厅。" },
         { "speaker": "bingjie", "text": "门诊大厅……那里丧尸最多。" },
         { "speaker": "caoge", "text": "怕什么！有我在！" },
-        { "speaker": "wangzai", "text": "汪！（旺仔也表示赞同）" },
+        { "speaker": "wangzai", "text": "说得对！（旺仔也表示赞同）" },
         { "speaker": "player", "text": "大家准备好。这次可能是一场硬仗。" },
         { "speaker": "旁白", "text": "你们推开医院大门，迎面而来的是浓烈的腐臭味和无尽的黑暗。" },
         { "speaker": "旁白", "text": "大厅深处，一个巨大的身影缓缓站起——" },
@@ -220,7 +220,7 @@
       "dialogues": [
         { "speaker": "旁白", "text": "安全区。高大的围墙，巡逻的士兵，还有——活着的人。" },
         { "speaker": "player", "text": "我们……到了？" },
-        { "speaker": "wangzai", "text": "汪汪！（旺仔兴奋地叫着）" },
+        { "speaker": "wangzai", "text": "太好了！（旺仔兴奋地喊着）" },
         { "speaker": "旁白", "text": "然而，安全区的大门前，一场意料之外的战斗正在等待你们。" },
         { "speaker": "旁白", "text": "一个穿着军装的男人站在路中间，身后是一群武装人员。" },
         { "speaker": "???", "text": "把你们从医院拿到的数据交出来。" },
@@ -233,7 +233,7 @@
         { "speaker": "caoge", "text": "冲啊！" },
         { "speaker": "bingjie", "text": "……真是一群麻烦的家伙。不过，我奉陪到底。" },
         { "speaker": "laojing", "text": "年轻人，谢谢你。让我们结束这一切。" },
-        { "speaker": "wangzai", "text": "汪！！！（旺仔怒吼着冲了上去）" }
+        { "speaker": "wangzai", "text": "去死吧！！！（旺仔怒吼着冲了上去）" }
       ],
       "forcedBattle": {
         "description": "最终BOSS战！",
@@ -251,7 +251,7 @@
           { "speaker": "旁白", "text": "三个月后，第一批解药开始分发。丧尸的数量开始减少。" },
           { "speaker": "旁白", "text": "你站在安全区的围墙上，看着远方逐渐恢复生机的城市。" },
           { "speaker": "player", "text": "旺仔，我们做到了。" },
-          { "speaker": "wangzai", "text": "汪！（旺仔靠在你脚边，安静地摇着尾巴）" },
+          { "speaker": "wangzai", "text": "终于安全了……（旺仔靠在墙边，长舒一口气）" },
           { "speaker": "旁白", "text": "末日终将过去，而你们的故事，才刚刚开始。" },
           { "speaker": "旁白", "text": "—— 全剧终 ——" }
         ]

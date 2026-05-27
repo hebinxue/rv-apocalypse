@@ -553,41 +553,76 @@ class BattleScene extends Phaser.Scene {
       return;
     }
 
-    const { width } = this.cameras.main;
-    const container = this.add.container(0, 0);
+    const { width, height } = this.cameras.main;
 
-    this.add.text(width / 2, 540, '选择攻击目标：', {
+    // Hint text
+    const hintText = this.add.text(width / 2, height - 30, '点击丧尸选择攻击目标', {
       fontFamily: 'Microsoft YaHei, sans-serif',
       fontSize: '14px',
       color: '#ccd6f6',
     }).setOrigin(0.5);
 
+    const cleanup = () => {
+      hintText.destroy();
+      for (const item of targetItems) {
+        item.destroy();
+      }
+    };
+
+    const targetItems = [];
+
     for (const enemy of aliveEnemies) {
       const x = enemy._displayX;
       const y = enemy._displayY;
 
-      // Clickable overlay on enemy
-      const hitArea = this.add.rectangle(x, y, 80, 80)
+      // Highlight ring
+      const highlight = this.add.graphics();
+      highlight.lineStyle(3, 0x00c8ff, 0.9);
+      highlight.strokeCircle(x, y, 45);
+      this.tweens.add({
+        targets: highlight,
+        alpha: 0.3,
+        duration: 500,
+        yoyo: true,
+        repeat: -1,
+      });
+      targetItems.push(highlight);
+
+      // Label
+      const label = this.add.text(x, y + 55, '点击攻击', {
+        fontFamily: 'Microsoft YaHei, sans-serif',
+        fontSize: '12px',
+        color: '#00c8ff',
+        backgroundColor: '#000000',
+        padding: { x: 6, y: 2 },
+      }).setOrigin(0.5);
+      targetItems.push(label);
+
+      // Clickable area - larger, on top of everything
+      const hitArea = this.add.rectangle(x, y, 90, 90, 0x00c8ff, 0.001)
         .setInteractive({ useHandCursor: true })
         .setOrigin(0.5)
-        .setAlpha(0.001);
+        .setDepth(1000);
 
-      const highlight = this.add.graphics();
-      highlight.lineStyle(2, 0x00c8ff, 0.8);
-      highlight.strokeRect(x - 40, y - 40, 80, 80);
+      hitArea.on('pointerover', () => {
+        highlight.clear();
+        highlight.lineStyle(3, 0xff0000, 1);
+        highlight.strokeCircle(x, y, 45);
+      });
+      hitArea.on('pointerout', () => {
+        highlight.clear();
+        highlight.lineStyle(3, 0x00c8ff, 0.9);
+        highlight.strokeCircle(x, y, 45);
+      });
 
-      const label = this.add.text(x, y + 70, '点击选择', {
-        fontFamily: 'Microsoft YaHei, sans-serif',
-        fontSize: '11px',
-        color: '#00c8ff',
-      }).setOrigin(0.5);
-
-      container.add([hitArea, highlight, label]);
-
-      hitArea.on('pointerdown', () => {
-        container.destroy();
+      hitArea.on('pointerdown', (pointer) => {
+        pointer.event.stopPropagation();
+        cleanup();
+        hitArea.destroy();
         onSelect(enemy);
       });
+
+      targetItems.push(hitArea);
     }
   }
 
