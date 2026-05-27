@@ -487,7 +487,10 @@ class BattleScene extends Phaser.Scene {
       });
 
       btnText.on('pointerup', () => {
-        this.actionContainer.removeAll(true);
+        // Defer destruction so the callback executes fully first
+        this.time.delayedCall(0, () => {
+          this.actionContainer.removeAll(true);
+        });
         capturedCallback();
       });
     });
@@ -554,10 +557,12 @@ class BattleScene extends Phaser.Scene {
     const cleanup = () => {
       if (cleaned) return;
       cleaned = true;
-      hintText.destroy();
-      for (const item of targetItems) {
-        if (item && item.destroy) item.destroy();
-      }
+      this.time.delayedCall(0, () => {
+        if (hintText && hintText.destroy) hintText.destroy();
+        for (const item of targetItems) {
+          if (item && item.destroy) item.destroy();
+        }
+      });
     };
 
     const targetItems = [];
@@ -682,7 +687,7 @@ class BattleScene extends Phaser.Scene {
       itemBtn.on('pointerover', () => itemBtn.setColor('#00c8ff'));
       itemBtn.on('pointerout', () => itemBtn.setColor('#8892b0'));
       itemBtn.on('pointerdown', () => {
-        container.destroy();
+        this.time.delayedCall(0, () => container.destroy());
         this.useItem(invItem, def);
       });
 
@@ -697,7 +702,7 @@ class BattleScene extends Phaser.Scene {
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
     container.add(cancelBtn);
     cancelBtn.on('pointerdown', () => {
-      container.destroy();
+      this.time.delayedCall(0, () => container.destroy());
       this.showActionBar();
     });
   }
@@ -1126,11 +1131,10 @@ class BattleScene extends Phaser.Scene {
     continueBtn.on('pointerover', () => continueBtn.setColor('#ffffff'));
     continueBtn.on('pointerout', () => continueBtn.setColor('#00c8ff'));
     continueBtn.on('pointerdown', () => {
-      container.destroy();
+      this.time.delayedCall(0, () => container.destroy());
       if (this.onComplete) {
         this.onComplete(this.gameState);
       }
-      // Always return to the return scene
       this.scene.start(this.returnScene, {
         gameState: this.gameState,
         storyNode: this.storyNode,
