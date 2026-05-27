@@ -504,12 +504,13 @@ class RVScene extends Phaser.Scene {
 
     const contentContainer = this.createScrollableArea(parentContainer, scrollX, scrollY, scrollW, scrollH);
 
-    // Header
+    // Header (inside scroll area so it doesn't overlap the tab bar)
     const count = this.gameState.inventory.length;
     const cap = this.gameState.rv.capacity;
-    this.add.text(scrollX + scrollW / 2, scrollY - 20, `背包: ${count}/${cap}`, {
+    const headerText = this.add.text(scrollW / 2, 8, `背包: ${count}/${cap}`, {
       fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px', color: '#8892b0',
-    }).setOrigin(0.5);
+    }).setOrigin(0.5, 0);
+    contentContainer.add(headerText);
 
     if (this.gameState.inventory.length === 0) {
       this.add.text(scrollX + scrollW / 2, scrollY + 100, '储存空间为空', {
@@ -523,6 +524,7 @@ class RVScene extends Phaser.Scene {
     const gap = 8;
     const cellW = (scrollW - gap * (cols - 1)) / cols;
     const cellH = 72;
+    const gridOffsetY = 28; // below the header text
 
     const itemsData = this.cache.json.get('itemsData') || {};
     const typeEmojis = { food: '🍖', material: '🔧', medical: '💊', weapon: '⚔️', special: '⭐' };
@@ -532,7 +534,7 @@ class RVScene extends Phaser.Scene {
       const col = i % cols;
       const row = Math.floor(i / cols);
       const cx = col * (cellW + gap);
-      const cy = row * (cellH + gap);
+      const cy = gridOffsetY + row * (cellH + gap);
 
       const itemContainer = this.add.container(cx, cy);
       contentContainer.add(itemContainer);
@@ -572,7 +574,7 @@ class RVScene extends Phaser.Scene {
     });
 
     const totalRows = Math.ceil(this.gameState.inventory.length / cols);
-    const totalHeight = totalRows * (cellH + gap);
+    const totalHeight = gridOffsetY + totalRows * (cellH + gap);
     this.updateScrollHeight(parentContainer, totalHeight);
     this.addScrollIndicators(parentContainer);
   }
@@ -633,9 +635,9 @@ class RVScene extends Phaser.Scene {
       // Card background
       const cardBg = this.add.graphics();
       cardBg.fillStyle(0x12122a, 0.9);
-      cardBg.fillRoundedRect(0, 0, scrollW, 72, 6);
+      cardBg.fillRoundedRect(0, 0, scrollW, 88, 6);
       cardBg.lineStyle(1, canAfford ? 0x00c8ff : 0x222244, canAfford ? 0.7 : 0.8);
-      cardBg.strokeRoundedRect(0, 0, scrollW, 72, 6);
+      cardBg.strokeRoundedRect(0, 0, scrollW, 88, 6);
       upgradeContainer.add(cardBg);
 
       // Name
@@ -647,6 +649,7 @@ class RVScene extends Phaser.Scene {
       // Description
       upgradeContainer.add(this.add.text(12, 28, upgrade.description, {
         fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#8892b0',
+        wordWrap: { width: scrollW - 110 },
       }));
 
       // Cost items (left-aligned, word-wrapped)
@@ -656,15 +659,15 @@ class RVScene extends Phaser.Scene {
         return `${def ? def.name : itemId}x${qty}`;
       });
       const costStr = '需要: ' + costArr.join(' ');
-      upgradeContainer.add(this.add.text(12, 46, costStr, {
+      upgradeContainer.add(this.add.text(12, 52, costStr, {
         fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '10px', color: '#666688',
         wordWrap: { width: scrollW - 120 },
       }));
 
       // Upgrade button
-      this.createUpgradeButton(upgradeContainer, scrollW - 90, 24, upgrade, canAfford);
+      this.createUpgradeButton(upgradeContainer, scrollW - 90, 30, upgrade, canAfford);
 
-      yPos += 80;
+      yPos += 96;
     });
 
     this.updateScrollHeight(parentContainer, yPos);
