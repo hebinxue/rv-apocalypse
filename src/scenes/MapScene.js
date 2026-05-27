@@ -365,6 +365,8 @@ class MapScene extends Phaser.Scene {
 
     // If there is a forced battle, go to BattleScene
     if (storyNode.forcedBattle) {
+      // Pre-compute next node for post-battle advancement
+      const nextNode = storyNode.next || null;
       SaveLoad.save(this.gameState);
       this.scene.start('BattleScene', {
         gameState: this.gameState,
@@ -372,8 +374,13 @@ class MapScene extends Phaser.Scene {
         storyNodeId: storyNode.id,
         returnScene: 'MapScene',
         onComplete: (gameState) => {
-          this.gameState = gameState;
-          this.advanceStory(storyNode.id);
+          // Advance story node before returning to map
+          const updatedState = gameState || this.gameState;
+          if (nextNode) {
+            updatedState.currentStoryNode = nextNode;
+            updatedState.day = (updatedState.day || 1) + 1;
+          }
+          SaveLoad.save(updatedState);
         },
       });
       return;
@@ -444,6 +451,7 @@ class MapScene extends Phaser.Scene {
           this.applyPenalty(selected.result.penalty);
         }
         if (selected.result.forcedBattle) {
+          const nextNode = selected.next || storyNode.next || null;
           SaveLoad.save(this.gameState);
           this.scene.start('BattleScene', {
             gameState: this.gameState,
@@ -452,8 +460,12 @@ class MapScene extends Phaser.Scene {
             choiceId: selected.id,
             returnScene: 'MapScene',
             onComplete: (gameState) => {
-              this.gameState = gameState;
-              this.advanceStory(storyNode.id);
+              const updatedState = gameState || this.gameState;
+              if (nextNode) {
+                updatedState.currentStoryNode = nextNode;
+                updatedState.day = (updatedState.day || 1) + 1;
+              }
+              SaveLoad.save(updatedState);
             },
           });
           return;

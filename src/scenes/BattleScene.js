@@ -1110,12 +1110,12 @@ class BattleScene extends Phaser.Scene {
       container.destroy();
       if (this.onComplete) {
         this.onComplete(this.gameState);
-      } else {
-        this.scene.start(this.returnScene, {
-          gameState: this.gameState,
-          storyNode: this.storyNode,
-        });
       }
+      // Always return to the return scene
+      this.scene.start(this.returnScene, {
+        gameState: this.gameState,
+        storyNode: this.storyNode,
+      });
     });
   }
 }
