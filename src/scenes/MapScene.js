@@ -371,6 +371,10 @@ class MapScene extends Phaser.Scene {
         battleData: storyNode.forcedBattle,
         storyNodeId: storyNode.id,
         returnScene: 'MapScene',
+        onComplete: (gameState) => {
+          this.gameState = gameState;
+          this.advanceStory(storyNode.id);
+        },
       });
       return;
     }
@@ -447,6 +451,10 @@ class MapScene extends Phaser.Scene {
             storyNodeId: storyNode.id,
             choiceId: selected.id,
             returnScene: 'MapScene',
+            onComplete: (gameState) => {
+              this.gameState = gameState;
+              this.advanceStory(storyNode.id);
+            },
           });
           return;
         }
