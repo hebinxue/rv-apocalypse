@@ -126,7 +126,7 @@ class BattleScene extends Phaser.Scene {
 
   getNpcEmoji(npcId) {
     const emojiMap = {
-      wangzai: '🐕',
+      wangzai: '👦',
       bingjie: '👩',
       caoge: '💪',
       laojing: '👨‍🏫',
@@ -471,36 +471,24 @@ class BattleScene extends Phaser.Scene {
         fontFamily: 'Microsoft YaHei, sans-serif',
         fontSize: '15px',
         color: '#ccd6f6',
-      }).setOrigin(0.5);
+        backgroundColor: '#1a1a2e',
+        padding: { x: 20, y: 8 },
+      }).setOrigin(0.5).setInteractive({ useHandCursor: true });
       this.actionContainer.add(btnText);
 
-      const hitArea = this.add.rectangle(bx, y, btnW, btnH)
-        .setInteractive({ useHandCursor: true })
-        .setOrigin(0.5)
-        .setAlpha(0.001);
-      this.actionContainer.add(hitArea);
+      const capturedCallback = action.callback;
 
-      hitArea.on('pointerover', () => {
-        btnBg.clear();
-        btnBg.fillStyle(0x16213e, 1);
-        btnBg.fillRoundedRect(bx - btnW / 2, y - btnH / 2, btnW, btnH, 6);
-        btnBg.lineStyle(1, 0x00c8ff, 0.9);
-        btnBg.strokeRoundedRect(bx - btnW / 2, y - btnH / 2, btnW, btnH, 6);
-        btnText.setColor('#00c8ff');
+      btnText.on('pointerover', () => {
+        btnText.setStyle({ backgroundColor: '#16213e', color: '#00c8ff' });
       });
 
-      hitArea.on('pointerout', () => {
-        btnBg.clear();
-        btnBg.fillStyle(0x1a1a2e, 1);
-        btnBg.fillRoundedRect(bx - btnW / 2, y - btnH / 2, btnW, btnH, 6);
-        btnBg.lineStyle(1, 0x00c8ff, 0.5);
-        btnBg.strokeRoundedRect(bx - btnW / 2, y - btnH / 2, btnW, btnH, 6);
-        btnText.setColor('#ccd6f6');
+      btnText.on('pointerout', () => {
+        btnText.setStyle({ backgroundColor: '#1a1a2e', color: '#ccd6f6' });
       });
 
-      hitArea.on('pointerdown', () => {
+      btnText.on('pointerup', () => {
         this.actionContainer.removeAll(true);
-        action.callback();
+        capturedCallback();
       });
     });
   }
@@ -562,10 +550,13 @@ class BattleScene extends Phaser.Scene {
       color: '#ccd6f6',
     }).setOrigin(0.5);
 
+    let cleaned = false;
     const cleanup = () => {
+      if (cleaned) return;
+      cleaned = true;
       hintText.destroy();
       for (const item of targetItems) {
-        item.destroy();
+        if (item && item.destroy) item.destroy();
       }
     };
 
@@ -588,41 +579,34 @@ class BattleScene extends Phaser.Scene {
       });
       targetItems.push(highlight);
 
-      // Label
-      const label = this.add.text(x, y + 55, '点击攻击', {
+      // Clickable label - use text directly for reliable input
+      const label = this.add.text(x, y + 55, '[ 点击攻击 ]', {
         fontFamily: 'Microsoft YaHei, sans-serif',
-        fontSize: '12px',
+        fontSize: '13px',
         color: '#00c8ff',
-        backgroundColor: '#000000',
-        padding: { x: 6, y: 2 },
-      }).setOrigin(0.5);
+        backgroundColor: '#0a0a1a',
+        padding: { x: 10, y: 4 },
+      }).setOrigin(0.5).setInteractive({ useHandCursor: true });
       targetItems.push(label);
 
-      // Clickable area - larger, on top of everything
-      const hitArea = this.add.rectangle(x, y, 90, 90, 0x00c8ff, 0.001)
-        .setInteractive({ useHandCursor: true })
-        .setOrigin(0.5)
-        .setDepth(1000);
-
-      hitArea.on('pointerover', () => {
+      label.on('pointerover', () => {
+        label.setColor('#ff0000');
         highlight.clear();
         highlight.lineStyle(3, 0xff0000, 1);
         highlight.strokeCircle(x, y, 45);
       });
-      hitArea.on('pointerout', () => {
+      label.on('pointerout', () => {
+        label.setColor('#00c8ff');
         highlight.clear();
         highlight.lineStyle(3, 0x00c8ff, 0.9);
         highlight.strokeCircle(x, y, 45);
       });
 
-      hitArea.on('pointerdown', (pointer) => {
-        pointer.event.stopPropagation();
+      const capturedEnemy = enemy;
+      label.on('pointerup', () => {
         cleanup();
-        hitArea.destroy();
-        onSelect(enemy);
+        onSelect(capturedEnemy);
       });
-
-      targetItems.push(hitArea);
     }
   }
 
