@@ -8,32 +8,41 @@ class BootScene extends Phaser.Scene {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
-    // Progress bar background
+    // Background
+    const bg = this.add.graphics();
+    bg.fillGradientStyle(0x0a0a1a, 0x0a0a1a, 0x1a0a0a, 0x1a0a0a, 1);
+    bg.fillRect(0, 0, width, height);
+
+    // Progress bar background (rounded)
+    const barW = 300, barH = 8;
+    const barX = width / 2 - barW / 2, barY = height / 2;
     const barBg = this.add.graphics();
     barBg.fillStyle(0x1a1a2e, 1);
-    barBg.fillRect(width / 2 - 160, height / 2 - 12, 320, 24);
+    barBg.fillRoundedRect(barX, barY, barW, barH, 4);
+    barBg.lineStyle(1, 0x222244, 0.5);
+    barBg.strokeRoundedRect(barX, barY, barW, barH, 4);
 
     // Progress bar fill
     const bar = this.add.graphics();
 
     // Loading text
-    const loadingText = this.add.text(width / 2, height / 2 - 40, '正在加载资源...', {
+    const loadingText = this.add.text(width / 2, height / 2 - 40, '正在加载...', {
       fontFamily: 'Microsoft YaHei, sans-serif',
-      fontSize: '18px',
-      color: '#8892b0',
+      fontSize: '16px',
+      color: '#5a6578',
     }).setOrigin(0.5);
 
     // Percent text
-    const percentText = this.add.text(width / 2, height / 2 + 30, '0%', {
-      fontFamily: 'Microsoft YaHei, sans-serif',
-      fontSize: '14px',
-      color: '#ccd6f6',
+    const percentText = this.add.text(width / 2, height / 2 + 25, '0%', {
+      fontFamily: 'Consolas, monospace',
+      fontSize: '12px',
+      color: '#4a5568',
     }).setOrigin(0.5);
 
     this.load.on('progress', (value) => {
       bar.clear();
-      bar.fillStyle(0x00c8ff, 1);
-      bar.fillRect(width / 2 - 156, height / 2 - 8, 312 * value, 16);
+      bar.fillStyle(0xe94560, 0.8);
+      bar.fillRoundedRect(barX + 2, barY + 2, (barW - 4) * value, barH - 4, 3);
       percentText.setText(`${Math.round(value * 100)}%`);
     });
 
@@ -50,9 +59,32 @@ class BootScene extends Phaser.Scene {
     this.load.json('zombiesData', 'src/data/zombies.json');
     this.load.json('eventsData', 'src/data/events.json');
     this.load.json('storyData', 'src/data/story.json');
+
+    // Load background images (PNG or JPG, missing files silently skipped)
+    const bgScenes = ['apartment', 'gas_station', 'supermarket', 'hospital', 'highway', 'mountain', 'safe_zone', 'battlefield'];
+    bgScenes.forEach(name => {
+      this.load.image(`bg_${name}_png`, `src/assets/bg/${name}.png`);
+      this.load.image(`bg_${name}_jpg`, `src/assets/bg/${name}.jpg`);
+    });
+    // Character portraits (PNG or JPG)
+    const characters = ['player', 'wangzai', 'bingjie', 'caoge', 'laojing', 'xuehe', 'boss'];
+    characters.forEach(name => {
+      this.load.image(`char_${name}_png`, `src/assets/characters/${name}.png`);
+      this.load.image(`char_${name}_jpg`, `src/assets/characters/${name}.jpg`);
+    });
+
+    // Silently skip missing image files — remove broken texture entries
+    this.load.on('loaderror', (file) => {
+      if (file.type === 'image') {
+        this.textures.remove(file.key);
+      }
+    });
   }
 
   create() {
-    this.scene.start('MenuScene');
+    this.cameras.main.fadeOut(300, 0, 0, 0);
+    this.time.delayedCall(300, () => {
+      this.scene.start('MenuScene');
+    });
   }
 }

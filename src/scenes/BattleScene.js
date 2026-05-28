@@ -167,16 +167,39 @@ class BattleScene extends Phaser.Scene {
       const x = startX + spacing * idx;
       const y = 100;
 
-      // Emoji background circle
-      const emojiBg = this.add.graphics();
-      emojiBg.fillStyle(0x330000, 0.4);
-      emojiBg.fillCircle(x, y, 28);
-      emojiBg.lineStyle(1.5, 0xe94560, 0.3);
-      emojiBg.strokeCircle(x, y, 28);
-      this.enemyContainer.add(emojiBg);
+      // Boss立绘显示
+      if (enemy.isBoss) {
+        const bossKey = SceneBackgrounds.findTexture(this, 'char_boss');
+        if (bossKey) {
+          const bossImg = this.add.image(x, y, bossKey);
+          bossImg.setDisplaySize(120, 120);
+          bossImg.setOrigin(0.5);
+          this.enemyContainer.add(bossImg);
+        } else {
+          // Fallback to emoji
+          const emojiBg = this.add.graphics();
+          emojiBg.fillStyle(0x330000, 0.4);
+          emojiBg.fillCircle(x, y, 28);
+          emojiBg.lineStyle(1.5, 0xe94560, 0.3);
+          emojiBg.strokeCircle(x, y, 28);
+          this.enemyContainer.add(emojiBg);
 
-      const emojiText = this.add.text(x, y, enemy.emoji, { fontSize: '36px' }).setOrigin(0.5);
-      this.enemyContainer.add(emojiText);
+          const emojiText = this.add.text(x, y, enemy.emoji, { fontSize: '36px' }).setOrigin(0.5);
+          this.enemyContainer.add(emojiText);
+        }
+      } else {
+        // 普通敌人emoji
+        const emojiBg = this.add.graphics();
+        emojiBg.fillStyle(0x330000, 0.4);
+        emojiBg.fillCircle(x, y, 28);
+        emojiBg.lineStyle(1.5, 0xe94560, 0.3);
+        emojiBg.strokeCircle(x, y, 28);
+        this.enemyContainer.add(emojiBg);
+
+        const emojiText = this.add.text(x, y, enemy.emoji, { fontSize: '36px' }).setOrigin(0.5);
+        this.enemyContainer.add(emojiText);
+      }
+
       const nameText = this.add.text(x, y + 34, enemy.name, {
         fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px', color: '#e94560',
       }).setOrigin(0.5);
