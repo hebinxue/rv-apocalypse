@@ -5,6 +5,7 @@ class MapScene extends Phaser.Scene {
 
     // Ordered list of story nodes displayed on the map (linear path)
     this.storyPath = [
+      'prologue',
       'intro',
       'gas_station',
       'supermarket',
@@ -28,10 +29,11 @@ class MapScene extends Phaser.Scene {
       highway_mountain_path: 'highway',
     };
 
-    // Map node positions (7 nodes) with emoji icons
+    // Map node positions (8 nodes) with emoji icons
     this.nodePositions = {
-      intro:            { x: 80,  y: 150, name: '城市公寓', icon: '🏢' },
-      gas_station:      { x: 220, y: 250, name: '加油站', icon: '⛽' },
+      prologue:         { x: 50,  y: 100, name: '引言', icon: '📖' },
+      intro:            { x: 150, y: 150, name: '城市公寓', icon: '🏢' },
+      gas_station:      { x: 250, y: 250, name: '加油站', icon: '⛽' },
       supermarket:      { x: 380, y: 180, name: '超市', icon: '🛒' },
       apartment_laojing:{ x: 500, y: 300, name: '居民楼', icon: '🏠' },
       hospital:         { x: 620, y: 200, name: '废弃医院', icon: '🏥' },
@@ -635,8 +637,13 @@ class MapScene extends Phaser.Scene {
       this.gameState.currentStoryNode = storyNode.next;
       this.gameState.day = (this.gameState.day || 1) + 1;
 
-      // 每天减少饱食感
-      this.gameState.player.hunger = Math.max(0, (this.gameState.player.hunger || 100) - 10);
+      // 每天减少饱食感（改为5点，更平衡）
+      this.gameState.player.hunger = Math.max(0, (this.gameState.player.hunger || 100) - 5);
+
+      // 饱食感低于30时显示警告
+      if (this.gameState.player.hunger < 30 && this.gameState.player.hunger > 0) {
+        UIHelper.showToast(this, '饱食度过低！记得进食，否则会生病', 'warning');
+      }
 
       // 检查是否生病
       if (this.gameState.player.hunger < 20 && !this.gameState.player.isSick) {
@@ -649,16 +656,22 @@ class MapScene extends Phaser.Scene {
       // 如果已经生病，检查是否有NPC救助
       if (this.gameState.player.isSick) {
         this.gameState.player.sickDays = (this.gameState.player.sickDays || 0) + 1;
-        // 生病超过3天且没有NPC救助，游戏结束
-        if (this.gameState.player.sickDays > 3) {
+        // 生病期间HP每天下降10点
+        this.gameState.player.hp = Math.max(0, this.gameState.player.hp - 10);
+
+        // 生病超过5天且没有NPC救助，游戏结束
+        if (this.gameState.player.sickDays > 5) {
           this.showGameOver('你因为饥饿和疾病，身体再也撑不住了……');
           return;
         }
+
         // 检查是否有NPC好感度高于80
         const rescuer = this.findRescuer();
         if (rescuer) {
           this.showRescueEvent(rescuer);
           return;
+        } else {
+          UIHelper.showToast(this, `你生病了！需要伙伴好感度≥80才能救治（第${this.gameState.player.sickDays}天）`, 'danger');
         }
       }
 
