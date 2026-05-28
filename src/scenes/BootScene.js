@@ -59,6 +59,7 @@ class BootScene extends Phaser.Scene {
     this.load.json('zombiesData', 'src/data/zombies.json');
     this.load.json('eventsData', 'src/data/events.json');
     this.load.json('storyData', 'src/data/story.json');
+    this.load.json('specialEventsData', 'src/data/special_events.json');
 
     // Load background images (PNG or JPG, missing files silently skipped)
     const bgScenes = ['apartment', 'gas_station', 'supermarket', 'hospital', 'highway', 'mountain', 'safe_zone', 'battlefield'];

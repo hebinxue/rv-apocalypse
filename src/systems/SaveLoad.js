@@ -38,7 +38,9 @@ class SaveLoad {
                 attack: 10,
                 defense: 5,
                 speed: 10,
-                hunger: 100
+                hunger: 100,
+                isSick: false,
+                sickDays: 0
             },
             rv: {
                 durability: 50,

@@ -933,7 +933,64 @@ class RVScene extends Phaser.Scene {
     upgrade.apply(this.gameState.rv);
 
     this.showNotification(`升级成功: ${upgrade.name}！`);
-    this.time.delayedCall(800, () => { this.renderTab('upgrades'); });
+
+    // 触发特殊剧情
+    this.triggerUpgradeEvent(upgrade.id);
+  }
+
+  triggerUpgradeEvent(upgradeId) {
+    const specialEventsData = this.cache.json.get('specialEventsData');
+    if (!specialEventsData || !specialEventsData.rv_upgrade_events) {
+      this.time.delayedCall(800, () => { this.renderTab('upgrades'); });
+      return;
+    }
+
+    const upgradeEvents = specialEventsData.rv_upgrade_events[upgradeId];
+    if (!upgradeEvents) {
+      this.time.delayedCall(800, () => { this.renderTab('upgrades'); });
+      return;
+    }
+
+    // 随机选择一个已招募的NPC
+    const recruitedNpcs = Object.keys(this.gameState.npcs).filter(
+      npcId => this.gameState.npcs[npcId].recruited
+    );
+
+    if (recruitedNpcs.length === 0) {
+      this.time.delayedCall(800, () => { this.renderTab('upgrades'); });
+      return;
+    }
+
+    const randomNpcId = recruitedNpcs[Math.floor(Math.random() * recruitedNpcs.length)];
+    const dialogues = upgradeEvents[randomNpcId];
+
+    if (!dialogues) {
+      this.time.delayedCall(800, () => { this.renderTab('upgrades'); });
+      return;
+    }
+
+    // 延迟一下再显示剧情
+    this.time.delayedCall(1000, () => {
+      const dialogueSystem = new Dialogue(this);
+      dialogueSystem.show(dialogues, () => {
+        // 剧情结束，增加NPC好感度
+        if (this.gameState.npcs[randomNpcId]) {
+          this.gameState.npcs[randomNpcId].affinity = Math.min(
+            100,
+            (this.gameState.npcs[randomNpcId].affinity || 50) + 10
+          );
+          this.showNotification(`${this.getNpcName(randomNpcId)}好感度 +10`);
+        }
+
+        SaveLoad.save(this.gameState);
+        this.time.delayedCall(800, () => { this.renderTab('upgrades'); });
+      });
+    });
+  }
+
+  getNpcName(npcId) {
+    const npcsData = this.cache.json.get('npcsData') || {};
+    return npcsData[npcId] ? npcsData[npcId].name : npcId;
   }
 
   // ============================================================

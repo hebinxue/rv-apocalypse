@@ -634,11 +634,147 @@ class MapScene extends Phaser.Scene {
     if (storyNode && storyNode.next) {
       this.gameState.currentStoryNode = storyNode.next;
       this.gameState.day = (this.gameState.day || 1) + 1;
+
+      // 每天减少饱食感
+      this.gameState.player.hunger = Math.max(0, (this.gameState.player.hunger || 100) - 10);
+
+      // 检查是否生病
+      if (this.gameState.player.hunger < 20 && !this.gameState.player.isSick) {
+        this.gameState.player.isSick = true;
+        this.gameState.player.sickDays = 0;
+        this.showSicknessEvent();
+        return;
+      }
+
+      // 如果已经生病，检查是否有NPC救助
+      if (this.gameState.player.isSick) {
+        this.gameState.player.sickDays = (this.gameState.player.sickDays || 0) + 1;
+        // 生病超过3天且没有NPC救助，游戏结束
+        if (this.gameState.player.sickDays > 3) {
+          this.showGameOver('你因为饥饿和疾病，身体再也撑不住了……');
+          return;
+        }
+        // 检查是否有NPC好感度高于80
+        const rescuer = this.findRescuer();
+        if (rescuer) {
+          this.showRescueEvent(rescuer);
+          return;
+        }
+      }
+
       SaveLoad.save(this.gameState);
       this.scene.restart({ gameState: this.gameState, autoEnter: true });
     } else {
       SaveLoad.save(this.gameState);
     }
+  }
+
+  findRescuer() {
+    const npcs = this.gameState.npcs || {};
+    for (const npcId of Object.keys(npcs)) {
+      if (npcs[npcId].recruited && npcs[npcId].affinity >= 80) {
+        return npcId;
+      }
+    }
+    return null;
+  }
+
+  showSicknessEvent() {
+    const { width, height } = this.cameras.main;
+
+    // 显示生病提示
+    UIHelper.showToast(this, '你因为饥饿过度生病了！需要有人照顾你才能康复', 'danger');
+
+    // 如果没有NPC好感度高于80，显示游戏结束
+    const rescuer = this.findRescuer();
+    if (!rescuer) {
+      this.time.delayedCall(2000, () => {
+        this.showGameOver('你因为饥饿和疾病，身体再也撑不住了……\n没有人能照顾你，你的旅程到此结束。');
+      });
+      return;
+    }
+
+    // 如果有NPC好感度高于80，触发救助事件
+    this.time.delayedCall(2000, () => {
+      this.showRescueEvent(rescuer);
+    });
+  }
+
+  showRescueEvent(npcId) {
+    const specialEventsData = this.cache.json.get('specialEventsData');
+    if (!specialEventsData || !specialEventsData.sickness_events) {
+      this.gameState.player.isSick = false;
+      this.gameState.player.sickDays = 0;
+      SaveLoad.save(this.gameState);
+      this.scene.restart({ gameState: this.gameState, autoEnter: true });
+      return;
+    }
+
+    const rescueKey = `${npcId}_rescue`;
+    const dialogues = specialEventsData.sickness_events[rescueKey];
+    if (!dialogues) {
+      this.gameState.player.isSick = false;
+      this.gameState.player.sickDays = 0;
+      SaveLoad.save(this.gameState);
+      this.scene.restart({ gameState: this.gameState, autoEnter: true });
+      return;
+    }
+
+    const dialogueSystem = new Dialogue(this);
+    dialogueSystem.show(dialogues, () => {
+      // 救助成功，恢复健康
+      this.gameState.player.isSick = false;
+      this.gameState.player.sickDays = 0;
+      this.gameState.player.hunger = Math.min(100, this.gameState.player.hunger + 30);
+      this.gameState.player.hp = Math.min(this.gameState.player.maxHp, this.gameState.player.hp + 20);
+
+      UIHelper.showToast(this, `${this.getNpcName(npcId)}照顾了你，你恢复了健康`, 'reward');
+
+      SaveLoad.save(this.gameState);
+      this.time.delayedCall(1500, () => {
+        this.scene.restart({ gameState: this.gameState, autoEnter: true });
+      });
+    });
+  }
+
+  getNpcName(npcId) {
+    const npcsData = this.cache.json.get('npcsData') || {};
+    return npcsData[npcId] ? npcsData[npcId].name : npcId;
+  }
+
+  showGameOver(message) {
+    const { width, height } = this.cameras.main;
+
+    const overlay = this.add.graphics();
+    overlay.setDepth(100);
+    overlay.fillStyle(0x000000, 0.85);
+    overlay.fillRect(0, 0, width, height);
+
+    const panel = UIHelper.drawPanel(this, width / 2 - 200, height / 2 - 140, 400, 280, {
+      fillColor: UIHelper.COLORS.panelBg,
+      fillAlpha: 0.95,
+      borderColor: UIHelper.COLORS.danger,
+      borderAlpha: 0.7,
+      radius: 12,
+    });
+    panel.setDepth(101);
+
+    this.add.text(width / 2, height / 2 - 100, '游戏结束', {
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '36px',
+      color: '#e94560', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(102);
+
+    this.add.text(width / 2, height / 2 - 40, message, {
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px',
+      color: UIHelper.COLORS.textSecondary, align: 'center',
+    }).setOrigin(0.5).setDepth(102);
+
+    UIHelper.createButton(this, width / 2, height / 2 + 50, 180, 44, '重新开始', {
+      isPrimary: true, fontSize: '18px',
+    }, () => {
+      SaveLoad.deleteSave();
+      this.scene.start('MenuScene');
+    }).setDepth(102);
   }
 
   // ============================================================
