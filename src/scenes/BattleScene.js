@@ -30,18 +30,44 @@ class BattleScene extends Phaser.Scene {
   create() {
     const { width, height } = this.cameras.main;
 
-    const bg = this.add.graphics();
-    bg.fillGradientStyle(0x0a0a1a, 0x0a0a1a, 0x1a0a0a, 0x1a0a0a, 1);
-    bg.fillRect(0, 0, width, height);
+    // --- Battlefield background ---
+    const bgKey = SceneBackgrounds.findTexture(this, 'bg_battlefield');
+    if (bgKey) {
+      const img = this.add.image(width / 2, height / 2, bgKey);
+      img.setDisplaySize(width, height);
+      img.setDepth(-1);
+    } else {
+      const bg = this.add.graphics();
+      bg.fillGradientStyle(0x1a0a0a, 0x1a0a0a, 0x0a0a1a, 0x0a0a1a, 1);
+      bg.fillRect(0, 0, width, height);
+      bg.fillStyle(0x111118, 1);
+      bg.fillRect(0, height * 0.55, width, height * 0.45);
+      bg.lineStyle(1, 0x2a2a33, 0.5);
+      bg.lineBetween(0, height * 0.55, width, height * 0.55);
+      for (let i = 0; i < 15; i++) {
+        bg.fillStyle(0x1a1a22, 0.3 + Math.random() * 0.2);
+        bg.fillRect(Math.random() * width, height * 0.55 + Math.random() * height * 0.35, 8 + Math.random() * 15, 3 + Math.random() * 4);
+      }
+      bg.fillStyle(0xe94560, 0.03);
+      bg.fillCircle(width * 0.3, height * 0.4, 200);
+      bg.fillStyle(0xe94560, 0.02);
+      bg.fillCircle(width * 0.7, height * 0.35, 150);
+    }
 
-    const grid = this.add.graphics();
-    grid.lineStyle(1, 0x1a1a3e, 0.1);
-    for (let gx = 0; gx < width; gx += 40) grid.lineBetween(gx, 0, gx, height);
-    for (let gy = 0; gy < height; gy += 40) grid.lineBetween(0, gy, width, gy);
+    // --- Atmospheric particles ---
+    SceneParticles.addEmbers(this, width, height);
+    SceneParticles.addDust(this, width, height);
 
-    this.add.text(width / 2, 20, '- 战斗 -', {
+    // --- Battle title with accent ---
+    const titleBg = this.add.graphics();
+    titleBg.fillStyle(0xe94560, 0.15);
+    titleBg.fillRoundedRect(width / 2 - 80, 8, 160, 30, 6);
+    titleBg.lineStyle(1, 0xe94560, 0.4);
+    titleBg.strokeRoundedRect(width / 2 - 80, 8, 160, 30, 6);
+
+    this.add.text(width / 2, 23, '⚔️ 战斗', {
       fontFamily: 'Microsoft YaHei, sans-serif',
-      fontSize: '24px', color: '#e94560', fontStyle: 'bold',
+      fontSize: '16px', color: '#e94560', fontStyle: 'bold',
     }).setOrigin(0.5);
 
     this.initAllies();
@@ -53,6 +79,8 @@ class BattleScene extends Phaser.Scene {
     this.renderAllies();
     this.renderBattleLog();
 
+    // Fade in
+    this.cameras.main.fadeIn(400, 0, 0, 0);
     this.time.delayedCall(500, () => this.startBattle());
   }
 
@@ -136,33 +164,48 @@ class BattleScene extends Phaser.Scene {
       const x = startX + spacing * idx;
       const y = 100;
 
-      const emojiText = this.add.text(x, y, enemy.emoji, { fontSize: '40px' }).setOrigin(0.5);
+      // Emoji background circle
+      const emojiBg = this.add.graphics();
+      emojiBg.fillStyle(0x330000, 0.4);
+      emojiBg.fillCircle(x, y, 28);
+      emojiBg.lineStyle(1.5, 0xe94560, 0.3);
+      emojiBg.strokeCircle(x, y, 28);
+      this.enemyContainer.add(emojiBg);
+
+      const emojiText = this.add.text(x, y, enemy.emoji, { fontSize: '36px' }).setOrigin(0.5);
       this.enemyContainer.add(emojiText);
-      const nameText = this.add.text(x, y + 30, enemy.name, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '13px', color: '#e94560',
+      const nameText = this.add.text(x, y + 34, enemy.name, {
+        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px', color: '#e94560',
       }).setOrigin(0.5);
       this.enemyContainer.add(nameText);
 
-      const barW = 70, barH = 6;
+      // HP bar with rounded corners
+      const barW = 72, barH = 7;
+      const barY = y + 48;
       const barBg = this.add.graphics();
-      barBg.fillStyle(0x333333, 1);
-      barBg.fillRect(x - barW / 2, y + 42, barW, barH);
+      barBg.fillStyle(0x1a1a22, 1);
+      barBg.fillRoundedRect(x - barW / 2, barY, barW, barH, 3);
+      barBg.lineStyle(1, 0x2a2a33, 0.5);
+      barBg.strokeRoundedRect(x - barW / 2, barY, barW, barH, 3);
       this.enemyContainer.add(barBg);
 
       const hpRatio = Math.max(0, enemy.hp / enemy.maxHp);
+      const barColor = hpRatio > 0.5 ? 0xe94560 : hpRatio > 0.25 ? 0xff8800 : 0xff0000;
       const barFill = this.add.graphics();
-      barFill.fillStyle(0xe94560, 1);
-      barFill.fillRect(x - barW / 2, y + 42, barW * hpRatio, barH);
+      if (hpRatio > 0) {
+        barFill.fillStyle(barColor, 0.9);
+        barFill.fillRoundedRect(x - barW / 2, barY, barW * hpRatio, barH, 3);
+      }
       this.enemyContainer.add(barFill);
 
-      const hpText = this.add.text(x, y + 56, `${enemy.hp}/${enemy.maxHp}`, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#8892b0',
+      const hpText = this.add.text(x, barY + 12, `${enemy.hp}/${enemy.maxHp}`, {
+        fontFamily: 'Consolas, monospace', fontSize: '10px', color: '#667788',
       }).setOrigin(0.5);
       this.enemyContainer.add(hpText);
 
       if (enemy.isBoss) {
-        const bossTag = this.add.text(x, y - 30, '[ BOSS ]', {
-          fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px',
+        const bossTag = this.add.text(x, y - 38, '💀 BOSS', {
+          fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px',
           color: '#ff6600', fontStyle: 'bold',
         }).setOrigin(0.5);
         this.enemyContainer.add(bossTag);
@@ -189,34 +232,49 @@ class BattleScene extends Phaser.Scene {
       const x = startX + spacing * idx;
       const y = 340;
 
-      const emojiText = this.add.text(x, y, ally.emoji, { fontSize: '36px' }).setOrigin(0.5);
+      const barColorHex = ally.isPlayer ? 0x00c8ff : 0x44aa66;
+
+      // Emoji background circle
+      const emojiBg = this.add.graphics();
+      emojiBg.fillStyle(ally.isPlayer ? 0x002233 : 0x002211, 0.4);
+      emojiBg.fillCircle(x, y, 25);
+      emojiBg.lineStyle(1.5, barColorHex, 0.3);
+      emojiBg.strokeCircle(x, y, 25);
+      this.allyContainer.add(emojiBg);
+
+      const emojiText = this.add.text(x, y, ally.emoji, { fontSize: '32px' }).setOrigin(0.5);
       this.allyContainer.add(emojiText);
-      const nameColor = ally.isPlayer ? '#00c8ff' : '#8892b0';
-      const nameText = this.add.text(x, y + 28, ally.name, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '13px', color: nameColor,
+      const nameText = this.add.text(x, y + 30, ally.name, {
+        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px',
+        color: ally.isPlayer ? '#00c8ff' : '#77aa88',
       }).setOrigin(0.5);
       this.allyContainer.add(nameText);
 
-      const barW = 70, barH = 6;
+      // HP bar
+      const barW = 72, barH = 7;
+      const barY = y + 44;
       const barBg = this.add.graphics();
-      barBg.fillStyle(0x333333, 1);
-      barBg.fillRect(x - barW / 2, y + 40, barW, barH);
+      barBg.fillStyle(0x1a1a22, 1);
+      barBg.fillRoundedRect(x - barW / 2, barY, barW, barH, 3);
+      barBg.lineStyle(1, 0x2a2a33, 0.5);
+      barBg.strokeRoundedRect(x - barW / 2, barY, barW, barH, 3);
       this.allyContainer.add(barBg);
 
       const hpRatio = Math.max(0, ally.hp / ally.maxHp);
-      const barColor = ally.isPlayer ? 0x00c8ff : 0x44aa66;
       const barFill = this.add.graphics();
-      barFill.fillStyle(barColor, 1);
-      barFill.fillRect(x - barW / 2, y + 40, barW * hpRatio, barH);
+      if (hpRatio > 0) {
+        barFill.fillStyle(barColorHex, 0.9);
+        barFill.fillRoundedRect(x - barW / 2, barY, barW * hpRatio, barH, 3);
+      }
       this.allyContainer.add(barFill);
 
-      const hpText = this.add.text(x, y + 54, `${ally.hp}/${ally.maxHp}`, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#8892b0',
+      const hpText = this.add.text(x, barY + 12, `${ally.hp}/${ally.maxHp}`, {
+        fontFamily: 'Consolas, monospace', fontSize: '10px', color: '#667788',
       }).setOrigin(0.5);
       this.allyContainer.add(hpText);
 
       if (ally.defending) {
-        const shieldText = this.add.text(x + 30, y - 10, '🛡️', { fontSize: '16px' }).setOrigin(0.5);
+        const shieldText = this.add.text(x + 28, y - 8, '🛡️', { fontSize: '16px' }).setOrigin(0.5);
         this.allyContainer.add(shieldText);
       }
 
@@ -233,13 +291,16 @@ class BattleScene extends Phaser.Scene {
     const { width } = this.cameras.main;
     const logY = 430;
     const logBg = this.add.graphics();
-    logBg.fillStyle(0x0d0d1f, 0.9);
-    logBg.fillRect(20, logY, width - 40, 90);
-    logBg.lineStyle(1, 0x1a1a3e, 0.6);
-    logBg.strokeRect(20, logY, width - 40, 90);
-    this.logText = this.add.text(30, logY + 8, '战斗开始！', {
+    logBg.fillStyle(0x0a0a15, 0.85);
+    logBg.fillRoundedRect(20, logY, width - 40, 90, 8);
+    logBg.lineStyle(1, 0x222244, 0.5);
+    logBg.strokeRoundedRect(20, logY, width - 40, 90, 8);
+    // Left accent
+    logBg.fillStyle(0xe94560, 0.4);
+    logBg.fillRoundedRect(22, logY + 8, 3, 74, 2);
+    this.logText = this.add.text(35, logY + 10, '战斗开始！', {
       fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px',
-      color: '#8892b0', wordWrap: { width: width - 80 }, lineSpacing: 4,
+      color: '#7788aa', wordWrap: { width: width - 90 }, lineSpacing: 5,
     });
   }
 
@@ -254,11 +315,18 @@ class BattleScene extends Phaser.Scene {
   // ============================================================
   startBattle() {
     this.turnCount = 0;
+    this._npcsActedThisRound = new Set();
+    this._comboTriggered = false;
     this.buildTurnOrder();
     this.processTurn();
   }
 
   buildTurnOrder() {
+    // Check for combo attacks before new round
+    this.checkComboAttack();
+    this._npcsActedThisRound = new Set();
+    this._comboTriggered = false;
+
     this.turnOrder = [];
     for (const ally of this.allies) {
       if (ally.hp > 0) this.turnOrder.push({ type: 'ally', unit: ally });
@@ -270,8 +338,53 @@ class BattleScene extends Phaser.Scene {
     this.currentTurnIndex = 0;
   }
 
+  checkComboAttack() {
+    if (this._comboTriggered) return;
+    if (this._npcsActedThisRound.size < 2) return;
+
+    // Define combo pairs
+    const combos = [
+      { partners: ['caoge', 'bingjie'], name: '冰火合击', power: 60, desc: '草哥和冰姐默契配合，冰与火的碰撞！' },
+      { partners: ['player', 'wangzai'], name: '搭档连击', power: 45, desc: '你和旺仔默契十足，连续攻击！' },
+      { partners: ['wangzai', 'laojing'], name: '智慧守护', power: 40, desc: '旺仔和老晶心意相通，攻守兼备！' },
+      { partners: ['player', 'caoge'], name: '热血冲锋', power: 50, desc: '你和草哥并肩冲锋，势不可挡！' },
+      { partners: ['player', 'bingjie'], name: '精准打击', power: 55, desc: '冰姐冷酷指引，你精准出击！' },
+    ];
+
+    const npcsActed = Array.from(this._npcsActedThisRound);
+    for (const combo of combos) {
+      if (combo.partners.every(p => npcsActed.includes(p))) {
+        const aliveEnemies = this.enemies.filter(e => e.hp > 0);
+        if (aliveEnemies.length === 0) break;
+
+        this._comboTriggered = true;
+        const target = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
+        const damage = this.calculateDamage(combo.power, target.defense);
+        target.hp = Math.max(0, target.hp - damage);
+
+        this.addLog(`【${combo.name}】${combo.desc}`);
+        this.addLog(`合击对 ${target.name} 造成 ${damage} 点额外伤害！`);
+        this.showDamageNumber(target._displayX, target._displayY, damage, 0xffd700);
+
+        if (target.hp <= 0) {
+          this.addLog(`${target.name} 被消灭了！`);
+        }
+        this.renderEnemies();
+        break;
+      }
+    }
+  }
+
   processTurn() {
     if (this.battleOver) return;
+
+    // 玩家死亡立即结束
+    const player = this.allies.find(a => a.isPlayer);
+    if (player && player.hp <= 0) {
+      this.gameState.player.hp = 0;
+      this.endBattle(false);
+      return;
+    }
 
     const aliveAllies = this.allies.filter(a => a.hp > 0);
     const aliveEnemies = this.enemies.filter(e => e.hp > 0);
@@ -304,56 +417,98 @@ class BattleScene extends Phaser.Scene {
   }
 
   advanceTurn() {
+    // 玩家死亡立即结束
+    const player = this.allies.find(a => a.isPlayer);
+    if (player && player.hp <= 0) {
+      this.gameState.player.hp = 0;
+      this.endBattle(false);
+      return;
+    }
     this.currentTurnIndex++;
     this.time.delayedCall(300, () => this.processTurn());
   }
 
   // ============================================================
-  //  ACTION BAR — scene-level click detection, no container input
+  //  ACTION BAR — dual: scene-level + direct interactive
   // ============================================================
   showActionBar() {
     this.clearUI();
     const { width } = this.cameras.main;
-    const y = 540;
-    const btnW = 100, btnH = 36, gap = 12;
+    const y = 545;
+    const btnW = 90, btnH = 36, gap = 8;
     const actions = [
       { label: '攻击', callback: () => this.playerAttack() },
       { label: '防御', callback: () => this.playerDefend() },
       { label: '物品', callback: () => this.showItems() },
       { label: '逃跑', callback: () => this.tryEscape() },
+      { label: '自动战斗', callback: () => this.autoBattle() },
     ];
     const totalW = actions.length * btnW + (actions.length - 1) * gap;
     const startX = (width - totalW) / 2;
 
-    const btnRects = [];
+    // Background bar with depth
+    const barBg = UIHelper.drawPanel(this, startX - 10, y - btnH / 2 - 6, totalW + 20, btnH + 12, {
+      fillColor: UIHelper.COLORS.panelBg, fillAlpha: 0.95,
+      radius: 8, shadowOffset: 2,
+    });
+    barBg.setDepth(100);
+    this._uiElements.push(barBg);
+
     actions.forEach((action, i) => {
       const bx = startX + i * (btnW + gap);
+      const btnContainer = this.add.container(bx + btnW / 2, y);
+      btnContainer.setDepth(102);
+
+      const glow = this.add.graphics();
+      btnContainer.add(glow);
+
       const bg = this.add.graphics();
-      bg.fillStyle(0x1a1a2e, 1);
-      bg.fillRoundedRect(bx, y - btnH / 2, btnW, btnH, 6);
-      bg.lineStyle(1, 0x00c8ff, 0.5);
-      bg.strokeRoundedRect(bx, y - btnH / 2, btnW, btnH, 6);
-      this._uiElements.push(bg);
+      bg.fillStyle(UIHelper.COLORS.cardBg, 1);
+      bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 6);
+      bg.lineStyle(1, UIHelper.COLORS.info, 0.4);
+      bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 6);
+      btnContainer.add(bg);
 
-      const txt = this.add.text(bx + btnW / 2, y, action.label, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '15px', color: '#ccd6f6',
+      const txt = this.add.text(0, 0, action.label, {
+        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px', color: UIHelper.COLORS.textPrimary,
       }).setOrigin(0.5);
-      this._uiElements.push(txt);
+      btnContainer.add(txt);
 
-      btnRects.push({ x: bx, y: y - btnH / 2, w: btnW, h: btnH, callback: action.callback, bg, txt });
-    });
+      const hitArea = this.add.rectangle(0, 0, btnW, btnH, 0x000000, 0.001)
+        .setInteractive({ useHandCursor: true });
+      btnContainer.add(hitArea);
+      this._uiElements.push(btnContainer);
 
-    this._clickHandler = (pointer) => {
-      const px = pointer.x, py = pointer.y;
-      for (const btn of btnRects) {
-        if (px >= btn.x && px <= btn.x + btn.w && py >= btn.y && py <= btn.y + btn.h) {
+      hitArea.on('pointerover', () => {
+        glow.clear();
+        glow.fillStyle(UIHelper.COLORS.info, 0.06);
+        glow.fillRoundedRect(-btnW / 2 - 3, -btnH / 2 - 3, btnW + 6, btnH + 6, 8);
+        bg.clear();
+        bg.fillStyle(0x16213e, 1);
+        bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 6);
+        bg.lineStyle(1, UIHelper.COLORS.info, 0.8);
+        bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 6);
+        txt.setColor('#38bdf8');
+        btnContainer.setScale(1.03);
+      });
+      hitArea.on('pointerout', () => {
+        glow.clear();
+        bg.clear();
+        bg.fillStyle(UIHelper.COLORS.cardBg, 1);
+        bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 6);
+        bg.lineStyle(1, UIHelper.COLORS.info, 0.4);
+        bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 6);
+        txt.setColor(UIHelper.COLORS.textPrimary);
+        btnContainer.setScale(1);
+      });
+      hitArea.on('pointerdown', () => {
+        btnContainer.setScale(0.95);
+        this.time.delayedCall(80, () => {
           this.clearUI();
-          btn.callback();
-          return;
-        }
-      }
-    };
-    this.input.on('pointerdown', this._clickHandler);
+          action.callback();
+        });
+      });
+    });
   }
 
   clearUI() {
@@ -377,17 +532,26 @@ class BattleScene extends Phaser.Scene {
   playerAttack() {
     const player = this.allies.find(a => a.isPlayer);
     if (!player || player.hp <= 0) { this.advanceTurn(); return; }
+    const aliveEnemies = this.enemies.filter(e => e.hp > 0);
+    if (aliveEnemies.length === 0) { this.advanceTurn(); return; }
+    this._npcsActedThisRound.add('player');
     this.showTargetSelection((target) => {
       const damage = this.calculateDamage(player.attack, target.defense);
       target.hp = Math.max(0, target.hp - damage);
       const dead = target.hp <= 0;
       this.addLog(`你 攻击了 ${target.name}，造成 ${damage} 点伤害！`);
+      this.showSlashEffect(target._displayX, target._displayY, 0x00c8ff);
       this.showDamageNumber(target._displayX, target._displayY, damage);
+      this.flashUnit();
       this.renderEnemies();
       this.renderAllies();
       if (dead) {
         this.addLog(`${target.name} 被消灭了！`);
-        this.turnOrder = this.turnOrder.filter(t => t.unit !== target);
+      }
+      // Immediate victory check — don't wait for turn system
+      if (this.enemies.filter(e => e.hp > 0).length === 0) {
+        this.time.delayedCall(400, () => this.endBattle(true));
+        return;
       }
       this.advanceTurn();
     });
@@ -400,6 +564,7 @@ class BattleScene extends Phaser.Scene {
     this.clearUI();
     const aliveEnemies = this.enemies.filter(e => e.hp > 0);
 
+    if (aliveEnemies.length === 0) { this.advanceTurn(); return; }
     if (aliveEnemies.length === 1) {
       onSelect(aliveEnemies[0]);
       return;
@@ -409,14 +574,14 @@ class BattleScene extends Phaser.Scene {
 
     const hintText = this.add.text(width / 2, height - 30, '点击丧尸选择攻击目标', {
       fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px', color: '#ccd6f6',
-    }).setOrigin(0.5);
+    }).setOrigin(0.5).setDepth(100);
     this._uiElements.push(hintText);
 
-    const targets = [];
     for (const enemy of aliveEnemies) {
       const x = enemy._displayX, y = enemy._displayY;
 
       const highlight = this.add.graphics();
+      highlight.setDepth(100);
       highlight.lineStyle(3, 0x00c8ff, 0.9);
       highlight.strokeCircle(x, y, 45);
       this.tweens.add({ targets: highlight, alpha: 0.3, duration: 500, yoyo: true, repeat: -1 });
@@ -424,24 +589,19 @@ class BattleScene extends Phaser.Scene {
 
       const label = this.add.text(x, y + 55, '[ 点击攻击 ]', {
         fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '13px', color: '#00c8ff',
-      }).setOrigin(0.5);
+      }).setOrigin(0.5).setDepth(100);
       this._uiElements.push(label);
 
-      // Hit area: 90x90 around enemy center
-      targets.push({ enemy, cx: x, cy: y, r: 45 });
-    }
+      // Direct interactive hit area
+      const hitArea = this.add.circle(x, y, 50, 0x000000, 0.001)
+        .setDepth(101).setInteractive({ useHandCursor: true });
+      this._uiElements.push(hitArea);
 
-    this._targetClickHandler = (pointer) => {
-      for (const t of targets) {
-        const dx = pointer.x - t.cx, dy = pointer.y - t.cy;
-        if (dx * dx + dy * dy <= t.r * t.r * 1.5) {
-          this.clearUI();
-          onSelect(t.enemy);
-          return;
-        }
-      }
-    };
-    this.input.on('pointerdown', this._targetClickHandler);
+      hitArea.on('pointerdown', () => {
+        this.clearUI();
+        onSelect(enemy);
+      });
+    }
   }
 
   // ============================================================
@@ -450,6 +610,7 @@ class BattleScene extends Phaser.Scene {
   playerDefend() {
     const player = this.allies.find(a => a.isPlayer);
     if (!player) { this.advanceTurn(); return; }
+    this._npcsActedThisRound.add('player');
     player.defending = true;
     this.playerDefending = true;
     this.addLog('你 举起了防御姿态，伤害减半！');
@@ -477,6 +638,7 @@ class BattleScene extends Phaser.Scene {
     const { width } = this.cameras.main;
 
     const panelBg = this.add.graphics();
+    panelBg.setDepth(100);
     panelBg.fillStyle(0x0d0d1f, 0.95);
     panelBg.fillRoundedRect(200, 180, width - 400, 240, 8);
     panelBg.lineStyle(1, 0x1a1a3e, 0.8);
@@ -486,10 +648,9 @@ class BattleScene extends Phaser.Scene {
     const title = this.add.text(width / 2, 200, '使用物品', {
       fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '16px',
       color: '#ccd6f6', fontStyle: 'bold',
-    }).setOrigin(0.5);
+    }).setOrigin(0.5).setDepth(101);
     this._uiElements.push(title);
 
-    const itemRects = [];
     let yPos = 230;
     for (const invItem of usableItems) {
       const def = itemsData[invItem.id];
@@ -501,44 +662,35 @@ class BattleScene extends Phaser.Scene {
 
       const itemBtn = this.add.text(width / 2, yPos, `${def.name} x${invItem.quantity}  (${effectText})`, {
         fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px', color: '#8892b0',
-      }).setOrigin(0.5);
+      }).setOrigin(0.5).setDepth(102).setInteractive({ useHandCursor: true });
       this._uiElements.push(itemBtn);
 
-      const b = itemBtn.getBounds();
-      itemRects.push({ x: b.x, y: b.y, w: b.width, h: b.height, invItem, def });
+      itemBtn.on('pointerover', () => itemBtn.setColor('#00c8ff'));
+      itemBtn.on('pointerout', () => itemBtn.setColor('#8892b0'));
+      itemBtn.on('pointerdown', () => {
+        this.clearUI();
+        this.useItem(invItem, def);
+      });
+
       yPos += 30;
     }
 
     // Cancel button
     const cancelBtn = this.add.text(width / 2, yPos + 15, '[ 取消 ]', {
       fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px', color: '#e94560',
-    }).setOrigin(0.5);
+    }).setOrigin(0.5).setDepth(102).setInteractive({ useHandCursor: true });
     this._uiElements.push(cancelBtn);
-    const cb = cancelBtn.getBounds();
 
-    this._clickHandler = (pointer) => {
-      const px = pointer.x, py = pointer.y;
-      // Check cancel
-      if (px >= cb.x && px <= cb.x + cb.width && py >= cb.y && py <= cb.y + cb.height) {
-        this.clearUI();
-        this.showActionBar();
-        return;
-      }
-      // Check items
-      for (const item of itemRects) {
-        if (px >= item.x && px <= item.x + item.w && py >= item.y && py <= item.y + item.h) {
-          this.clearUI();
-          this.useItem(item.invItem, item.def);
-          return;
-        }
-      }
-    };
-    this.input.on('pointerdown', this._clickHandler);
+    cancelBtn.on('pointerdown', () => {
+      this.clearUI();
+      this.showActionBar();
+    });
   }
 
   useItem(invItem, def) {
     const player = this.allies.find(a => a.isPlayer);
     if (!player) { this.advanceTurn(); return; }
+    this._npcsActedThisRound.add('player');
 
     if (def.effect.hp) {
       const healed = Math.min(def.effect.hp, player.maxHp - player.hp);
@@ -572,8 +724,10 @@ class BattleScene extends Phaser.Scene {
     if (Math.random() < escapeChance) {
       this.addLog('逃跑成功！你们迅速撤退了。');
       this.battleOver = true;
+      if (this.onComplete) this.onComplete(this.gameState);
+      SaveLoad.save(this.gameState);
       this.time.delayedCall(800, () => {
-        this.scene.start(this.returnScene, { gameState: this.gameState, storyNode: this.storyNode });
+        this.scene.start(this.returnScene, { gameState: this.gameState });
       });
     } else {
       this.addLog('逃跑失败！丧尸挡住了去路！');
@@ -582,11 +736,134 @@ class BattleScene extends Phaser.Scene {
   }
 
   // ============================================================
+  //  AUTO BATTLE — instant resolution
+  // ============================================================
+  autoBattle() {
+    this.clearUI();
+    this.addLog('自动战斗中...');
+
+    let rounds = 0;
+    const maxRounds = 100;
+
+    // Define combos for auto-battle
+    const combos = [
+      { partners: ['caoge', 'bingjie'], name: '冰火合击', power: 60 },
+      { partners: ['player', 'wangzai'], name: '搭档连击', power: 45 },
+      { partners: ['wangzai', 'laojing'], name: '智慧守护', power: 40 },
+      { partners: ['player', 'caoge'], name: '热血冲锋', power: 50 },
+      { partners: ['player', 'bingjie'], name: '精准打击', power: 55 },
+    ];
+
+    while (rounds < maxRounds) {
+      const aliveAllies = this.allies.filter(a => a.hp > 0);
+      const aliveEnemies = this.enemies.filter(e => e.hp > 0);
+      if (aliveEnemies.length === 0 || aliveAllies.length === 0) break;
+
+      // All allies attack random enemies (re-filter each iteration)
+      for (const ally of aliveAllies) {
+        const enemies = this.enemies.filter(e => e.hp > 0);
+        if (enemies.length === 0) break;
+        const target = enemies[Math.floor(Math.random() * enemies.length)];
+        // NPCs use skills with 50% chance
+        let damage;
+        if (ally.npcRef && Math.random() < 0.5) {
+          const skills = ally.npcRef.getAvailableSkills();
+          const attackSkill = skills.find(s => s.type === 'attack' || s.type === 'ultimate');
+          if (attackSkill) {
+            damage = this.calculateDamage(ally.attack + attackSkill.power, target.defense);
+            if (attackSkill.effect.target === 'all_enemies') {
+              for (const e of this.enemies.filter(e => e.hp > 0)) {
+                const d = this.calculateDamage(ally.attack + attackSkill.power, e.defense);
+                e.hp = Math.max(0, e.hp - d);
+              }
+              continue;
+            }
+          } else {
+            damage = this.calculateDamage(ally.attack, target.defense);
+          }
+        } else {
+          damage = this.calculateDamage(ally.attack, target.defense);
+        }
+        target.hp = Math.max(0, target.hp - damage);
+        if (target.hp <= 0) {
+          this.turnOrder = this.turnOrder.filter(t => t.unit !== target);
+        }
+      }
+
+      // Check combo attacks
+      const actedIds = aliveAllies.map(a => a.id);
+      for (const combo of combos) {
+        if (combo.partners.every(p => actedIds.includes(p))) {
+          const enemies = this.enemies.filter(e => e.hp > 0);
+          if (enemies.length === 0) break;
+          const target = enemies[Math.floor(Math.random() * enemies.length)];
+          const damage = this.calculateDamage(combo.power, target.defense);
+          target.hp = Math.max(0, target.hp - damage);
+          this.addLog(`【${combo.name}】额外造成 ${damage} 点伤害！`);
+          if (target.hp <= 0) {
+            this.turnOrder = this.turnOrder.filter(t => t.unit !== target);
+          }
+          break; // Only one combo per round
+        }
+      }
+
+      // All enemies attack (re-filter allies each iteration)
+      const enemiesAlive = this.enemies.filter(e => e.hp > 0);
+      for (const enemy of enemiesAlive) {
+        const allies = this.allies.filter(a => a.hp > 0);
+        if (allies.length === 0) break;
+        const target = allies.reduce((min, a) => a.defense < min.defense ? a : min, allies[0]);
+        const damage = this.calculateDamage(enemy.attack, target.defense);
+        target.hp = Math.max(0, target.hp - damage);
+        if (target.hp <= 0) {
+          this.turnOrder = this.turnOrder.filter(t => t.unit !== target);
+        }
+        // 玩家死亡立即跳出循环
+        const p = this.allies.find(a => a.isPlayer);
+        if (p && p.hp <= 0) break;
+      }
+
+      // 玩家死亡立即结束自动战斗
+      const playerCheck = this.allies.find(a => a.isPlayer);
+      if (playerCheck && playerCheck.hp <= 0) break;
+
+      rounds++;
+    }
+
+    // Sync player HP
+    const player = this.allies.find(a => a.isPlayer);
+    if (player) this.gameState.player.hp = player.hp;
+
+    this.renderEnemies();
+    this.renderAllies();
+
+    // 玩家死亡立即结束
+    if (player && player.hp <= 0) {
+      this.gameState.player.hp = 0;
+      this.addLog('你倒下了...');
+      this.endBattle(false);
+      return;
+    }
+
+    const won = this.enemies.filter(e => e.hp > 0).length === 0;
+    if (won) {
+      this.addLog(`自动战斗完成！经过 ${rounds} 回合，战斗胜利！`);
+    } else {
+      this.addLog(`自动战斗完成！经过 ${rounds} 回合...`);
+    }
+
+    this.time.delayedCall(600, () => this.endBattle(won));
+  }
+
+  // ============================================================
   //  NPC ACTION
   // ============================================================
   npcAction(ally) {
     if (this.battleOver) return;
     if (!ally.npcRef) { this.npcBasicAttack(ally); this.advanceTurn(); return; }
+
+    // Track NPC for combo attacks
+    this._npcsActedThisRound.add(ally.id);
 
     const behavior = ally.npcRef.getCombatAction();
     const aliveEnemies = this.enemies.filter(e => e.hp > 0);
@@ -597,7 +874,7 @@ class BattleScene extends Phaser.Scene {
       case 'aggressive': {
         const skills = ally.npcRef.getAvailableSkills();
         const attackSkill = skills.filter(s => s.type === 'attack' || s.type === 'ultimate');
-        if (attackSkill.length > 0 && Math.random() < 0.5) {
+        if (attackSkill.length > 0 && Math.random() < 0.7) {
           const skill = attackSkill[Math.floor(Math.random() * attackSkill.length)];
           if (skill.effect.target === 'all_enemies') {
             for (const enemy of aliveEnemies) {
@@ -607,7 +884,6 @@ class BattleScene extends Phaser.Scene {
               this.showDamageNumber(enemy._displayX, enemy._displayY, damage);
               if (dead) {
                 this.addLog(`${ally.name} 使用 ${skill.name} 消灭了 ${enemy.name}！`);
-                this.turnOrder = this.turnOrder.filter(t => t.unit !== enemy);
               }
             }
             this.addLog(`${ally.name} 使用了 ${skill.name}！`);
@@ -620,7 +896,6 @@ class BattleScene extends Phaser.Scene {
             this.showDamageNumber(target._displayX, target._displayY, damage);
             if (dead) {
               this.addLog(`${target.name} 被消灭了！`);
-              this.turnOrder = this.turnOrder.filter(t => t.unit !== target);
             }
           }
         } else {
@@ -629,7 +904,7 @@ class BattleScene extends Phaser.Scene {
         break;
       }
       case 'normal': {
-        if (Math.random() < 0.3) {
+        if (Math.random() < 0.5) {
           const skills = ally.npcRef.getAvailableSkills();
           const healSkill = skills.find(s => s.type === 'heal');
           if (healSkill && lowestHpAlly.hp < lowestHpAlly.maxHp * 0.5) {
@@ -687,7 +962,10 @@ class BattleScene extends Phaser.Scene {
     this.showDamageNumber(target._displayX, target._displayY, damage);
     if (dead) {
       this.addLog(`${target.name} 被消灭了！`);
-      this.turnOrder = this.turnOrder.filter(t => t.unit !== target);
+    }
+    // Immediate victory check
+    if (this.enemies.filter(e => e.hp > 0).length === 0) {
+      this.time.delayedCall(400, () => this.endBattle(true));
     }
   }
 
@@ -734,18 +1012,40 @@ class BattleScene extends Phaser.Scene {
 
     const defendMsg = target.defending ? '（防御减半）' : '';
     this.addLog(`${enemy.name} 攻击了 ${target.name}，造成 ${finalDamage} 点伤害！${defendMsg}`);
+    this.showSlashEffect(target._displayX, target._displayY, 0xe94560);
     this.showDamageNumber(target._displayX, target._displayY, finalDamage, 0xe94560);
+    this.flashUnit();
 
     if (target.hp <= 0) {
       this.addLog(`${target.name} 倒下了...`);
-      if (target.isPlayer) this.addLog('你失去了意识...');
-      this.turnOrder = this.turnOrder.filter(t => t.unit !== target);
+      if (target.isPlayer) {
+        this.addLog('你失去了意识...');
+        this.gameState.player.hp = 0;
+        this.renderAllies();
+        this.endBattle(false);
+        return;
+      }
     }
 
     const player = this.allies.find(a => a.isPlayer);
     if (player) this.gameState.player.hp = player.hp;
 
     this.renderAllies();
+
+    // 玩家死亡立即结束
+    if (player && player.hp <= 0) {
+      this.gameState.player.hp = 0;
+      this.endBattle(false);
+      return;
+    }
+
+    // Check if all allies dead
+    const aliveAlliesNow = this.allies.filter(a => a.hp > 0);
+    if (aliveAlliesNow.length === 0) {
+      this.endBattle(false);
+      return;
+    }
+
     this.advanceTurn();
   }
 
@@ -759,24 +1059,82 @@ class BattleScene extends Phaser.Scene {
   showDamageNumber(x, y, amount, color) {
     const colorHex = color || 0xe94560;
     const colorStr = '#' + colorHex.toString(16).padStart(6, '0');
-    const text = this.add.text(x, y - 20, `-${amount}`, {
-      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '18px',
-      color: colorStr, fontStyle: 'bold',
-    }).setOrigin(0.5).setAlpha(0);
+    const isHeal = colorHex === 0x00ff88;
+    const offsetX = (Math.random() - 0.5) * 16;
 
+    // Background pill
+    const pill = this.add.graphics();
+    pill.fillStyle(isHeal ? 0x004422 : 0x440000, 0.7);
+    pill.fillRoundedRect(x - 28 + offsetX, y - 22, 56, 22, 6);
+    pill.setAlpha(0);
+    pill.setScale(0.5);
+
+    const text = this.add.text(x + offsetX, y - 11, `${isHeal ? '+' : '-'}${amount}`, {
+      fontFamily: 'Consolas, monospace', fontSize: '16px',
+      color: colorStr, fontStyle: 'bold',
+      stroke: '#000000', strokeThickness: 2,
+    }).setOrigin(0.5).setAlpha(0).setScale(0.5);
+
+    // Pop-in animation with bounce
     this.tweens.add({
-      targets: text, alpha: 1, y: y - 50, duration: 600, ease: 'Power2',
+      targets: [text, pill], alpha: 1, scaleX: 1.2, scaleY: 1.2, y: `-=35`,
+      duration: 200, ease: 'Back.easeOut',
       onComplete: () => {
         this.tweens.add({
-          targets: text, alpha: 0, duration: 300,
-          onComplete: () => text.destroy(),
+          targets: [text, pill], scaleX: 1, scaleY: 1, y: `-=8`,
+          duration: 120,
+          onComplete: () => {
+            this.tweens.add({
+              targets: [text, pill], alpha: 0, y: `-=12`, duration: 300,
+              onComplete: () => { text.destroy(); pill.destroy(); },
+            });
+          },
         });
       },
     });
   }
 
+  // Slash attack effect
+  showSlashEffect(x, y, color) {
+    const slashColor = color || 0xe94560;
+    // Flash burst
+    const burst = this.add.graphics();
+    burst.fillStyle(slashColor, 0.6);
+    burst.fillCircle(x, y, 5);
+    this.tweens.add({
+      targets: burst, scaleX: 8, scaleY: 8, alpha: 0,
+      duration: 300, ease: 'Quad.easeOut',
+      onComplete: () => burst.destroy(),
+    });
+
+    // Slash lines
+    for (let i = 0; i < 3; i++) {
+      const line = this.add.graphics();
+      const angle = (Math.random() - 0.5) * 1.2;
+      const len = 25 + Math.random() * 15;
+      line.lineStyle(2 + Math.random(), slashColor, 0.8);
+      line.lineBetween(
+        x - Math.cos(angle) * len, y - Math.sin(angle) * len,
+        x + Math.cos(angle) * len, y + Math.sin(angle) * len
+      );
+      this.tweens.add({
+        targets: line, alpha: 0, duration: 250, delay: i * 40,
+        onComplete: () => line.destroy(),
+      });
+    }
+  }
+
+  // Screen shake + flash on hit
   flashUnit(unit, color) {
-    this.cameras.main.shake(100, 0.003);
+    this.cameras.main.shake(80, 0.004);
+    // Red flash overlay
+    const flash = this.add.graphics();
+    flash.fillStyle(0xe94560, 0.08);
+    flash.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
+    this.tweens.add({
+      targets: flash, alpha: 0, duration: 200,
+      onComplete: () => flash.destroy(),
+    });
   }
 
   // ============================================================
@@ -785,6 +1143,15 @@ class BattleScene extends Phaser.Scene {
   endBattle(won) {
     this.battleOver = true;
     this.clearUI();
+
+    // gameOver battles: always end permanently, win or lose
+    if (this.battleData.gameOver) {
+      SaveLoad.save(this.gameState);
+      this.time.delayedCall(1500, () => {
+        this.showGameOverScreen('肩膀上的咬伤开始发黑，病毒沿着血管迅速蔓延。\n你的视线模糊，四肢逐渐失去知觉……\n末日之中，善良有时也是致命的弱点。');
+      });
+      return;
+    }
 
     if (won) {
       this.addLog('战斗胜利！');
@@ -802,9 +1169,9 @@ class BattleScene extends Phaser.Scene {
       this.time.delayedCall(1000, () => this.showVictoryScreen());
     } else {
       this.addLog('战斗失败...');
+      SaveLoad.save(this.gameState);
       this.time.delayedCall(1500, () => {
-        SaveLoad.deleteSave();
-        this.scene.start('MenuScene');
+        this.showGameOverScreen('你们在战斗中耗尽了最后一丝力气……\n末日不会给任何人第二次机会。');
       });
     }
   }
@@ -834,47 +1201,131 @@ class BattleScene extends Phaser.Scene {
     const { width, height } = this.cameras.main;
 
     const overlay = this.add.graphics();
+    overlay.setDepth(100);
     overlay.fillStyle(0x000000, 0.7);
     overlay.fillRect(0, 0, width, height);
     this._uiElements.push(overlay);
 
-    const panelBg = this.add.graphics();
-    panelBg.fillStyle(0x0d0d1f, 0.95);
-    panelBg.fillRoundedRect(width / 2 - 180, height / 2 - 120, 360, 240, 10);
-    panelBg.lineStyle(1, 0x00c8ff, 0.5);
-    panelBg.strokeRoundedRect(width / 2 - 180, height / 2 - 120, 360, 240, 10);
-    this._uiElements.push(panelBg);
+    const panel = UIHelper.drawPanel(this, width / 2 - 180, height / 2 - 120, 360, 240, {
+      fillColor: UIHelper.COLORS.panelBg, fillAlpha: 0.95,
+      borderColor: UIHelper.COLORS.info, borderAlpha: 0.5, radius: 12,
+    });
+    panel.setDepth(101);
+    this._uiElements.push(panel);
 
     const victoryText = this.add.text(width / 2, height / 2 - 80, '战斗胜利！', {
       fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '28px',
-      color: '#00c8ff', fontStyle: 'bold',
-    }).setOrigin(0.5);
+      color: '#38bdf8', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(102);
     this._uiElements.push(victoryText);
 
     const dropText = this.add.text(width / 2, height / 2 - 30, '获得战利品已放入背包', {
-      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px', color: '#8892b0',
-    }).setOrigin(0.5);
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px', color: UIHelper.COLORS.textSecondary,
+    }).setOrigin(0.5).setDepth(102);
     this._uiElements.push(dropText);
 
     const affinityText = this.add.text(width / 2, height / 2, '同伴好感度 +5', {
-      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px', color: '#8892b0',
-    }).setOrigin(0.5);
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px', color: UIHelper.COLORS.textSecondary,
+    }).setOrigin(0.5).setDepth(102);
     this._uiElements.push(affinityText);
 
-    const continueBtn = this.add.text(width / 2, height / 2 + 70, '[ 继续 ]', {
-      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '18px', color: '#00c8ff',
-    }).setOrigin(0.5);
-    this._uiElements.push(continueBtn);
-    const btnBounds = continueBtn.getBounds();
+    UIHelper.createButton(this, width / 2, height / 2 + 70, 140, 40, '继续', {}, () => {
+      this.clearUI();
+      if (this.onComplete) this.onComplete(this.gameState);
+      this.scene.start(this.returnScene, { gameState: this.gameState });
+    }).setDepth(102);
+  }
 
-    this._clickHandler = (pointer) => {
-      const b = btnBounds;
-      if (pointer.x >= b.x && pointer.x <= b.x + b.width && pointer.y >= b.y && pointer.y <= b.y + b.height) {
-        this.clearUI();
-        if (this.onComplete) this.onComplete(this.gameState);
-        this.scene.start(this.returnScene, { gameState: this.gameState, storyNode: this.storyNode });
+  showDefeatScreen() {
+    const { width, height } = this.cameras.main;
+
+    const overlay = this.add.graphics();
+    overlay.setDepth(100);
+    overlay.fillStyle(0x000000, 0.7);
+    overlay.fillRect(0, 0, width, height);
+    this._uiElements.push(overlay);
+
+    const panel = UIHelper.drawPanel(this, width / 2 - 180, height / 2 - 120, 360, 260, {
+      fillColor: UIHelper.COLORS.panelBg, fillAlpha: 0.95,
+      borderColor: UIHelper.COLORS.danger, borderAlpha: 0.5, radius: 12,
+    });
+    panel.setDepth(101);
+    this._uiElements.push(panel);
+
+    const defeatText = this.add.text(width / 2, height / 2 - 80, '战斗失败...', {
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '28px',
+      color: '#e94560', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(102);
+    this._uiElements.push(defeatText);
+
+    const hintText = this.add.text(width / 2, height / 2 - 30, '你们勉强撤退，保住了性命', {
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px', color: UIHelper.COLORS.textSecondary,
+    }).setOrigin(0.5).setDepth(102);
+    this._uiElements.push(hintText);
+
+    UIHelper.createButton(this, width / 2, height / 2 + 20, 150, 40, '重新挑战', {}, () => {
+      this.clearUI();
+      this.gameState.player.hp = this.gameState.player.maxHp;
+      for (const ally of this.allies) {
+        if (ally.isNPC) {
+          const maxHp = this.gameState.npcs[ally.id] ? this.gameState.npcs[ally.id].stats.hp : ally.maxHp;
+          ally.hp = maxHp;
+          if (this.gameState.npcs[ally.id]) {
+            this.gameState.npcs[ally.id].stats.hp = maxHp;
+          }
+        }
       }
-    };
-    this.input.on('pointerdown', this._clickHandler);
+      SaveLoad.save(this.gameState);
+      this.scene.restart({
+        gameState: this.gameState,
+        battleData: this.battleData,
+        storyNodeId: this.storyNode,
+        returnScene: this.returnScene,
+        onComplete: this.onComplete,
+      });
+    }).setDepth(102);
+
+    UIHelper.createButton(this, width / 2, height / 2 + 70, 150, 40, '撤退回地图', {}, () => {
+      this.clearUI();
+      if (this.onComplete) this.onComplete(this.gameState);
+      SaveLoad.save(this.gameState);
+      this.scene.start(this.returnScene, { gameState: this.gameState });
+    }).setDepth(102);
+  }
+
+  showGameOverScreen(desc) {
+    const { width, height } = this.cameras.main;
+
+    const overlay = this.add.graphics();
+    overlay.setDepth(100);
+    overlay.fillStyle(0x000000, 0.85);
+    overlay.fillRect(0, 0, width, height);
+    this._uiElements.push(overlay);
+
+    const panel = UIHelper.drawPanel(this, width / 2 - 200, height / 2 - 140, 400, 280, {
+      fillColor: UIHelper.COLORS.panelBg, fillAlpha: 0.95,
+      borderColor: UIHelper.COLORS.danger, borderAlpha: 0.7, radius: 12,
+    });
+    panel.setDepth(101);
+    this._uiElements.push(panel);
+
+    const gameOverText = this.add.text(width / 2, height / 2 - 100, '游戏结束', {
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '36px',
+      color: '#e94560', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(102);
+    this._uiElements.push(gameOverText);
+
+    const descText = this.add.text(width / 2, height / 2 - 40, desc || '你的旅程到此结束了……', {
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px',
+      color: UIHelper.COLORS.textSecondary, align: 'center',
+    }).setOrigin(0.5).setDepth(102);
+    this._uiElements.push(descText);
+
+    UIHelper.createButton(this, width / 2, height / 2 + 50, 180, 44, '重新开始', {
+      isPrimary: true, fontSize: '18px',
+    }, () => {
+      SaveLoad.deleteSave();
+      this.scene.start('MenuScene');
+    }).setDepth(102);
   }
 }
