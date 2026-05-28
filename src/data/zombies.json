@@ -11,8 +11,9 @@
     "rewards": {
       "exp": 10,
       "drops": [
+        { "itemId": "scrap_metal", "chance": 0.5 },
         { "itemId": "cloth", "chance": 0.3 },
-        { "itemId": "screws", "chance": 0.2 },
+        { "itemId": "screws", "chance": 0.25 },
         { "itemId": "first_aid_kit", "chance": 0.08 }
       ]
     }
@@ -29,8 +30,9 @@
     "rewards": {
       "exp": 25,
       "drops": [
-        { "itemId": "scrap_metal", "chance": 0.4 },
+        { "itemId": "scrap_metal", "chance": 0.7 },
         { "itemId": "cloth", "chance": 0.3 },
+        { "itemId": "screws", "chance": 0.3 },
         { "itemId": "bandage", "chance": 0.15 },
         { "itemId": "first_aid_kit", "chance": 0.12 }
       ]
@@ -48,7 +50,9 @@
     "rewards": {
       "exp": 30,
       "drops": [
+        { "itemId": "scrap_metal", "chance": 0.4 },
         { "itemId": "wire", "chance": 0.25 },
+        { "itemId": "screws", "chance": 0.2 },
         { "itemId": "first_aid_kit", "chance": 0.1 }
       ]
     }

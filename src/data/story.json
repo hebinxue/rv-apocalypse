@@ -1,8 +1,29 @@
 {
-  "chapter": "zombie_chapter",
-  "chapterName": "丧尸末日篇",
-  "startNode": "intro",
+  "chapter": "prologue",
+  "chapterName": "引言：末日降临",
+  "startNode": "prologue",
   "nodes": {
+    "prologue": {
+      "id": "prologue",
+      "scene": "apartment",
+      "sceneName": "序章",
+      "dialogues": [
+        { "speaker": "旁白", "text": "【引言】" },
+        { "speaker": "旁白", "text": "这是一个关于生存、信任与救赎的故事。" },
+        { "speaker": "旁白", "text": "末日降临，世界崩塌。你将面对的不仅是丧尸的威胁，还有人性的考验。" },
+        { "speaker": "旁白", "text": "【游戏提示】" },
+        { "speaker": "旁白", "text": "在这场旅途中，你会遇到各种各样的伙伴。他们有着不同的过去，不同的伤痛。" },
+        { "speaker": "旁白", "text": "试着去了解他们，关心他们。当你的饱食度降低时，只有真心待你的伙伴才能救你。" },
+        { "speaker": "旁白", "text": "记住：在末日里，信任是最珍贵的货币。" },
+        { "speaker": "旁白", "text": "【操作说明】" },
+        { "speaker": "旁白", "text": "- 点击地图上的节点推进剧情" },
+        { "speaker": "旁白", "text": "- 进入房车管理物资和伙伴" },
+        { "speaker": "旁白", "text": "- 通过喂食和对话提升伙伴好感度" },
+        { "speaker": "旁白", "text": "- 好感度越高，伙伴越可能在关键时刻救你" },
+        { "speaker": "旁白", "text": "准备好了吗？你的故事，从这里开始。" }
+      ],
+      "next": "intro"
+    },
     "intro": {
       "id": "intro",
       "scene": "apartment",
