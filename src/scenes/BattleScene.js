@@ -1044,7 +1044,7 @@ class BattleScene extends Phaser.Scene {
     }
 
     this.showDamageNumber(target._displayX, target._displayY, damage);
-    }
+
     // Immediate victory check
     if (this.enemies.filter(e => e.hp > 0).length === 0) {
       this.time.delayedCall(400, () => this.endBattle(true));
