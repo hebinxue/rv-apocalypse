@@ -121,12 +121,13 @@
         { "speaker": "丧尸之王", "text": "（微笑）我……终于……可以休息了……" },
         { "speaker": "丧尸之王", "text": "对不起……我伤害了那么多人……请……原谅我……" },
         { "speaker": "旁白", "text": "丧尸之王的身体彻底崩解，化为一滩黑色的液体。" },
-        { "speaker": "旁白", "text": "在那滩液体中，你发现了一把钥匙和一张地图碎片。" },
+        { "speaker": "旁白", "text": "在那滩液体中，你发现了一把钥匙、一张地图碎片，还有一个完好的急救包。" },
         { "speaker": "旁白", "text": "钥匙上刻着'绿洲'两个字，地图碎片标注着西边的路线。" }
       ],
       "rewards": [
         { "itemId": "oasis_key", "amount": 1 },
-        { "itemId": "map_fragment", "amount": 1 }
+        { "itemId": "map_fragment", "amount": 1 },
+        { "itemId": "first_aid_kit", "amount": 1 }
       ]
     },
     "rewards": {
