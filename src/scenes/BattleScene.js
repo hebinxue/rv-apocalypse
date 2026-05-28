@@ -1171,7 +1171,7 @@ class BattleScene extends Phaser.Scene {
       this.addLog('战斗失败...');
       SaveLoad.save(this.gameState);
       this.time.delayedCall(1500, () => {
-        this.showGameOverScreen('你们在战斗中耗尽了最后一丝力气……\n末日不会给任何人第二次机会。');
+        this.showGameOverScreen('你在战斗中耗尽了最后一丝力气……\n末日不会给任何人第二次机会。');
       });
     }
   }
