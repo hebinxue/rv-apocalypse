@@ -543,6 +543,12 @@ class MapScene extends Phaser.Scene {
       return;
     }
 
+    // If node has skipExplore flag, advance directly
+    if (storyNode.skipExplore && storyNode.next) {
+      this.advanceStory(storyNode.id);
+      return;
+    }
+
     // Show explore / continue choice (only for nodes without rewards)
     this.showExploreChoice(storyNode);
   }
