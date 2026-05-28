@@ -132,7 +132,6 @@
     "rewards": {
       "exp": 200,
       "drops": [
-        { "itemId": "first_aid_kit", "chance": 1.0 },
         { "itemId": "old_photo", "chance": 1.0 }
       ]
     }
