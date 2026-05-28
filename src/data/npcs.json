@@ -208,7 +208,7 @@
     "isPermanent": false,
     "personality": "温柔、理性、善于分析",
     "role": "support",
-    "description": "曾经是大学教授，末日后依然保持着学者的冷静和理性。",
+    "description": "生物工程博士，末日后依然保持着科研人员的冷静和理性。",
     "baseStats": {
       "hp": 85,
       "attack": 10,
@@ -266,6 +266,74 @@
       "combat_low_hp": [
         "我没事……先照顾其他人。",
         "老了，不中用了……但还能坚持。"
+      ]
+    }
+  },
+  "xuehe": {
+    "id": "xuehe",
+    "name": "雪盒",
+    "isPermanent": false,
+    "personality": "外表可爱、说话严肃、反差感强",
+    "role": "sniper",
+    "description": "军方特殊病原体研究部科学家，长相甜美可爱但说话一本正经，在安全区等待幸存者带回数据。她知道病毒变异的真相，是通往第二章的关键人物。",
+    "recruitedInChapter": 2,
+    "baseStats": {
+      "hp": 80,
+      "attack": 22,
+      "defense": 10,
+      "speed": 16
+    },
+    "skills": [
+      {
+        "id": "xuehe_precision_shot",
+        "name": "精准射击",
+        "unlockAffinity": 0,
+        "type": "attack",
+        "power": 40,
+        "effect": { "damage": 40, "target": "single_enemy" },
+        "description": "雪盒冷静地瞄准目标，一击命中要害。"
+      },
+      {
+        "id": "xuehe_virus_scan",
+        "name": "病毒扫描",
+        "unlockAffinity": 60,
+        "type": "debuff",
+        "power": 0,
+        "effect": { "debuff": { "defense": -10, "speed": -5 }, "target": "all_enemies", "duration": 3 },
+        "description": "雪盒用军方设备扫描敌人弱点，暴露所有敌人的防御漏洞。"
+      },
+      {
+        "id": "xuehe_antidote_burst",
+        "name": "解药弹幕",
+        "unlockAffinity": 100,
+        "type": "ultimate",
+        "power": 60,
+        "effect": { "damage": 60, "target": "all_enemies", "heal": 30, "healTarget": "all_allies" },
+        "description": "雪盒发射装载解药的特殊弹药，对变异体造成巨大伤害的同时治疗队友。"
+      }
+    ],
+    "dialogues": {
+      "happy": [
+        "你做得很好。也许……这个世界还有希望。",
+        "（雪盒难得露出微笑）继续前进吧。",
+        "我开始相信，选择和你们合作是对的。"
+      ],
+      "neutral": [
+        "别放松警惕。真正的危险还在前方。",
+        "（雪盒在检查设备）数据还在分析中……",
+        "变异体的行为模式越来越难以预测了。"
+      ],
+      "angry": [
+        "你不明白这件事的严重性。",
+        "（雪盒冷冷地看着你）不要再犯同样的错误。"
+      ],
+      "combat_ready": [
+        "目标锁定。准备开火。",
+        "保持距离，我来处理远程目标。"
+      ],
+      "combat_low_hp": [
+        "……还能坚持。任务还没完成。",
+        "别管我，保护好数据。"
       ]
     }
   }

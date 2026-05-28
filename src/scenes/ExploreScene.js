@@ -10,6 +10,7 @@ class ExploreScene extends Phaser.Scene {
       supermarket: '超市',
       hospital: '废弃医院',
       highway: '高速公路',
+      mountain: '山路',
       safe_zone: '安全区大门',
     };
 
@@ -20,6 +21,7 @@ class ExploreScene extends Phaser.Scene {
       supermarket: ['canned_food', 'water', 'instant_noodles', 'first_aid_kit', 'bat'],
       hospital: ['bandage', 'first_aid_kit', 'wire'],
       highway: ['scrap_metal', 'water'],
+      mountain: ['canned_food', 'water', 'bandage', 'cloth'],
       safe_zone: ['canned_food', 'water', 'bandage'],
     };
   }
@@ -34,60 +36,65 @@ class ExploreScene extends Phaser.Scene {
   create() {
     const { width, height } = this.cameras.main;
 
-    // --- Dark background ---
-    const bg = this.add.graphics();
-    bg.fillGradientStyle(0x0a0a1a, 0x0a0a1a, 0x111128, 0x111128, 1);
-    bg.fillRect(0, 0, width, height);
-
-    // Subtle grid pattern
-    const grid = this.add.graphics();
-    grid.lineStyle(1, 0x1a1a3e, 0.15);
-    for (let gx = 0; gx < width; gx += 40) {
-      grid.lineBetween(gx, 0, gx, height);
+    // --- Scene-specific background ---
+    const drawBg = SceneBackgrounds.getBySceneName(this.storyNode.scene);
+    if (drawBg) {
+      drawBg(this, width, height);
+    } else {
+      SceneBackgrounds.drawNightSky(this, width, height);
     }
-    for (let gy = 0; gy < height; gy += 40) {
-      grid.lineBetween(0, gy, width, gy);
+    // Dark overlay for readability
+    const overlay = this.add.graphics();
+    overlay.fillStyle(0x000000, 0.3);
+    overlay.fillRect(0, 0, width, height);
+
+    // --- Atmospheric particles ---
+    if (this.storyNode.scene) {
+      SceneParticles.applyForScene(this.storyNode.scene, this, width, height);
     }
 
     // --- Scene name ---
     const sceneName = this.sceneNames[this.storyNode.scene] || this.storyNode.sceneName || '未知区域';
     this.add.text(width / 2, 80, sceneName, {
       fontFamily: 'Microsoft YaHei, sans-serif',
-      fontSize: '36px',
-      color: '#ccd6f6',
+      fontSize: '32px',
+      color: UIHelper.COLORS.textPrimary,
       fontStyle: 'bold',
+      stroke: '#0a0a1a',
+      strokeThickness: 2,
     }).setOrigin(0.5);
 
     this.add.text(width / 2, 112, '探索中...', {
       fontFamily: 'Microsoft YaHei, sans-serif',
       fontSize: '14px',
-      color: '#4a5568',
+      color: UIHelper.COLORS.textMuted,
     }).setOrigin(0.5);
 
     // --- Status bar ---
     this.renderStatusBar();
 
     // --- Action buttons ---
-    this.createActionButton(width / 2, 220, '搜索物资', () => this.searchForItems());
-    this.createActionButton(width / 2, 280, '返回房车', () => this.returnToRV());
-    this.createActionButton(width / 2, 340, '存档', () => this.saveGame());
+    UIHelper.createButton(this, width / 2, 220, 180, 42, '搜索物资', {}, () => this.searchForItems());
+    UIHelper.createButton(this, width / 2, 280, 180, 42, '返回房车', {}, () => this.returnToRV());
+    UIHelper.createButton(this, width / 2, 340, 180, 42, '存档', {}, () => this.saveGame());
 
     // --- Search count display ---
     this.searchCountText = this.add.text(width / 2, 400, `搜索次数: ${this.searchCount}/${this.maxSearches}`, {
       fontFamily: 'Microsoft YaHei, sans-serif',
       fontSize: '16px',
-      color: '#8892b0',
+      color: UIHelper.COLORS.textSecondary,
     }).setOrigin(0.5);
 
     // --- Message area ---
     this.messageText = this.add.text(width / 2, 460, '点击"搜索物资"开始搜刮...', {
       fontFamily: 'Microsoft YaHei, sans-serif',
       fontSize: '14px',
-      color: '#4a5568',
+      color: UIHelper.COLORS.textMuted,
       wordWrap: { width: width - 100 },
     }).setOrigin(0.5);
 
     // --- Play entry dialogues ---
+    this.cameras.main.fadeIn(400, 0, 0, 0);
     this.playEntryDialogues();
   }
 
@@ -98,12 +105,14 @@ class ExploreScene extends Phaser.Scene {
     const { width } = this.cameras.main;
     const gs = this.gameState;
     const y = 12;
+    const barH = 32;
 
-    const barBg = this.add.graphics();
-    barBg.fillStyle(0x0d0d1f, 0.85);
-    barBg.fillRect(0, y - 4, width, 32);
-    barBg.lineStyle(1, 0x1a1a3e, 0.6);
-    barBg.lineBetween(0, y + 28, width, y + 28);
+    UIHelper.drawPanel(this, 10, y - 4, width - 20, barH, {
+      fillColor: UIHelper.COLORS.statusBarBg,
+      fillAlpha: 0.88,
+      radius: 6,
+      shadowOffset: 2,
+    });
 
     const stats = [
       { icon: '🚐', label: '耐久', value: `${gs.rv.durability}/${gs.rv.maxDurability}` },
@@ -116,15 +125,12 @@ class ExploreScene extends Phaser.Scene {
     const spacing = width / (stats.length + 1);
     stats.forEach((s, i) => {
       const sx = spacing * (i + 1);
-      this.add.text(sx - 24, y + 6, s.icon, {
-        fontSize: '14px',
-      }).setOrigin(0.5);
-
+      this.add.text(sx - 24, y + 6, s.icon, { fontSize: '14px' }).setOrigin(0.5);
       const label = s.label + (s.value ? ` ${s.value}` : '');
       this.add.text(sx + 4, y + 6, label, {
         fontFamily: 'Microsoft YaHei, sans-serif',
         fontSize: '12px',
-        color: '#8892b0',
+        color: UIHelper.COLORS.textSecondary,
       }).setOrigin(0, 0.5);
     });
   }
@@ -132,48 +138,6 @@ class ExploreScene extends Phaser.Scene {
   // ============================================================
   //  ACTION BUTTONS
   // ============================================================
-  createActionButton(x, y, label, callback) {
-    const btnWidth = 180;
-    const btnHeight = 42;
-
-    const btnBg = this.add.graphics();
-    btnBg.fillStyle(0x1a1a2e, 1);
-    btnBg.fillRoundedRect(x - btnWidth / 2, y - btnHeight / 2, btnWidth, btnHeight, 6);
-    btnBg.lineStyle(1, 0x00c8ff, 0.5);
-    btnBg.strokeRoundedRect(x - btnWidth / 2, y - btnHeight / 2, btnWidth, btnHeight, 6);
-
-    const btnText = this.add.text(x, y, label, {
-      fontFamily: 'Microsoft YaHei, sans-serif',
-      fontSize: '16px',
-      color: '#ccd6f6',
-    }).setOrigin(0.5);
-
-    const hitArea = this.add.rectangle(x, y, btnWidth, btnHeight)
-      .setInteractive({ useHandCursor: true })
-      .setOrigin(0.5)
-      .setAlpha(0.001);
-
-    hitArea.on('pointerover', () => {
-      btnBg.clear();
-      btnBg.fillStyle(0x16213e, 1);
-      btnBg.fillRoundedRect(x - btnWidth / 2, y - btnHeight / 2, btnWidth, btnHeight, 6);
-      btnBg.lineStyle(1, 0x00c8ff, 0.9);
-      btnBg.strokeRoundedRect(x - btnWidth / 2, y - btnHeight / 2, btnWidth, btnHeight, 6);
-      btnText.setColor('#00c8ff');
-    });
-
-    hitArea.on('pointerout', () => {
-      btnBg.clear();
-      btnBg.fillStyle(0x1a1a2e, 1);
-      btnBg.fillRoundedRect(x - btnWidth / 2, y - btnHeight / 2, btnWidth, btnHeight, 6);
-      btnBg.lineStyle(1, 0x00c8ff, 0.5);
-      btnBg.strokeRoundedRect(x - btnWidth / 2, y - btnHeight / 2, btnWidth, btnHeight, 6);
-      btnText.setColor('#ccd6f6');
-    });
-
-    hitArea.on('pointerdown', callback);
-  }
-
   // ============================================================
   //  ENTRY DIALOGUES
   // ============================================================
@@ -190,25 +154,8 @@ class ExploreScene extends Phaser.Scene {
   //  NOTIFICATION
   // ============================================================
   showNotification(message) {
-    const { width } = this.cameras.main;
-    const toast = this.add.text(width / 2, 50, message, {
-      fontFamily: 'Microsoft YaHei, sans-serif',
-      fontSize: '16px',
-      color: '#ffffff',
-      backgroundColor: '#e94560',
-      padding: { x: 16, y: 6 },
-    }).setOrigin(0.5).setAlpha(0);
-
-    this.tweens.add({
-      targets: toast,
-      alpha: 1,
-      y: 55,
-      duration: 300,
-      ease: 'Back.easeOut',
-      yoyo: true,
-      hold: 1500,
-      onComplete: () => toast.destroy(),
-    });
+    const type = message.includes('获得') ? 'reward' : 'info';
+    UIHelper.showToast(this, message, type);
   }
 
   // ============================================================
@@ -447,6 +394,11 @@ class ExploreScene extends Phaser.Scene {
   //  RETURN TO RV (back to map)
   // ============================================================
   returnToRV() {
+    // Advance story if current node matches this explore's node and it has a next
+    const storyNodeId = this.storyNode.id;
+    if (storyNodeId && this.gameState.currentStoryNode === storyNodeId && this.storyNode.next) {
+      this.gameState.currentStoryNode = this.storyNode.next;
+    }
     this.gameState.day = (this.gameState.day || 1) + 1;
     SaveLoad.save(this.gameState);
     this.scene.start('MapScene', { gameState: this.gameState });

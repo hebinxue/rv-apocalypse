@@ -50,9 +50,7 @@ class SaveLoad {
             },
             inventory: [],
             rvStorage: [],
-            npcs: {
-                wangzai: { affinity: 80, recruited: true }
-            },
+            npcs: {},
             currentScene: 'intro',
             currentStoryNode: 'intro',
             day: 1,

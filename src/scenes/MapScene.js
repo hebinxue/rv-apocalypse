@@ -14,15 +14,29 @@ class MapScene extends Phaser.Scene {
       'safe_zone',
     ];
 
-    // Map node positions (7 nodes)
+    // Branch nodes that map back to a parent node on the display
+    this.branchParents = {
+      gas_station_explore: 'gas_station',
+      gas_station_rescue: 'gas_station',
+      gas_station_trap: 'gas_station',
+      gas_station_engine: 'gas_station',
+      gas_station_fix_self: 'gas_station',
+      gas_station_search_parts: 'gas_station',
+      gas_station_walk: 'gas_station',
+      laojing_rejected: 'apartment_laojing',
+      highway_fast_path: 'highway',
+      highway_mountain_path: 'highway',
+    };
+
+    // Map node positions (7 nodes) with emoji icons
     this.nodePositions = {
-      intro:            { x: 80,  y: 150, name: '城市公寓' },
-      gas_station:      { x: 220, y: 250, name: '加油站' },
-      supermarket:      { x: 380, y: 180, name: '超市' },
-      apartment_laojing:{ x: 500, y: 300, name: '居民楼' },
-      hospital:         { x: 620, y: 200, name: '废弃医院' },
-      highway:          { x: 700, y: 350, name: '高速公路' },
-      safe_zone:        { x: 750, y: 150, name: '安全区' },
+      intro:            { x: 80,  y: 150, name: '城市公寓', icon: '🏢' },
+      gas_station:      { x: 220, y: 250, name: '加油站', icon: '⛽' },
+      supermarket:      { x: 380, y: 180, name: '超市', icon: '🛒' },
+      apartment_laojing:{ x: 500, y: 300, name: '居民楼', icon: '🏠' },
+      hospital:         { x: 620, y: 200, name: '废弃医院', icon: '🏥' },
+      highway:          { x: 700, y: 350, name: '高速公路', icon: '🛣️' },
+      safe_zone:        { x: 750, y: 150, name: '安全区', icon: '🛡️' },
     };
   }
 
@@ -33,38 +47,50 @@ class MapScene extends Phaser.Scene {
     } else {
       this.gameState = SaveLoad.load() || SaveLoad.getDefaultState();
     }
+    this._autoEnter = data && data.autoEnter;
   }
 
   create() {
     const { width, height } = this.cameras.main;
 
-    // --- Dark background ---
-    const bg = this.add.graphics();
-    bg.fillGradientStyle(0x0a0a1a, 0x0a0a1a, 0x111128, 0x111128, 1);
-    bg.fillRect(0, 0, width, height);
+    // Reset any fade state carried over from previous scene
+    this.cameras.main.resetFX();
 
-    // Subtle grid pattern
-    const grid = this.add.graphics();
-    grid.lineStyle(1, 0x1a1a3e, 0.15);
-    for (let gx = 0; gx < width; gx += 40) {
-      grid.lineBetween(gx, 0, gx, height);
+    // --- Scene-specific background ---
+    const currentNodeId = this.getDisplayNode();
+    const currentNodeData = this.cache.json.get('storyData').nodes[currentNodeId];
+    const sceneName = currentNodeData ? currentNodeData.scene : null;
+    const drawBg = SceneBackgrounds.getBySceneName(sceneName);
+    if (drawBg) {
+      drawBg(this, width, height);
+    } else {
+      SceneBackgrounds.drawNightSky(this, width, height);
     }
-    for (let gy = 0; gy < height; gy += 40) {
-      grid.lineBetween(0, gy, width, gy);
+
+    // Dark overlay for readability
+    const overlay = this.add.graphics();
+    overlay.fillStyle(0x000000, 0.35);
+    overlay.fillRect(0, 0, width, height);
+
+    // --- Atmospheric particles ---
+    if (sceneName) {
+      SceneParticles.applyForScene(sceneName, this, width, height);
     }
 
     // --- Title ---
-    this.add.text(width / 2, 70, '末日公路', {
+    this.add.text(width / 2, 65, '末日公路', {
       fontFamily: 'Microsoft YaHei, sans-serif',
-      fontSize: '36px',
-      color: '#ccd6f6',
+      fontSize: '32px',
+      color: UIHelper.COLORS.textPrimary,
       fontStyle: 'bold',
+      stroke: '#0a0a1a',
+      strokeThickness: 2,
     }).setOrigin(0.5);
 
-    this.add.text(width / 2, 102, '第一章：丧尸围城', {
+    this.add.text(width / 2, 95, '第一章：丧尸围城', {
       fontFamily: 'Microsoft YaHei, sans-serif',
-      fontSize: '14px',
-      color: '#4a5568',
+      fontSize: '13px',
+      color: UIHelper.COLORS.textMuted,
     }).setOrigin(0.5);
 
     // --- Status bar ---
@@ -81,6 +107,27 @@ class MapScene extends Phaser.Scene {
 
     // --- "Enter RV" button ---
     this.createEnterRVButton();
+
+    // --- Check if ending should be shown (after battle victory) ---
+    if (this.gameState._showEnding) {
+      const ending = this.gameState._showEnding;
+      delete this.gameState._showEnding;
+      SaveLoad.save(this.gameState);
+      this.time.delayedCall(500, () => {
+        this.showEnding(ending);
+      });
+      return;
+    }
+
+    // --- Auto-enter node if coming from a choice ---
+    if (this._autoEnter) {
+      this.time.delayedCall(200, () => {
+        this.enterScene(this.gameState.currentStoryNode);
+      });
+    }
+
+    // --- Fade in ---
+    this.cameras.main.fadeIn(400, 0, 0, 0);
   }
 
   // ============================================================
@@ -89,62 +136,95 @@ class MapScene extends Phaser.Scene {
   renderStatusBar() {
     const { width } = this.cameras.main;
     const gs = this.gameState;
-    const y = 12;
+    const y = 8;
+    const barH = 36;
 
-    // Background strip
+    // Frosted panel background
+    UIHelper.drawPanel(this, 10, y, width - 20, barH, {
+      fillColor: UIHelper.COLORS.statusBarBg,
+      fillAlpha: 0.88,
+      radius: 6,
+      shadowOffset: 2,
+    });
+
     const barBg = this.add.graphics();
-    barBg.fillStyle(0x0d0d1f, 0.85);
-    barBg.fillRect(0, y - 4, width, 32);
-    barBg.lineStyle(1, 0x1a1a3e, 0.6);
-    barBg.lineBetween(0, y + 28, width, y + 28);
 
     const stats = [
-      { icon: '🚐', label: '耐久', value: `${gs.rv.durability}/${gs.rv.maxDurability}` },
-      { icon: '❤️', label: 'HP', value: `${gs.player.hp}/${gs.player.maxHp}` },
-      { icon: '🍖', label: '饱食', value: `${gs.player.hunger}` },
-      { icon: '🎒', label: '背包', value: `${gs.inventory.length}/${gs.rv.capacity}` },
-      { icon: '📅', label: `第${gs.day}天` },
+      { icon: '🚐', label: '耐久', value: `${gs.rv.durability}/${gs.rv.maxDurability}`, ratio: gs.rv.durability / gs.rv.maxDurability, hasBar: true, color: '#66aacc' },
+      { icon: '❤️', label: 'HP', value: `${gs.player.hp}/${gs.player.maxHp}`, ratio: gs.player.hp / gs.player.maxHp, hasBar: true, color: '#e94560' },
+      { icon: '🍖', label: '饱食', value: `${gs.player.hunger}`, ratio: gs.player.hunger / 100, hasBar: true, color: '#ccaa44' },
+      { icon: '🎒', label: '背包', value: `${gs.inventory.length}/${gs.rv.capacity}`, hasBar: false, color: UIHelper.COLORS.textSecondary },
+      { icon: '📅', label: `第${gs.day}天`, hasBar: false, color: UIHelper.COLORS.textSecondary },
     ];
 
-    const spacing = width / (stats.length + 1);
+    const spacing = (width - 40) / stats.length;
     stats.forEach((s, i) => {
-      const sx = spacing * (i + 1);
-      const iconText = this.add.text(sx - 24, y + 6, s.icon, {
-        fontSize: '14px',
-      }).setOrigin(0.5);
-
+      const sx = 30 + spacing * i + spacing / 2;
+      this.add.text(sx - 20, y + 9, s.icon, { fontSize: '13px' }).setOrigin(0.5);
       const label = s.label + (s.value ? ` ${s.value}` : '');
-      this.add.text(sx + 4, y + 6, label, {
+      this.add.text(sx - 4, y + (s.hasBar ? 7 : 10), label, {
         fontFamily: 'Microsoft YaHei, sans-serif',
-        fontSize: '12px',
-        color: '#8892b0',
+        fontSize: '11px',
+        color: s.color,
       }).setOrigin(0, 0.5);
+
+      // Mini bar for stats that have ratios
+      if (s.hasBar) {
+        const miniBarX = sx - 4;
+        const miniBarY = y + 22;
+        const miniBarW = 50;
+        const miniBarH = 3;
+        barBg.fillStyle(0x1a1a2e, 0.8);
+        barBg.fillRoundedRect(miniBarX, miniBarY, miniBarW, miniBarH, 1.5);
+        const ratio = Math.max(0, Math.min(1, s.ratio));
+        const barColor = ratio > 0.6 ? 0x34d399 : ratio > 0.3 ? 0xfbbf24 : 0xef4444;
+        barBg.fillStyle(barColor, 0.85);
+        barBg.fillRoundedRect(miniBarX, miniBarY, miniBarW * ratio, miniBarH, 1.5);
+      }
     });
   }
 
   // ============================================================
   //  PATH LINES
   // ============================================================
+  getDisplayNode() {
+    const cur = this.gameState.currentStoryNode;
+    if (this.storyPath.includes(cur)) return cur;
+    return this.branchParents[cur] || cur;
+  }
+
   drawPaths() {
     const graphics = this.add.graphics();
     const progressGraphics = this.add.graphics();
 
-    // Determine how far the player has progressed
-    const currentIdx = this.storyPath.indexOf(this.gameState.currentStoryNode);
-    // Nodes before (and including) current are "completed path"
+    const displayNode = this.getDisplayNode();
+    const currentIdx = this.storyPath.indexOf(displayNode);
     const completedUpTo = Math.max(0, currentIdx);
 
     for (let i = 0; i < this.storyPath.length - 1; i++) {
       const fromNode = this.nodePositions[this.storyPath[i]];
       const toNode = this.nodePositions[this.storyPath[i + 1]];
+      const dx = toNode.x - fromNode.x;
+      const dy = toNode.y - fromNode.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
 
-      // Gray base line (all connections)
-      graphics.lineStyle(3, 0x333355, 0.6);
-      graphics.lineBetween(fromNode.x, fromNode.y, toNode.x, toNode.y);
+      // Dashed gray base line
+      const dashLen = 8;
+      const gapLen = 6;
+      const steps = Math.floor(dist / (dashLen + gapLen));
+      graphics.lineStyle(2, 0x333355, 0.5);
+      for (let s = 0; s < steps; s++) {
+        const t0 = s * (dashLen + gapLen) / dist;
+        const t1 = Math.min(1, (s * (dashLen + gapLen) + dashLen) / dist);
+        graphics.lineBetween(
+          fromNode.x + dx * t0, fromNode.y + dy * t0,
+          fromNode.x + dx * t1, fromNode.y + dy * t1
+        );
+      }
 
-      // Red progress line for completed segments
+      // Solid red progress line for completed segments
       if (i < completedUpTo) {
-        progressGraphics.lineStyle(3, 0xe94560, 0.85);
+        progressGraphics.lineStyle(3, 0xe94560, 0.8);
         progressGraphics.lineBetween(fromNode.x, fromNode.y, toNode.x, toNode.y);
       }
     }
@@ -154,7 +234,8 @@ class MapScene extends Phaser.Scene {
   //  MAP NODES
   // ============================================================
   drawNodes() {
-    const currentIdx = this.storyPath.indexOf(this.gameState.currentStoryNode);
+    const displayNode = this.getDisplayNode();
+    const currentIdx = this.storyPath.indexOf(displayNode);
 
     this.storyPath.forEach((nodeId, index) => {
       const pos = this.nodePositions[nodeId];
@@ -162,79 +243,111 @@ class MapScene extends Phaser.Scene {
 
       const isCurrent = index === currentIdx;
       const isPast = index < currentIdx;
-      const isFuture = index > currentIdx;
+      const radius = isCurrent ? 22 : 16;
+      const color = isCurrent ? 0xe94560 : isPast ? 0x444466 : 0x222233;
+      const borderColor = isCurrent ? 0xff6b81 : isPast ? 0x6666aa : 0x3a4578;
 
-      // Node circle
-      const radius = isCurrent ? 18 : 14;
-      const color = isCurrent ? 0xe94560 : isPast ? 0x555577 : 0x2a2a44;
-      const borderColor = isCurrent ? 0xff6b81 : isPast ? 0x7777aa : 0x3a3a5e;
+      // Layer 1: Outer glow for current node
+      if (isCurrent) {
+        const glowOuter = this.add.graphics();
+        glowOuter.fillStyle(0xe94560, 0.05);
+        glowOuter.fillCircle(pos.x, pos.y, radius + 16);
+        glowOuter.fillStyle(0xe94560, 0.1);
+        glowOuter.fillCircle(pos.x, pos.y, radius + 8);
+      }
 
+      // Layer 2: Drop shadow
+      const shadow = this.add.graphics();
+      shadow.fillStyle(0x000000, 0.2);
+      shadow.fillCircle(pos.x + 1, pos.y + 2, radius);
+
+      // Layer 3: Base fill
       const nodeGraphic = this.add.graphics();
       nodeGraphic.fillStyle(color, 1);
       nodeGraphic.fillCircle(pos.x, pos.y, radius);
-      nodeGraphic.lineStyle(2, borderColor, 1);
+
+      // Layer 4: Top highlight (half-circle)
+      nodeGraphic.fillStyle(0xffffff, isCurrent ? 0.08 : 0.04);
+      nodeGraphic.beginPath();
+      nodeGraphic.arc(pos.x, pos.y, radius - 1, Math.PI, 0, false);
+      nodeGraphic.closePath();
+      nodeGraphic.fillPath();
+
+      // Layer 5: Border
+      nodeGraphic.lineStyle(isCurrent ? 2.5 : 1.5, borderColor, 0.9);
       nodeGraphic.strokeCircle(pos.x, pos.y, radius);
 
-      // Pulsing animation for current node
+      // Layer 6: Inner edge highlight
+      nodeGraphic.lineStyle(1, 0xffffff, 0.04);
+      nodeGraphic.strokeCircle(pos.x, pos.y, radius - 2);
+
+      // Pulse ring for current node
       if (isCurrent) {
         const pulseRing = this.add.graphics();
-        pulseRing.lineStyle(2, 0xe94560, 0.5);
+        pulseRing.lineStyle(2, 0xe94560, 0.4);
         pulseRing.strokeCircle(pos.x, pos.y, radius);
         this.tweens.add({
           targets: pulseRing,
-          scaleX: 1.6,
-          scaleY: 1.6,
-          alpha: 0,
-          duration: 1200,
-          ease: 'Sine.easeOut',
-          repeat: -1,
-          yoyo: false,
-          onRepeat: () => {
-            pulseRing.setScale(1);
-            pulseRing.setAlpha(0.5);
-          },
+          scaleX: 1.8, scaleY: 1.8, alpha: 0,
+          duration: 1500, ease: 'Sine.easeOut', repeat: -1,
+          onRepeat: () => { pulseRing.setScale(1); pulseRing.setAlpha(0.4); },
         });
       }
 
-      // Node number / icon
-      const numberText = isPast ? '✓' : String(index + 1);
-      this.add.text(pos.x, pos.y, numberText, {
-        fontFamily: 'Microsoft YaHei, sans-serif',
-        fontSize: isCurrent ? '14px' : '12px',
+      // Icon
+      const iconText = isPast ? '✓' : (pos.icon || String(index + 1));
+      this.add.text(pos.x, pos.y, iconText, {
+        fontSize: isCurrent ? '20px' : '14px',
         color: isCurrent ? '#ffffff' : isPast ? '#aaaacc' : '#666688',
-        fontStyle: 'bold',
       }).setOrigin(0.5);
 
-      // Location name label
-      const labelColor = isCurrent ? '#e94560' : isPast ? '#8888aa' : '#4a4a6a';
-      const labelY = pos.y + radius + 10;
+      // Location label
+      const labelColor = isCurrent ? '#e94560' : isPast ? UIHelper.COLORS.textSecondary : UIHelper.COLORS.textMuted;
+      const labelY = pos.y + radius + 12;
       this.add.text(pos.x, labelY, pos.name, {
         fontFamily: 'Microsoft YaHei, sans-serif',
         fontSize: '12px',
         color: labelColor,
+        fontStyle: isCurrent ? 'bold' : 'normal',
       }).setOrigin(0.5);
 
-      // Clickable area for current and adjacent nodes
-      const hitArea = this.add.circle(pos.x, pos.y, radius + 8, 0x000000, 0.001)
-        .setInteractive({ useHandCursor: isCurrent || isPast });
+      // Clickable area
+      const hitArea = this.add.circle(pos.x, pos.y, radius + 10, 0x000000, 0.001)
+        .setInteractive({ useHandCursor: isCurrent });
 
       if (isCurrent) {
         hitArea.on('pointerover', () => {
           nodeGraphic.clear();
-          nodeGraphic.fillStyle(0xff4060, 1);
+          nodeGraphic.fillStyle(0xff3050, 1);
           nodeGraphic.fillCircle(pos.x, pos.y, radius);
-          nodeGraphic.lineStyle(2, 0xff8090, 1);
+          nodeGraphic.fillStyle(0xffffff, 0.1);
+          nodeGraphic.beginPath();
+          nodeGraphic.arc(pos.x, pos.y, radius - 1, Math.PI, 0, false);
+          nodeGraphic.closePath();
+          nodeGraphic.fillPath();
+          nodeGraphic.lineStyle(2.5, 0xff8090, 1);
           nodeGraphic.strokeCircle(pos.x, pos.y, radius);
         });
         hitArea.on('pointerout', () => {
           nodeGraphic.clear();
           nodeGraphic.fillStyle(0xe94560, 1);
           nodeGraphic.fillCircle(pos.x, pos.y, radius);
-          nodeGraphic.lineStyle(2, 0xff6b81, 1);
+          nodeGraphic.fillStyle(0xffffff, 0.08);
+          nodeGraphic.beginPath();
+          nodeGraphic.arc(pos.x, pos.y, radius - 1, Math.PI, 0, false);
+          nodeGraphic.closePath();
+          nodeGraphic.fillPath();
+          nodeGraphic.lineStyle(2.5, 0xff6b81, 0.9);
           nodeGraphic.strokeCircle(pos.x, pos.y, radius);
+          nodeGraphic.lineStyle(1, 0xffffff, 0.04);
+          nodeGraphic.strokeCircle(pos.x, pos.y, radius - 2);
         });
         hitArea.on('pointerdown', () => {
-          this.enterScene(nodeId);
+          this.cameras.main.fadeOut(300, 0, 0, 0);
+          this.time.delayedCall(400, () => {
+            this.enterScene(nodeId);
+            this.cameras.main.fadeIn(300, 0, 0, 0);
+          });
         });
       }
     });
@@ -244,7 +357,8 @@ class MapScene extends Phaser.Scene {
   //  RV ICON
   // ============================================================
   createRVIcon() {
-    const currentIdx = this.storyPath.indexOf(this.gameState.currentStoryNode);
+    const displayNode = this.getDisplayNode();
+    const currentIdx = this.storyPath.indexOf(displayNode);
     const currentNodeId = this.storyPath[currentIdx >= 0 ? currentIdx : 0];
     const pos = this.nodePositions[currentNodeId];
     if (!pos) return;
@@ -270,47 +384,7 @@ class MapScene extends Phaser.Scene {
   // ============================================================
   createEnterRVButton() {
     const { height } = this.cameras.main;
-    const btnX = 80;
-    const btnY = height - 50;
-    const btnW = 140;
-    const btnH = 36;
-
-    const btnBg = this.add.graphics();
-    btnBg.fillStyle(0x1a1a2e, 1);
-    btnBg.fillRoundedRect(btnX - btnW / 2, btnY - btnH / 2, btnW, btnH, 6);
-    btnBg.lineStyle(1, 0x00c8ff, 0.5);
-    btnBg.strokeRoundedRect(btnX - btnW / 2, btnY - btnH / 2, btnW, btnH, 6);
-
-    const btnText = this.add.text(btnX, btnY, '🚐 进入房车', {
-      fontFamily: 'Microsoft YaHei, sans-serif',
-      fontSize: '15px',
-      color: '#ccd6f6',
-    }).setOrigin(0.5);
-
-    const hitArea = this.add.rectangle(btnX, btnY, btnW, btnH)
-      .setInteractive({ useHandCursor: true })
-      .setOrigin(0.5)
-      .setAlpha(0.001);
-
-    hitArea.on('pointerover', () => {
-      btnBg.clear();
-      btnBg.fillStyle(0x16213e, 1);
-      btnBg.fillRoundedRect(btnX - btnW / 2, btnY - btnH / 2, btnW, btnH, 6);
-      btnBg.lineStyle(1, 0x00c8ff, 0.9);
-      btnBg.strokeRoundedRect(btnX - btnW / 2, btnY - btnH / 2, btnW, btnH, 6);
-      btnText.setColor('#00c8ff');
-    });
-
-    hitArea.on('pointerout', () => {
-      btnBg.clear();
-      btnBg.fillStyle(0x1a1a2e, 1);
-      btnBg.fillRoundedRect(btnX - btnW / 2, btnY - btnH / 2, btnW, btnH, 6);
-      btnBg.lineStyle(1, 0x00c8ff, 0.5);
-      btnBg.strokeRoundedRect(btnX - btnW / 2, btnY - btnH / 2, btnW, btnH, 6);
-      btnText.setColor('#ccd6f6');
-    });
-
-    hitArea.on('pointerdown', () => {
+    UIHelper.createButton(this, 80, height - 50, 140, 36, '🚐 进入房车', { fontSize: '15px' }, () => {
       SaveLoad.save(this.gameState);
       this.scene.start('RVScene', { gameState: this.gameState });
     });
@@ -328,12 +402,6 @@ class MapScene extends Phaser.Scene {
 
     const storyNode = storyData.nodes[nodeId];
 
-    // If the node has an ending, show it and return to menu
-    if (storyNode.ending) {
-      this.showEnding(storyNode.ending);
-      return;
-    }
-
     // If node has dialogues, play them first
     if (storyNode.dialogues && storyNode.dialogues.length > 0) {
       this.playDialogues(storyNode, () => {
@@ -348,6 +416,51 @@ class MapScene extends Phaser.Scene {
   //  POST-DIALOGUE LOGIC
   // ============================================================
   handlePostDialogue(storyNode) {
+    // Game over node — show game over screen, delete save
+    if (storyNode.gameOver) {
+      this.showMapGameOver(storyNode.gameOver);
+      return;
+    }
+
+    // Check required items
+    if (storyNode.requireItem) {
+      const req = storyNode.requireItem;
+      const invItem = this.gameState.inventory.find(i => i.id === req.itemId);
+      if (!invItem || invItem.quantity < (req.amount || 1)) {
+        // Player doesn't have the required item
+        if (storyNode.failDialogue && storyNode.failDialogue.length > 0) {
+          const dialogueSystem = new Dialogue(this);
+          dialogueSystem.show(storyNode.failDialogue, () => {
+            // Navigate to next node after fail dialogue
+            if (storyNode.next) {
+              this.gameState.currentStoryNode = storyNode.next;
+              SaveLoad.save(this.gameState);
+              this.scene.restart({ gameState: this.gameState, autoEnter: true });
+            }
+          });
+        } else {
+          this.showNotification('缺少所需物品！');
+          if (storyNode.next) {
+            this.gameState.currentStoryNode = storyNode.next;
+            SaveLoad.save(this.gameState);
+            this.scene.restart({ gameState: this.gameState, autoEnter: true });
+          }
+        }
+        return;
+      }
+      // Consume the item
+      if (storyNode.consumeItem) {
+        const consumeReq = storyNode.consumeItem;
+        const idx = this.gameState.inventory.findIndex(i => i.id === consumeReq.itemId);
+        if (idx !== -1) {
+          this.gameState.inventory[idx].quantity -= (consumeReq.amount || 1);
+          if (this.gameState.inventory[idx].quantity <= 0) {
+            this.gameState.inventory.splice(idx, 1);
+          }
+        }
+      }
+    }
+
     // Recruit NPCs if specified
     if (storyNode.recruitNPCs) {
       this.recruitNPCs(storyNode.recruitNPCs);
@@ -365,8 +478,21 @@ class MapScene extends Phaser.Scene {
 
     // If there is a forced battle, go to BattleScene
     if (storyNode.forcedBattle) {
+      // If player HP is 0, auto-lose and game over
+      if (this.gameState.player.hp <= 0) {
+        SaveLoad.save(this.gameState);
+        this.scene.start('BattleScene', {
+          gameState: this.gameState,
+          battleData: storyNode.forcedBattle,
+          storyNodeId: storyNode.id,
+          returnScene: 'MapScene',
+        });
+        return;
+      }
+
       // Pre-compute next node for post-battle advancement
       const nextNode = storyNode.next || null;
+      const ending = storyNode.ending || null;
       SaveLoad.save(this.gameState);
       this.scene.start('BattleScene', {
         gameState: this.gameState,
@@ -374,15 +500,23 @@ class MapScene extends Phaser.Scene {
         storyNodeId: storyNode.id,
         returnScene: 'MapScene',
         onComplete: (gameState) => {
-          // Advance story node before returning to map
           const updatedState = gameState || this.gameState;
           if (nextNode) {
             updatedState.currentStoryNode = nextNode;
             updatedState.day = (updatedState.day || 1) + 1;
+          } else if (ending) {
+            // Mark that ending should be shown when returning to map
+            updatedState._showEnding = ending;
           }
           SaveLoad.save(updatedState);
         },
       });
+      return;
+    }
+
+    // If the node has an ending, show it (after dialogues and battles)
+    if (storyNode.ending) {
+      this.showEnding(storyNode.ending);
       return;
     }
 
@@ -392,7 +526,13 @@ class MapScene extends Phaser.Scene {
       return;
     }
 
-    // Show explore / continue choice
+    // If node has rewards + next (exploration node), advance directly
+    if (storyNode.rewards && storyNode.next) {
+      this.advanceStory(storyNode.id);
+      return;
+    }
+
+    // Show explore / continue choice (only for nodes without rewards)
     this.showExploreChoice(storyNode);
   }
 
@@ -476,7 +616,7 @@ class MapScene extends Phaser.Scene {
       if (selected.next) {
         this.gameState.currentStoryNode = selected.next;
         SaveLoad.save(this.gameState);
-        this.scene.restart({ gameState: this.gameState });
+        this.scene.restart({ gameState: this.gameState, autoEnter: true });
       } else {
         // Fall through to default next
         this.advanceStory(storyNode.id);
@@ -493,12 +633,10 @@ class MapScene extends Phaser.Scene {
 
     if (storyNode && storyNode.next) {
       this.gameState.currentStoryNode = storyNode.next;
-      // Advance day
       this.gameState.day = (this.gameState.day || 1) + 1;
       SaveLoad.save(this.gameState);
-      this.scene.restart({ gameState: this.gameState });
+      this.scene.restart({ gameState: this.gameState, autoEnter: true });
     } else {
-      // No next node - stay on map
       SaveLoad.save(this.gameState);
     }
   }
@@ -613,21 +751,20 @@ class MapScene extends Phaser.Scene {
         fontStyle: 'bold',
       }).setOrigin(0.5);
 
+      // Chapter transition subtitle
+      if (ending.chapterTransition) {
+        this.add.text(width / 2, height / 2 - 120, '第二章即将开启', {
+          fontFamily: 'Microsoft YaHei, sans-serif',
+          fontSize: '16px',
+          color: '#8892b0',
+        }).setOrigin(0.5);
+      }
+
       // Play ending dialogues
       const dialogueSystem = new Dialogue(this);
       dialogueSystem.show(ending.dialogues, () => {
-        // After ending dialogue, show "return to menu" button
-        const returnBtn = this.add.text(width / 2, height / 2 + 100, '返回主菜单', {
-          fontFamily: 'Microsoft YaHei, sans-serif',
-          fontSize: '20px',
-          color: '#ccd6f6',
-          backgroundColor: '#1a1a2e',
-          padding: { x: 30, y: 12 },
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-        returnBtn.on('pointerover', () => returnBtn.setColor('#00c8ff'));
-        returnBtn.on('pointerout', () => returnBtn.setColor('#ccd6f6'));
-        returnBtn.on('pointerdown', () => {
+        const buttonLabel = ending.chapterTransition ? '等待第二章...' : '返回主菜单';
+        UIHelper.createButton(this, width / 2, height / 2 + 100, 180, 44, buttonLabel, { fontSize: '18px' }, () => {
           SaveLoad.save(this.gameState);
           this.scene.start('MenuScene');
         });
@@ -639,24 +776,46 @@ class MapScene extends Phaser.Scene {
   //  NOTIFICATION (small toast)
   // ============================================================
   showNotification(message) {
-    const { width } = this.cameras.main;
-    const toast = this.add.text(width / 2, 50, message, {
-      fontFamily: 'Microsoft YaHei, sans-serif',
-      fontSize: '16px',
-      color: '#ffffff',
-      backgroundColor: '#e94560',
-      padding: { x: 16, y: 6 },
-    }).setOrigin(0.5).setAlpha(0);
+    const type = message.includes('获得') ? 'reward' : 'danger';
+    UIHelper.showToast(this, message, type);
+  }
 
-    this.tweens.add({
-      targets: toast,
-      alpha: 1,
-      y: 55,
-      duration: 300,
-      ease: 'Back.easeOut',
-      yoyo: true,
-      hold: 1500,
-      onComplete: () => toast.destroy(),
+  // ============================================================
+  //  MAP GAME OVER (story node gameOver flag)
+  // ============================================================
+  showMapGameOver(desc) {
+    const { width, height } = this.cameras.main;
+
+    const overlay = this.add.graphics();
+    overlay.setDepth(100);
+    overlay.fillStyle(0x000000, 0.85);
+    overlay.fillRect(0, 0, width, height);
+
+    // Panel with depth
+    const panel = UIHelper.drawPanel(this, width / 2 - 200, height / 2 - 140, 400, 280, {
+      fillColor: UIHelper.COLORS.panelBg,
+      fillAlpha: 0.95,
+      borderColor: UIHelper.COLORS.danger,
+      borderAlpha: 0.7,
+      radius: 12,
     });
+    panel.setDepth(101);
+
+    this.add.text(width / 2, height / 2 - 100, '游戏结束', {
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '36px',
+      color: '#e94560', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(102);
+
+    this.add.text(width / 2, height / 2 - 40, desc || '你的旅程到此结束了……', {
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px',
+      color: UIHelper.COLORS.textSecondary, align: 'center',
+    }).setOrigin(0.5).setDepth(102);
+
+    UIHelper.createButton(this, width / 2, height / 2 + 50, 180, 44, '重新开始', {
+      isPrimary: true, fontSize: '18px',
+    }, () => {
+      SaveLoad.deleteSave();
+      this.scene.start('MenuScene');
+    }).setDepth(102);
   }
 }

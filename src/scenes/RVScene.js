@@ -19,24 +19,40 @@ class RVScene extends Phaser.Scene {
   create() {
     const { width, height } = this.cameras.main;
 
-    // --- Dark background ---
+    // --- RV Interior background ---
     const bg = this.add.graphics();
-    bg.fillGradientStyle(0x0a0a1a, 0x0a0a1a, 0x111128, 0x111128, 1);
+    // Warm interior gradient
+    bg.fillGradientStyle(0x1a1510, 0x1a1510, 0x151018, 0x151018, 1);
     bg.fillRect(0, 0, width, height);
 
-    // Subtle grid pattern
-    const grid = this.add.graphics();
-    grid.lineStyle(1, 0x1a1a3e, 0.15);
-    for (let gx = 0; gx < width; gx += 40) grid.lineBetween(gx, 0, gx, height);
-    for (let gy = 0; gy < height; gy += 40) grid.lineBetween(0, gy, width, gy);
+    // Wall panel lines (interior feel)
+    bg.lineStyle(1, 0x222018, 0.3);
+    for (let wx = 0; wx < width; wx += 60) {
+      bg.lineBetween(wx, 0, wx, height);
+    }
+    // Horizontal panel
+    bg.lineStyle(1, 0x222018, 0.2);
+    bg.lineBetween(0, height * 0.15, width, height * 0.15);
+
+    // Warm light glow
+    bg.fillStyle(0xffcc44, 0.02);
+    bg.fillCircle(width / 2, 20, 300);
+
+    // --- Warm floating particles ---
+    SceneParticles.addFireflies(this, width, height);
 
     // --- Title ---
-    this.add.text(width / 2, 35, '房车内部', {
+    this.add.text(width / 2, 35, '🚐 房车内部', {
       fontFamily: 'Microsoft YaHei, sans-serif',
-      fontSize: '28px',
-      color: '#ccd6f6',
+      fontSize: '24px',
+      color: UIHelper.COLORS.textPrimary,
       fontStyle: 'bold',
+      stroke: '#0a0a0a',
+      strokeThickness: 2,
     }).setOrigin(0.5);
+
+    // Fade in
+    this.cameras.main.fadeIn(400, 0, 0, 0);
 
     // --- Build NPC instances from gameState ---
     const npcsData = this.cache.json.get('npcsData') || {};
@@ -63,14 +79,7 @@ class RVScene extends Phaser.Scene {
     // --- Tab bar ---
     this.createTabBar();
 
-    // --- Notification text ---
-    this.notificationText = this.add.text(width / 2, 50, '', {
-      fontFamily: 'Microsoft YaHei, sans-serif',
-      fontSize: '16px',
-      color: '#ffffff',
-      backgroundColor: '#e94560',
-      padding: { x: 16, y: 6 },
-    }).setOrigin(0.5).setAlpha(0).setDepth(100);
+    // Notification handled by UIHelper.showToast
 
     // --- Render default tab ---
     this.renderTab('npcs');
@@ -109,22 +118,19 @@ class RVScene extends Phaser.Scene {
     const isActive = key === this.activeTab;
 
     const bg = this.add.graphics();
-    bg.fillStyle(isActive ? 0x16213e : 0x1a1a2e, 1);
+    bg.fillStyle(isActive ? 0x16213e : UIHelper.COLORS.cardBg, 1);
     bg.fillRoundedRect(x, y, w, h, 6);
-    bg.lineStyle(1, isActive ? 0x00c8ff : 0x333355, isActive ? 0.9 : 0.5);
+    bg.lineStyle(1, isActive ? UIHelper.COLORS.info : UIHelper.COLORS.border, isActive ? 0.9 : 0.5);
     bg.strokeRoundedRect(x, y, w, h, 6);
 
     const text = this.add.text(x + w / 2, y + h / 2, `${icon} ${label}`, {
       fontFamily: 'Microsoft YaHei, sans-serif',
       fontSize: '16px',
-      color: isActive ? '#00c8ff' : '#8892b0',
+      color: isActive ? '#38bdf8' : UIHelper.COLORS.textSecondary,
       fontStyle: 'bold',
-    }).setOrigin(0.5);
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
-    const hitArea = this.add.rectangle(x + w / 2, y + h / 2, w, h)
-      .setOrigin(0.5).setAlpha(0.001).setInteractive({ useHandCursor: true });
-
-    hitArea.on('pointerdown', () => {
+    text.on('pointerdown', () => {
       if (this.activeTab !== key) {
         this.activeTab = key;
         this.refreshTabBar();
@@ -132,30 +138,30 @@ class RVScene extends Phaser.Scene {
       }
     });
 
-    hitArea.on('pointerover', () => {
+    text.on('pointerover', () => {
       if (this.activeTab !== key) {
         text.setColor('#ccd6f6');
       }
     });
 
-    hitArea.on('pointerout', () => {
+    text.on('pointerout', () => {
       if (this.activeTab !== key) {
         text.setColor('#8892b0');
       }
     });
 
-    this.tabButtons[key] = { bg, text, hitArea, x, y, w, h };
+    this.tabButtons[key] = { bg, text, x, y, w, h };
   }
 
   refreshTabBar() {
     Object.entries(this.tabButtons).forEach(([key, btn]) => {
       const isActive = key === this.activeTab;
       btn.bg.clear();
-      btn.bg.fillStyle(isActive ? 0x16213e : 0x1a1a2e, 1);
+      btn.bg.fillStyle(isActive ? 0x16213e : UIHelper.COLORS.cardBg, 1);
       btn.bg.fillRoundedRect(btn.x, btn.y, btn.w, btn.h, 6);
-      btn.bg.lineStyle(1, isActive ? 0x00c8ff : 0x333355, isActive ? 0.9 : 0.5);
+      btn.bg.lineStyle(1, isActive ? UIHelper.COLORS.info : UIHelper.COLORS.border, isActive ? 0.9 : 0.5);
       btn.bg.strokeRoundedRect(btn.x, btn.y, btn.w, btn.h, 6);
-      btn.text.setColor(isActive ? '#00c8ff' : '#8892b0');
+      btn.text.setColor(isActive ? '#38bdf8' : UIHelper.COLORS.textSecondary);
     });
   }
 
@@ -179,54 +185,32 @@ class RVScene extends Phaser.Scene {
   }
 
   // ============================================================
-  //  SCROLLABLE AREA HELPER
+  //  SCROLLABLE AREA HELPER — no dragArea overlay, uses wheel only
   // ============================================================
   createScrollableArea(parentContainer, x, y, w, h) {
-    const contentContainer = this.add.container(0, 0);
+    const contentContainer = this.add.container(x, y);
     parentContainer.add(contentContainer);
 
-    // Mask to clip content
+    // Mask to clip content — use same (x, y, w, h) so local y=0 maps to world y=y
     const maskGfx = this.make.graphics().fillRect(x, y, w, h).setVisible(false);
     const mask = maskGfx.createGeometryMask();
     contentContainer.setMask(mask);
 
-    // Drag target
-    const dragArea = this.add.rectangle(x + w / 2, y + h / 2, w, h)
-      .setOrigin(0.5).setAlpha(0.001).setInteractive();
-
-    let dragStartY = 0;
-    let scrollStart = 0;
-    let isDragging = false;
-
-    dragArea.on('pointerdown', (pointer) => {
-      isDragging = true;
-      dragStartY = pointer.y;
-      scrollStart = contentContainer.y;
-    });
-
-    this.input.on('pointermove', (pointer) => {
-      if (!isDragging) return;
-      contentContainer.y = scrollStart + (pointer.y - dragStartY);
-    });
-
-    this.input.on('pointerup', () => { isDragging = false; });
-
-    // Wheel scrolling
+    // Wheel scrolling (no dragArea needed — wheel doesn't block clicks)
+    const scrollBounds = new Phaser.Geom.Rectangle(x, y, w, h);
     const wheelFn = (pointer, gameObjects, deltaX, deltaY) => {
-      if (!dragArea.getBounds().contains(pointer.x, pointer.y)) return;
+      if (!scrollBounds.contains(pointer.x, pointer.y)) return;
       contentContainer.y -= deltaY * 0.5;
       const scrollArea = this.scrollContainers[parentContainer];
       if (scrollArea) {
-        const minScroll = Math.min(0, h - scrollArea.scrollHeight);
-        contentContainer.y = Phaser.Math.Clamp(contentContainer.y, minScroll, 0);
+        const minScroll = Math.min(y, y + h - scrollArea.scrollHeight);
+        contentContainer.y = Phaser.Math.Clamp(contentContainer.y, minScroll, y);
       }
     };
     this.input.on('wheel', wheelFn);
 
-    parentContainer.add(dragArea);
-
     this.scrollContainers[parentContainer] = {
-      contentContainer, dragArea, maskGfx, mask, wheelFn, x, y, w, h, scrollHeight: 0
+      contentContainer, maskGfx, mask, wheelFn, x, y, w, h, scrollHeight: 0
     };
 
     return contentContainer;
@@ -236,9 +220,9 @@ class RVScene extends Phaser.Scene {
     const scrollArea = this.scrollContainers[parentContainer];
     if (!scrollArea) return;
     scrollArea.scrollHeight = totalHeight;
-    // Clamp position
-    const minScroll = Math.min(0, scrollArea.h - totalHeight);
-    scrollArea.contentContainer.y = Phaser.Math.Clamp(scrollArea.contentContainer.y, minScroll, 0);
+    // Clamp position — y is the container's base (top of scroll area)
+    const minScroll = Math.min(scrollArea.y, scrollArea.y + scrollArea.h - totalHeight);
+    scrollArea.contentContainer.y = Phaser.Math.Clamp(scrollArea.contentContainer.y, minScroll, scrollArea.y);
   }
 
   addScrollIndicators(parentContainer) {
@@ -263,8 +247,8 @@ class RVScene extends Phaser.Scene {
       callback: () => {
         if (!scrollArea.contentContainer.active) return;
         const pos = scrollArea.contentContainer.y;
-        const minScroll = Math.min(0, scrollArea.h - scrollArea.scrollHeight);
-        scrollUp.setAlpha(pos < -5 ? 0.6 : 0.15);
+        const minScroll = Math.min(scrollArea.y, scrollArea.y + scrollArea.h - scrollArea.scrollHeight);
+        scrollUp.setAlpha(pos < scrollArea.y - 5 ? 0.6 : 0.15);
         scrollDown.setAlpha(pos > minScroll + 5 ? 0.6 : 0.15);
       },
     });
@@ -287,43 +271,59 @@ class RVScene extends Phaser.Scene {
     const npcIds = Object.keys(this.npcInstances);
 
     if (npcIds.length === 0) {
-      this.add.text(scrollX + scrollW / 2, scrollY + 100, '还没有队友加入', {
+      const emptyText = this.add.text(scrollW / 2, 100, '还没有队友加入', {
         fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '18px', color: '#4a5568'
       }).setOrigin(0.5);
+      contentContainer.add(emptyText);
+      this.updateScrollHeight(parentContainer, 200);
       return;
     }
 
+    const roleNames = { tank: '坦克', control: '控制', burst: '输出', support: '辅助' };
     let yPos = 0;
 
     npcIds.forEach(npcId => {
       const npc = this.npcInstances[npcId];
+      const cardH = 110;
       const cardContainer = this.add.container(0, yPos);
       contentContainer.add(cardContainer);
 
       // Card background
       const cardBg = this.add.graphics();
       cardBg.fillStyle(0x12122a, 0.9);
-      cardBg.fillRoundedRect(0, 0, scrollW, 85, 6);
+      cardBg.fillRoundedRect(0, 0, scrollW, cardH, 6);
       cardBg.lineStyle(1, 0x222244, 0.8);
-      cardBg.strokeRoundedRect(0, 0, scrollW, 85, 6);
+      cardBg.strokeRoundedRect(0, 0, scrollW, cardH, 6);
       cardContainer.add(cardBg);
 
-      // --- Left section: Name + Personality + Affinity bar ---
-      // Name
-      cardContainer.add(this.add.text(12, 8, npc.name, {
+      // --- Left section: Name + Role + Personality + Stats ---
+      const npcEmojis = { wangzai: '👦', bingjie: '👩', caoge: '💪', laojing: '👨‍🏫' };
+      const emoji = npcEmojis[npcId] || '👤';
+      cardContainer.add(this.add.text(12, 8, `${emoji} ${npc.name}`, {
         fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '16px',
         color: '#ccd6f6', fontStyle: 'bold',
       }));
 
-      // Personality
-      cardContainer.add(this.add.text(12, 28, npc.personality || '', {
+      const roleName = roleNames[npc.role] || npc.role || '';
+      cardContainer.add(this.add.text(12, 30, `职业: ${roleName}`, {
+        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#00c8ff',
+      }));
+
+      cardContainer.add(this.add.text(80, 30, npc.personality || '', {
         fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#666688',
       }));
 
-      // Affinity bar
+      // Stats row
+      const stats = npc.stats || {};
+      const statsStr = `HP:${stats.hp || 0}  攻:${stats.attack || 0}  防:${stats.defense || 0}  速:${stats.speed || 0}`;
+      cardContainer.add(this.add.text(12, 48, statsStr, {
+        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#8892b0',
+      }));
+
+      // --- Affinity bar ---
       const barX = 12;
-      const barY = 46;
-      const barW = 200;
+      const barY = 68;
+      const barW = 180;
       const barH = 10;
 
       cardContainer.add(this.add.text(barX, barY - 1, '好感:', {
@@ -331,7 +331,6 @@ class RVScene extends Phaser.Scene {
       }));
 
       const abX = barX + 32;
-      // Bar background
       const barBg = this.add.graphics();
       barBg.fillStyle(0x1a1a2e, 1);
       barBg.fillRoundedRect(abX, barY, barW, barH, 4);
@@ -339,7 +338,6 @@ class RVScene extends Phaser.Scene {
       barBg.strokeRoundedRect(abX, barY, barW, barH, 4);
       cardContainer.add(barBg);
 
-      // Bar fill
       const affinity = npc.affinity;
       const fillW = Math.max(2, (affinity / 100) * barW);
       const barColor = affinity > 60 ? 0xff69b4 : affinity > 30 ? 0xff8c00 : 0xe94560;
@@ -348,35 +346,45 @@ class RVScene extends Phaser.Scene {
       barFill.fillRoundedRect(abX + 1, barY + 1, fillW - 2, barH - 2, 3);
       cardContainer.add(barFill);
 
-      // Affinity value + status
       const status = this.getAffinityStatus(affinity);
       cardContainer.add(this.add.text(abX + barW + 8, barY - 1, `${affinity} ${status.text}`, {
         fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: status.color,
       }));
 
-      // --- Right section: Skills + Feed button ---
+      // --- Right section: Skills ---
       const rightX = 300;
 
-      // Skills
-      cardContainer.add(this.add.text(rightX, 6, '技能:', {
+      cardContainer.add(this.add.text(rightX, 8, '已解锁技能:', {
         fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#8892b0',
       }));
 
       const availableSkills = npc.getAvailableSkills();
-      let skillStr = '无';
       if (availableSkills.length > 0) {
-        skillStr = availableSkills.map(s => s.name).join(' / ');
+        availableSkills.forEach((skill, i) => {
+          cardContainer.add(this.add.text(rightX, 26 + i * 16, `${skill.name}`, {
+            fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#00c8ff',
+          }));
+        });
+      } else {
+        cardContainer.add(this.add.text(rightX, 26, '无', {
+          fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#4a5568',
+        }));
       }
-      const skillText = this.add.text(rightX, 22, skillStr, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#00c8ff',
-        wordWrap: { width: scrollW - rightX - 10 },
-      });
-      cardContainer.add(skillText);
+
+      // Locked skills hint
+      const allSkills = npc.skills || [];
+      const lockedSkills = allSkills.filter(s => affinity < s.unlockAffinity);
+      if (lockedSkills.length > 0) {
+        const nextSkill = lockedSkills[0];
+        cardContainer.add(this.add.text(rightX, 26 + availableSkills.length * 16 + 4, `🔒 ${nextSkill.name} (好感${nextSkill.unlockAffinity})`, {
+          fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '10px', color: '#4a5568',
+        }));
+      }
 
       // Feed button
-      this.createFeedButton(cardContainer, scrollW - 90, 58, npcId, npc);
+      this.createFeedButton(cardContainer, scrollW - 90, cardH - 30, npcId, npc);
 
-      yPos += 92;
+      yPos += cardH + 8;
     });
 
     this.updateScrollHeight(parentContainer, yPos);
@@ -396,14 +404,10 @@ class RVScene extends Phaser.Scene {
 
     const btnText = this.add.text(x + btnW / 2, y + btnH / 2, '🍖 喂食', {
       fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '13px', color: '#ccd6f6',
-    }).setOrigin(0.5);
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
     parentContainer.add(btnText);
 
-    const hitArea = this.add.rectangle(x + btnW / 2, y + btnH / 2, btnW, btnH)
-      .setOrigin(0.5).setAlpha(0.001).setInteractive({ useHandCursor: true });
-    parentContainer.add(hitArea);
-
-    hitArea.on('pointerover', () => {
+    btnText.on('pointerover', () => {
       btnBg.clear();
       btnBg.fillStyle(0x16213e, 1);
       btnBg.fillRoundedRect(x, y, btnW, btnH, 4);
@@ -412,7 +416,7 @@ class RVScene extends Phaser.Scene {
       btnText.setColor('#00c8ff');
     });
 
-    hitArea.on('pointerout', () => {
+    btnText.on('pointerout', () => {
       btnBg.clear();
       btnBg.fillStyle(0x1a1a2e, 1);
       btnBg.fillRoundedRect(x, y, btnW, btnH, 4);
@@ -421,7 +425,7 @@ class RVScene extends Phaser.Scene {
       btnText.setColor('#ccd6f6');
     });
 
-    hitArea.on('pointerdown', () => { this.feedNPC(npcId); });
+    btnText.on('pointerdown', () => { this.feedNPC(npcId); });
   }
 
   feedNPC(npcId) {
@@ -504,7 +508,7 @@ class RVScene extends Phaser.Scene {
 
     const contentContainer = this.createScrollableArea(parentContainer, scrollX, scrollY, scrollW, scrollH);
 
-    // Header (inside scroll area so it doesn't overlap the tab bar)
+    // Header
     const count = this.gameState.inventory.length;
     const cap = this.gameState.rv.capacity;
     const headerText = this.add.text(scrollW / 2, 8, `背包: ${count}/${cap}`, {
@@ -513,18 +517,20 @@ class RVScene extends Phaser.Scene {
     contentContainer.add(headerText);
 
     if (this.gameState.inventory.length === 0) {
-      this.add.text(scrollX + scrollW / 2, scrollY + 100, '储存空间为空', {
+      const emptyText = this.add.text(scrollW / 2, 120, '储存空间为空', {
         fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '18px', color: '#4a5568',
       }).setOrigin(0.5);
+      contentContainer.add(emptyText);
+      this.updateScrollHeight(parentContainer, 200);
       return;
     }
 
-    // Grid: 4 columns
-    const cols = 4;
-    const gap = 8;
+    // Grid: 3 columns for better readability
+    const cols = 3;
+    const gap = 10;
     const cellW = (scrollW - gap * (cols - 1)) / cols;
-    const cellH = 72;
-    const gridOffsetY = 28; // below the header text
+    const cellH = 90;
+    const gridOffsetY = 30;
 
     const itemsData = this.cache.json.get('itemsData') || {};
     const typeEmojis = { food: '🍖', material: '🔧', medical: '💊', weapon: '⚔️', special: '⭐' };
@@ -540,36 +546,58 @@ class RVScene extends Phaser.Scene {
       contentContainer.add(itemContainer);
 
       // Card background
+      const isUsable = def && (def.type === 'food' || def.type === 'medical');
       const cardBg = this.add.graphics();
-      cardBg.fillStyle(0x12122a, 0.9);
+      cardBg.fillStyle(isUsable ? 0x121830 : 0x12122a, 0.9);
       cardBg.fillRoundedRect(0, 0, cellW, cellH, 6);
-      cardBg.lineStyle(1, 0x222244, 0.8);
+      cardBg.lineStyle(1, isUsable ? 0x00c8ff : 0x222244, isUsable ? 0.4 : 0.8);
       cardBg.strokeRoundedRect(0, 0, cellW, cellH, 6);
       itemContainer.add(cardBg);
 
       const emoji = def ? (typeEmojis[def.type] || '📦') : '📦';
       const itemName = def ? def.name : invItem.id;
 
-      // Emoji
-      itemContainer.add(this.add.text(8, 6, emoji, { fontSize: '18px' }));
-
-      // Name
-      itemContainer.add(this.add.text(30, 6, itemName, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px',
+      // Emoji + Name + Quantity
+      itemContainer.add(this.add.text(8, 6, emoji, { fontSize: '16px' }));
+      itemContainer.add(this.add.text(28, 6, itemName, {
+        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '13px',
         color: '#ccd6f6', fontStyle: 'bold',
       }));
-
-      // Quantity
       itemContainer.add(this.add.text(cellW - 8, 6, `x${invItem.quantity}`, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px', color: '#00c8ff',
+        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '13px', color: '#00c8ff',
       }).setOrigin(1, 0));
 
-      // Description
+      // Effect info
+      let effectStr = '';
+      if (def && def.effect) {
+        if (def.effect.hp) effectStr = `HP +${def.effect.hp}`;
+        if (def.effect.hunger) effectStr = `饱食 +${def.effect.hunger}`;
+        if (def.effect.attack) effectStr = `攻击 +${def.effect.attack}`;
+        if (def.effect.affinity) effectStr = `好感 +${def.effect.affinity}`;
+      }
+      if (effectStr) {
+        itemContainer.add(this.add.text(8, 28, effectStr, {
+          fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#00ff88',
+        }));
+      }
+
+      // Description (truncated)
       if (def && def.description) {
-        itemContainer.add(this.add.text(8, 28, def.description, {
+        const desc = def.description.length > 30 ? def.description.substring(0, 30) + '...' : def.description;
+        itemContainer.add(this.add.text(8, 46, desc, {
           fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '10px', color: '#666688',
           wordWrap: { width: cellW - 16 },
         }));
+      }
+
+      // Use button for consumable items
+      if (isUsable) {
+        this.createItemUseButton(itemContainer, cellW - 50, cellH - 22, invItem, def);
+      }
+
+      // Special hint for old_photo
+      if (invItem.id === 'old_photo') {
+        this.createViewItemButton(itemContainer, cellW - 50, cellH - 22);
       }
     });
 
@@ -577,6 +605,125 @@ class RVScene extends Phaser.Scene {
     const totalHeight = gridOffsetY + totalRows * (cellH + gap);
     this.updateScrollHeight(parentContainer, totalHeight);
     this.addScrollIndicators(parentContainer);
+  }
+
+  createItemUseButton(parentContainer, x, y, invItem, def) {
+    const btnW = 44;
+    const btnH = 18;
+
+    const btnBg = this.add.graphics();
+    btnBg.fillStyle(0x0a2a2a, 1);
+    btnBg.fillRoundedRect(x, y, btnW, btnH, 3);
+    btnBg.lineStyle(1, 0x00c8ff, 0.5);
+    btnBg.strokeRoundedRect(x, y, btnW, btnH, 3);
+    parentContainer.add(btnBg);
+
+    const btnText = this.add.text(x + btnW / 2, y + btnH / 2, '使用', {
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#00c8ff',
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    parentContainer.add(btnText);
+
+    btnText.on('pointerover', () => {
+      btnBg.clear();
+      btnBg.fillStyle(0x0a3a3a, 1);
+      btnBg.fillRoundedRect(x, y, btnW, btnH, 3);
+      btnBg.lineStyle(1, 0x00c8ff, 1);
+      btnBg.strokeRoundedRect(x, y, btnW, btnH, 3);
+      btnText.setColor('#ffffff');
+    });
+
+    btnText.on('pointerout', () => {
+      btnBg.clear();
+      btnBg.fillStyle(0x0a2a2a, 1);
+      btnBg.fillRoundedRect(x, y, btnW, btnH, 3);
+      btnBg.lineStyle(1, 0x00c8ff, 0.5);
+      btnBg.strokeRoundedRect(x, y, btnW, btnH, 3);
+      btnText.setColor('#00c8ff');
+    });
+
+    btnText.on('pointerdown', () => { this.useItemFromInventory(invItem, def); });
+  }
+
+  createViewItemButton(parentContainer, x, y) {
+    const btnW = 44;
+    const btnH = 18;
+
+    const btnBg = this.add.graphics();
+    btnBg.fillStyle(0x1a1a2e, 1);
+    btnBg.fillRoundedRect(x, y, btnW, btnH, 3);
+    btnBg.lineStyle(1, 0x666688, 0.5);
+    btnBg.strokeRoundedRect(x, y, btnW, btnH, 3);
+    parentContainer.add(btnBg);
+
+    const btnText = this.add.text(x + btnW / 2, y + btnH / 2, '查看', {
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#8892b0',
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    parentContainer.add(btnText);
+
+    btnText.on('pointerover', () => {
+      btnBg.clear();
+      btnBg.fillStyle(0x16213e, 1);
+      btnBg.fillRoundedRect(x, y, btnW, btnH, 3);
+      btnBg.lineStyle(1, 0x8892b0, 0.8);
+      btnBg.strokeRoundedRect(x, y, btnW, btnH, 3);
+      btnText.setColor('#ccd6f6');
+    });
+
+    btnText.on('pointerout', () => {
+      btnBg.clear();
+      btnBg.fillStyle(0x1a1a2e, 1);
+      btnBg.fillRoundedRect(x, y, btnW, btnH, 3);
+      btnBg.lineStyle(1, 0x666688, 0.5);
+      btnBg.strokeRoundedRect(x, y, btnW, btnH, 3);
+      btnText.setColor('#8892b0');
+    });
+
+    btnText.on('pointerdown', () => {
+      const passedSafeZone = RVUpgrade.isNodeVisited(this.gameState.currentStoryNode, 'safe_zone');
+      if (passedSafeZone) {
+        this.showNotification('照片背面的字终于看清了——"雪盒，等我回来。"……这是什么意思？');
+      } else {
+        this.showNotification('照片背面模糊地写着几个字，但现在还看不清……也许到了安全区就能解开了。');
+      }
+    });
+  }
+
+  useItemFromInventory(invItem, def) {
+    if (def.effect.hp) {
+      const player = this.gameState.player;
+      const healed = Math.min(def.effect.hp, player.maxHp - player.hp);
+      if (healed <= 0) {
+        this.showNotification('HP已满！');
+        return;
+      }
+      player.hp = Math.min(player.maxHp, player.hp + def.effect.hp);
+      this.showNotification(`使用 ${def.name}，HP +${healed}`);
+    }
+    if (def.effect.hunger) {
+      this.gameState.player.hunger = Math.min(100, this.gameState.player.hunger + def.effect.hunger);
+      this.showNotification(`使用 ${def.name}，饱食 +${def.effect.hunger}`);
+    }
+    if (def.effect.affinity && def.effect.target) {
+      const npcId = def.effect.target;
+      if (this.gameState.npcs[npcId] && this.npcInstances[npcId]) {
+        const npc = this.npcInstances[npcId];
+        const result = npc.changeAffinity(def.effect.affinity);
+        this.gameState.npcs[npcId].affinity = npc.affinity;
+        this.showNotification(`给 ${npc.name} 使用 ${def.name}，好感 +${def.effect.affinity}`);
+      }
+    }
+
+    // Consume item
+    const idx = this.gameState.inventory.findIndex(i => i.id === invItem.id);
+    if (idx !== -1) {
+      this.gameState.inventory[idx].quantity -= 1;
+      if (this.gameState.inventory[idx].quantity <= 0) {
+        this.gameState.inventory.splice(idx, 1);
+      }
+    }
+
+    SaveLoad.save(this.gameState);
+    this.time.delayedCall(600, () => { this.renderTab('inventory'); });
   }
 
   // ============================================================
@@ -593,86 +740,124 @@ class RVScene extends Phaser.Scene {
 
     const contentContainer = this.createScrollableArea(parentContainer, scrollX, scrollY, scrollW, scrollH);
 
-    // --- Current RV stats row ---
+    // --- Current RV stats panel ---
     const statsContainer = this.add.container(0, 0);
     contentContainer.add(statsContainer);
 
     const statsBg = this.add.graphics();
     statsBg.fillStyle(0x12122a, 0.9);
-    statsBg.fillRoundedRect(0, 0, scrollW, 40, 6);
-    statsBg.lineStyle(1, 0x222244, 0.8);
-    statsBg.strokeRoundedRect(0, 0, scrollW, 40, 6);
+    statsBg.fillRoundedRect(0, 0, scrollW, 50, 6);
+    statsBg.lineStyle(1, 0x00c8ff, 0.3);
+    statsBg.strokeRoundedRect(0, 0, scrollW, 50, 6);
     statsContainer.add(statsBg);
 
     const rv = this.gameState.rv;
     const stats = [
-      { label: '耐久', value: `${rv.durability}/${rv.maxDurability}` },
-      { label: '容量', value: `${rv.capacity}` },
-      { label: '速度', value: `${rv.speed}` },
-      { label: '防御', value: `${rv.defense}` },
-      { label: '舒适', value: `${rv.comfort}` },
+      { icon: '🚐', label: '耐久', value: `${rv.durability}/${rv.maxDurability}` },
+      { icon: '📦', label: '容量', value: `${rv.capacity}` },
+      { icon: '⚡', label: '速度', value: `${rv.speed}` },
+      { icon: '🛡️', label: '防御', value: `${rv.defense}` },
+      { icon: '💤', label: '舒适', value: `${rv.comfort}` },
     ];
 
     const statSpacing = scrollW / (stats.length + 1);
     stats.forEach((stat, i) => {
       const sx = statSpacing * (i + 1);
-      statsContainer.add(this.add.text(sx, 12, `${stat.label}: ${stat.value}`, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px', color: '#8892b0',
+      statsContainer.add(this.add.text(sx, 14, `${stat.icon} ${stat.label}`, {
+        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#666688',
+      }).setOrigin(0.5));
+      statsContainer.add(this.add.text(sx, 30, `${stat.value}`, {
+        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px', color: '#ccd6f6', fontStyle: 'bold',
       }).setOrigin(0.5));
     });
 
+    // --- Section title ---
+    let yPos = 60;
+    contentContainer.add(this.add.text(4, yPos, '可升级项目', {
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px', color: '#8892b0',
+    }));
+    yPos += 24;
+
     // --- Upgrades list ---
-    let yPos = 52;
     const rvUpgrade = new RVUpgrade(this.gameState.rv);
     const upgrades = rvUpgrade.getUpgrades();
 
     upgrades.forEach(upgrade => {
-      const canAfford = this.canAffordUpgrade(upgrade.cost);
+      const isUnlocked = rvUpgrade.isUpgradeUnlocked(upgrade.id, this.gameState.currentStoryNode);
+      const canAfford = isUnlocked && this.canAffordUpgrade(upgrade.cost);
 
       const upgradeContainer = this.add.container(0, yPos);
       contentContainer.add(upgradeContainer);
 
-      const cardH = 100;
-      // Card background
+      const cardH = 88;
       const cardBg = this.add.graphics();
-      cardBg.fillStyle(0x12122a, 0.9);
-      cardBg.fillRoundedRect(0, 0, scrollW, cardH, 6);
-      cardBg.lineStyle(1, canAfford ? 0x00c8ff : 0x222244, canAfford ? 0.7 : 0.8);
-      cardBg.strokeRoundedRect(0, 0, scrollW, cardH, 6);
+
+      if (!isUnlocked) {
+        cardBg.fillStyle(0x0a0a18, 0.7);
+        cardBg.fillRoundedRect(0, 0, scrollW, cardH, 6);
+        cardBg.lineStyle(1, 0x1a1a2e, 0.5);
+        cardBg.strokeRoundedRect(0, 0, scrollW, cardH, 6);
+      } else {
+        cardBg.fillStyle(canAfford ? 0x121830 : 0x12122a, 0.9);
+        cardBg.fillRoundedRect(0, 0, scrollW, cardH, 6);
+        cardBg.lineStyle(1, canAfford ? 0x00c8ff : 0x222244, canAfford ? 0.6 : 0.8);
+        cardBg.strokeRoundedRect(0, 0, scrollW, cardH, 6);
+      }
       upgradeContainer.add(cardBg);
 
-      // Name (left side, top)
-      upgradeContainer.add(this.add.text(14, 10, upgrade.name, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '16px',
-        color: canAfford ? '#00c8ff' : '#ccd6f6', fontStyle: 'bold',
-      }));
+      if (!isUnlocked) {
+        // Locked state
+        upgradeContainer.add(this.add.text(14, 8, `\u{1F512} ${upgrade.name}`, {
+          fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '15px',
+          color: '#3a3a4a', fontStyle: 'bold',
+        }));
+        upgradeContainer.add(this.add.text(14, 30, `解锁条件: ${upgrade.unlockHint || '推进剧情'}`, {
+          fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px', color: '#2a2a3a',
+        }));
+        upgradeContainer.add(this.add.text(14, 52, upgrade.description, {
+          fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#2a2a3a',
+        }));
+      } else {
+        // Name
+        upgradeContainer.add(this.add.text(14, 8, upgrade.name, {
+          fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '15px',
+          color: canAfford ? '#00c8ff' : '#ccd6f6', fontStyle: 'bold',
+        }));
 
-      // Description (below name, left-aligned)
-      upgradeContainer.add(this.add.text(14, 34, upgrade.description, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px', color: '#8892b0',
-        wordWrap: { width: scrollW - 110 },
-      }));
+        // Description
+        upgradeContainer.add(this.add.text(14, 30, upgrade.description, {
+          fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px', color: '#8892b0',
+          wordWrap: { width: scrollW - 110 },
+        }));
 
-      // Cost items (bottom left)
-      const itemsData = this.cache.json.get('itemsData') || {};
-      const costArr = Object.entries(upgrade.cost).map(([itemId, qty]) => {
-        const def = itemsData[itemId];
-        return `${def ? def.name : itemId}x${qty}`;
-      });
-      const costStr = '需要: ' + costArr.join(' ');
-      upgradeContainer.add(this.add.text(14, 62, costStr, {
-        fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: '#666688',
-        wordWrap: { width: scrollW - 120 },
-      }));
+        // Cost items
+        const itemsData = this.cache.json.get('itemsData') || {};
+        const costArr = Object.entries(upgrade.cost).map(([itemId, qty]) => {
+          const def = itemsData[itemId];
+          const have = this.getItemCount(itemId);
+          const color = have >= qty ? '#00ff88' : '#e94560';
+          return { text: `${def ? def.name : itemId} ${have}/${qty}`, color };
+        });
+        const costStr = costArr.map(c => c.text).join('  ');
+        const costColor = canAfford ? '#00ff88' : '#e94560';
+        upgradeContainer.add(this.add.text(14, 52, `需要: ${costStr}`, {
+          fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px', color: costColor,
+        }));
 
-      // Upgrade button (right side, vertically centered)
-      this.createUpgradeButton(upgradeContainer, scrollW - 90, 36, upgrade, canAfford);
+        // Upgrade button
+        this.createUpgradeButton(upgradeContainer, scrollW - 90, 30, upgrade, canAfford);
+      }
 
       yPos += cardH + 8;
     });
 
     this.updateScrollHeight(parentContainer, yPos);
     this.addScrollIndicators(parentContainer);
+  }
+
+  getItemCount(itemId) {
+    const inv = this.gameState.inventory.find(i => i.id === itemId);
+    return inv ? inv.quantity : 0;
   }
 
   createUpgradeButton(parentContainer, x, y, upgrade, canAfford) {
@@ -691,15 +876,11 @@ class RVScene extends Phaser.Scene {
     const btnText = this.add.text(x + btnW / 2, y + btnH / 2, '升级', {
       fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px', color: textColor,
       fontStyle: 'bold',
-    }).setOrigin(0.5);
+    }).setOrigin(0.5).setInteractive({ useHandCursor: canAfford });
     parentContainer.add(btnText);
 
-    const hitArea = this.add.rectangle(x + btnW / 2, y + btnH / 2, btnW, btnH)
-      .setOrigin(0.5).setAlpha(0.001).setInteractive({ useHandCursor: canAfford });
-    parentContainer.add(hitArea);
-
     if (canAfford) {
-      hitArea.on('pointerover', () => {
+      btnText.on('pointerover', () => {
         btnBg.clear();
         btnBg.fillStyle(0x0a3a3a, 1);
         btnBg.fillRoundedRect(x, y, btnW, btnH, 4);
@@ -708,7 +889,7 @@ class RVScene extends Phaser.Scene {
         btnText.setColor('#ffffff');
       });
 
-      hitArea.on('pointerout', () => {
+      btnText.on('pointerout', () => {
         btnBg.clear();
         btnBg.fillStyle(0x0a2a2a, 1);
         btnBg.fillRoundedRect(x, y, btnW, btnH, 4);
@@ -717,7 +898,7 @@ class RVScene extends Phaser.Scene {
         btnText.setColor('#00c8ff');
       });
 
-      hitArea.on('pointerdown', () => { this.applyUpgrade(upgrade); });
+      btnText.on('pointerdown', () => { this.applyUpgrade(upgrade); });
     }
   }
 
@@ -730,6 +911,11 @@ class RVScene extends Phaser.Scene {
   }
 
   applyUpgrade(upgrade) {
+    const rvUpgrade = new RVUpgrade(this.gameState.rv);
+    if (!rvUpgrade.isUpgradeUnlocked(upgrade.id, this.gameState.currentStoryNode)) {
+      this.showNotification('该升级尚未解锁！');
+      return;
+    }
     if (!this.canAffordUpgrade(upgrade.cost)) return;
 
     // Consume materials
@@ -755,43 +941,7 @@ class RVScene extends Phaser.Scene {
   // ============================================================
   createBackButton() {
     const { width, height } = this.cameras.main;
-    const btnX = width / 2;
-    const btnY = height - 35;
-    const btnW = 160;
-    const btnH = 36;
-
-    const btnBg = this.add.graphics();
-    btnBg.fillStyle(0x1a1a2e, 1);
-    btnBg.fillRoundedRect(btnX - btnW / 2, btnY - btnH / 2, btnW, btnH, 6);
-    btnBg.lineStyle(1, 0x00c8ff, 0.5);
-    btnBg.strokeRoundedRect(btnX - btnW / 2, btnY - btnH / 2, btnW, btnH, 6);
-
-    const btnText = this.add.text(btnX, btnY, '返回地图', {
-      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '15px', color: '#ccd6f6',
-    }).setOrigin(0.5);
-
-    const hitArea = this.add.rectangle(btnX, btnY, btnW, btnH)
-      .setOrigin(0.5).setAlpha(0.001).setInteractive({ useHandCursor: true });
-
-    hitArea.on('pointerover', () => {
-      btnBg.clear();
-      btnBg.fillStyle(0x16213e, 1);
-      btnBg.fillRoundedRect(btnX - btnW / 2, btnY - btnH / 2, btnW, btnH, 6);
-      btnBg.lineStyle(1, 0x00c8ff, 0.9);
-      btnBg.strokeRoundedRect(btnX - btnW / 2, btnY - btnH / 2, btnW, btnH, 6);
-      btnText.setColor('#00c8ff');
-    });
-
-    hitArea.on('pointerout', () => {
-      btnBg.clear();
-      btnBg.fillStyle(0x1a1a2e, 1);
-      btnBg.fillRoundedRect(btnX - btnW / 2, btnY - btnH / 2, btnW, btnH, 6);
-      btnBg.lineStyle(1, 0x00c8ff, 0.5);
-      btnBg.strokeRoundedRect(btnX - btnW / 2, btnY - btnH / 2, btnW, btnH, 6);
-      btnText.setColor('#ccd6f6');
-    });
-
-    hitArea.on('pointerdown', () => {
+    UIHelper.createButton(this, width / 2, height - 35, 160, 36, '返回地图', { fontSize: '15px' }, () => {
       SaveLoad.save(this.gameState);
       this.scene.start('MapScene', { gameState: this.gameState });
     });
@@ -801,21 +951,6 @@ class RVScene extends Phaser.Scene {
   //  NOTIFICATION
   // ============================================================
   showNotification(message) {
-    if (!this.notificationText) return;
-    this.notificationText.setText(message);
-    this.notificationText.setAlpha(0);
-    this.tweens.add({
-      targets: this.notificationText,
-      alpha: 1,
-      y: 55,
-      duration: 300,
-      ease: 'Back.easeOut',
-      yoyo: true,
-      hold: 1500,
-      onComplete: () => {
-        this.notificationText.setAlpha(0);
-        this.notificationText.y = 50;
-      },
-    });
+    UIHelper.showToast(this, message, 'info');
   }
 }
