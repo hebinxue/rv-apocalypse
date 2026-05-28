@@ -128,6 +128,15 @@ class MapScene extends Phaser.Scene {
       });
     }
 
+    // --- 显示状态提示 ---
+    this.time.delayedCall(500, () => {
+      if (this.gameState.player.isSick) {
+        UIHelper.showToast(this, `你生病了！需要伙伴好感度≥80才能救治（第${this.gameState.player.sickDays}天）`, 'danger');
+      } else if (this.gameState.player.hunger < 30) {
+        UIHelper.showToast(this, '饱食度过低！记得进食，否则会生病', 'warning');
+      }
+    });
+
     // --- Fade in ---
     this.cameras.main.fadeIn(400, 0, 0, 0);
   }
@@ -154,8 +163,8 @@ class MapScene extends Phaser.Scene {
     const stats = [
       { icon: '🚐', label: '耐久', value: `${gs.rv.durability}/${gs.rv.maxDurability}`, ratio: gs.rv.durability / gs.rv.maxDurability, hasBar: true, color: '#66aacc' },
       { icon: '❤️', label: 'HP', value: `${gs.player.hp}/${gs.player.maxHp}`, ratio: gs.player.hp / gs.player.maxHp, hasBar: true, color: '#e94560' },
-      { icon: '🍖', label: '饱食', value: `${gs.player.hunger}`, ratio: gs.player.hunger / 100, hasBar: true, color: '#ccaa44' },
-      { icon: '🎒', label: '背包', value: `${gs.inventory.length}/${gs.rv.capacity}`, hasBar: false, color: UIHelper.COLORS.textSecondary },
+      { icon: '🍖', label: '饱食', value: `${gs.player.hunger}`, ratio: gs.player.hunger / 100, hasBar: true, color: gs.player.hunger < 30 ? '#ff4444' : '#ccaa44' },
+      { icon: gs.player.isSick ? '🤒' : '🎒', label: gs.player.isSick ? '生病中' : '背包', value: gs.player.isSick ? `第${gs.player.sickDays}天` : `${gs.inventory.length}/${gs.rv.capacity}`, hasBar: false, color: gs.player.isSick ? '#ff4444' : UIHelper.COLORS.textSecondary },
       { icon: '📅', label: `第${gs.day}天`, hasBar: false, color: UIHelper.COLORS.textSecondary },
     ];
 

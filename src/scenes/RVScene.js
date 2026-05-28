@@ -460,12 +460,20 @@ class RVScene extends Phaser.Scene {
     // Increase affinity (+5, +comfort bonus)
     const comfortBonus = Math.floor(this.gameState.rv.comfort / 3);
     const affinityGain = 5 + comfortBonus;
+    const oldAffinity = npc.affinity;
     const result = npc.changeAffinity(affinityGain);
 
     // Sync back to gameState
     this.gameState.npcs[npcId].affinity = npc.affinity;
 
     this.showNotification(`喂了 ${npc.name} ${foodName}，好感 +${affinityGain}`);
+
+    // 好感度达到80时的特殊提示
+    if (oldAffinity < 80 && npc.affinity >= 80) {
+      this.time.delayedCall(1000, () => {
+        this.showNotification(`${npc.name}的好感度达到80！当你生病时，TA会来救你`);
+      });
+    }
 
     // Warning if NPC about to leave
     if (result.event === 'warning') {
