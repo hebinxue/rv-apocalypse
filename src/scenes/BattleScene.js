@@ -20,6 +20,7 @@ class BattleScene extends Phaser.Scene {
     this.turnCount = 0;
     this.logMessages = [];
     this.playerDefending = false;
+    this._awakeningTriggered = false;
 
     // UI elements to clean up
     this._uiElements = [];
@@ -140,10 +141,12 @@ class BattleScene extends Phaser.Scene {
         const suffix = count > 1 ? `#${i + 1}` : '';
         this.enemies.push({
           id: zombieId + (count > 1 ? '_' + i : ''),
-          name: zombie.name + suffix, emoji: '🧟',
+          name: zombie.name + suffix, emoji: zombie.isBoss ? '👹' : '🧟',
           hp: zombie.hp, maxHp: zombie.maxHp,
           attack: zombie.attack, defense: zombie.defense,
-          speed: zombie.speed, isBoss: zombie.isBoss, zombieRef: zombie,
+          speed: zombie.speed, isBoss: zombie.isBoss,
+          isInvincible: zombie.isInvincible || false,
+          zombieRef: zombie,
         });
       }
     }
@@ -386,6 +389,11 @@ class BattleScene extends Phaser.Scene {
       return;
     }
 
+    // 检查boss清醒条件
+    if (this.checkBossAwakening()) {
+      return;
+    }
+
     const aliveAllies = this.allies.filter(a => a.hp > 0);
     const aliveEnemies = this.enemies.filter(e => e.hp > 0);
 
@@ -538,16 +546,26 @@ class BattleScene extends Phaser.Scene {
     this.showTargetSelection((target) => {
       const damage = this.calculateDamage(player.attack, target.defense);
       target.hp = Math.max(0, target.hp - damage);
-      const dead = target.hp <= 0;
-      this.addLog(`你 攻击了 ${target.name}，造成 ${damage} 点伤害！`);
+
+      // 检查boss是否应该被杀死（不可战胜的boss在清醒前不会死）
+      if (target.hp <= 0 && target.isBoss && target.zombieRef && target.zombieRef.isInvincible && !this._awakeningTriggered) {
+        target.hp = 1;
+        this.addLog(`你 攻击了 ${target.name}，造成 ${damage} 点伤害！`);
+        this.addLog(`${target.name} 似乎无法被杀死...`);
+      } else {
+        const dead = target.hp <= 0;
+        this.addLog(`你 攻击了 ${target.name}，造成 ${damage} 点伤害！`);
+        if (dead) {
+          this.addLog(`${target.name} 被消灭了！`);
+        }
+      }
+
       this.showSlashEffect(target._displayX, target._displayY, 0x00c8ff);
       this.showDamageNumber(target._displayX, target._displayY, damage);
       this.flashUnit();
       this.renderEnemies();
       this.renderAllies();
-      if (dead) {
-        this.addLog(`${target.name} 被消灭了！`);
-      }
+
       // Immediate victory check — don't wait for turn system
       if (this.enemies.filter(e => e.hp > 0).length === 0) {
         this.time.delayedCall(400, () => this.endBattle(true));
@@ -759,6 +777,25 @@ class BattleScene extends Phaser.Scene {
       const aliveEnemies = this.enemies.filter(e => e.hp > 0);
       if (aliveEnemies.length === 0 || aliveAllies.length === 0) break;
 
+      // 检查boss清醒条件
+      const player = this.allies.find(a => a.isPlayer);
+      if (player && player.hp > 0) {
+        const boss = this.enemies.find(e => e.isBoss && e.hp > 0 && e.zombieRef);
+        if (boss && boss.zombieRef && boss.zombieRef.awakening) {
+          const playerHpPercent = player.hp / player.maxHp;
+          if (playerHpPercent <= boss.zombieRef.awakening.playerHpThreshold) {
+            // 触发boss清醒，停止自动战斗
+            this._awakeningTriggered = true;
+            this.addLog(`${boss.name} 突然停止了攻击...`);
+            // 退出自动战斗，触发清醒对话
+            this.time.delayedCall(500, () => {
+              this.triggerBossAwakening(boss, boss.zombieRef.awakening);
+            });
+            return;
+          }
+        }
+      }
+
       // All allies attack random enemies (re-filter each iteration)
       for (const ally of aliveAllies) {
         const enemies = this.enemies.filter(e => e.hp > 0);
@@ -785,6 +822,12 @@ class BattleScene extends Phaser.Scene {
           damage = this.calculateDamage(ally.attack, target.defense);
         }
         target.hp = Math.max(0, target.hp - damage);
+
+        // 检查boss是否应该被杀死（不可战胜的boss在清醒前不会死）
+        if (target.hp <= 0 && target.isBoss && target.isInvincible && !this._awakeningTriggered) {
+          target.hp = 1;
+        }
+
         if (target.hp <= 0) {
           this.turnOrder = this.turnOrder.filter(t => t.unit !== target);
         }
@@ -800,6 +843,12 @@ class BattleScene extends Phaser.Scene {
           const damage = this.calculateDamage(combo.power, target.defense);
           target.hp = Math.max(0, target.hp - damage);
           this.addLog(`【${combo.name}】额外造成 ${damage} 点伤害！`);
+
+          // 检查boss是否应该被杀死
+          if (target.hp <= 0 && target.isBoss && target.isInvincible && !this._awakeningTriggered) {
+            target.hp = 1;
+          }
+
           if (target.hp <= 0) {
             this.turnOrder = this.turnOrder.filter(t => t.unit !== target);
           }
@@ -957,11 +1006,21 @@ class BattleScene extends Phaser.Scene {
     const target = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
     const damage = this.calculateDamage(ally.attack, target.defense);
     target.hp = Math.max(0, target.hp - damage);
-    const dead = target.hp <= 0;
-    this.addLog(`${ally.name} 攻击了 ${target.name}，造成 ${damage} 点伤害！`);
+
+    // 检查boss是否应该被杀死（不可战胜的boss在清醒前不会死）
+    if (target.hp <= 0 && target.isBoss && target.zombieRef && target.zombieRef.isInvincible && !this._awakeningTriggered) {
+      target.hp = 1;
+      this.addLog(`${ally.name} 攻击了 ${target.name}，造成 ${damage} 点伤害！`);
+      this.addLog(`${target.name} 似乎无法被杀死...`);
+    } else {
+      const dead = target.hp <= 0;
+      this.addLog(`${ally.name} 攻击了 ${target.name}，造成 ${damage} 点伤害！`);
+      if (dead) {
+        this.addLog(`${target.name} 被消灭了！`);
+      }
+    }
+
     this.showDamageNumber(target._displayX, target._displayY, damage);
-    if (dead) {
-      this.addLog(`${target.name} 被消灭了！`);
     }
     // Immediate victory check
     if (this.enemies.filter(e => e.hp > 0).length === 0) {
@@ -975,6 +1034,11 @@ class BattleScene extends Phaser.Scene {
   enemyAction(enemy) {
     if (this.battleOver) return;
     if (enemy.hp <= 0) { this.advanceTurn(); return; }
+
+    // 检查boss清醒条件
+    if (this.checkBossAwakening()) {
+      return;
+    }
 
     const zombie = enemy.zombieRef;
     if (zombie && zombie.isBoss && zombie.shouldSummon()) {
@@ -1135,6 +1199,109 @@ class BattleScene extends Phaser.Scene {
       targets: flash, alpha: 0, duration: 200,
       onComplete: () => flash.destroy(),
     });
+  }
+
+  // ============================================================
+  //  BOSS AWAKENING CHECK
+  // ============================================================
+  checkBossAwakening() {
+    if (this.battleOver || this._awakeningTriggered) return false;
+
+    const player = this.allies.find(a => a.isPlayer);
+    if (!player || player.hp <= 0) return false;
+
+    // 查找boss敌人
+    const boss = this.enemies.find(e => e.isBoss && e.hp > 0 && e.zombieRef);
+    if (!boss || !boss.zombieRef) return false;
+
+    const zombie = boss.zombieRef;
+    const awakening = zombie.awakening;
+    if (!awakening) return false;
+
+    // 检查玩家HP是否低于阈值
+    const playerHpPercent = player.hp / player.maxHp;
+    if (playerHpPercent <= awakening.playerHpThreshold) {
+      this._awakeningTriggered = true;
+      this.triggerBossAwakening(boss, awakening);
+      return true;
+    }
+
+    return false;
+  }
+
+  triggerBossAwakening(boss, awakening) {
+    this.battleOver = true;
+    this.clearUI();
+
+    // 停止所有战斗动作
+    this.addLog(`${boss.name} 突然停止了攻击...`);
+
+    // 显示boss清醒对话
+    this.time.delayedCall(1000, () => {
+      const dialogueSystem = new Dialogue(this);
+      dialogueSystem.show(awakening.dialogues, () => {
+        // 对话结束，给予奖励
+        this.giveAwakeningRewards(awakening);
+
+        // 显示结束信息
+        this.time.delayedCall(500, () => {
+          this.showAwakeningComplete(boss);
+        });
+      });
+    });
+  }
+
+  giveAwakeningRewards(awakening) {
+    if (!awakening.rewards) return;
+
+    const itemsData = this.cache.json.get('itemsData') || {};
+
+    awakening.rewards.forEach(reward => {
+      if (reward.itemId) {
+        const existing = this.gameState.inventory.find(i => i.id === reward.itemId);
+        if (existing) {
+          existing.quantity += (reward.amount || 1);
+        } else if (this.gameState.inventory.length < this.gameState.rv.capacity) {
+          this.gameState.inventory.push({ id: reward.itemId, quantity: reward.amount || 1 });
+        }
+        const itemDef = itemsData[reward.itemId];
+        const itemName = itemDef ? itemDef.name : reward.itemId;
+        this.addLog(`获得: ${itemName} x${reward.amount || 1}`);
+      }
+    });
+
+    SaveLoad.save(this.gameState);
+  }
+
+  showAwakeningComplete(boss) {
+    const { width, height } = this.cameras.main;
+
+    const overlay = this.add.graphics();
+    overlay.setDepth(100);
+    overlay.fillStyle(0x000000, 0.7);
+    overlay.fillRect(0, 0, width, height);
+
+    const panel = UIHelper.drawPanel(this, width / 2 - 200, height / 2 - 120, 400, 240, {
+      fillColor: UIHelper.COLORS.panelBg, fillAlpha: 0.95,
+      borderColor: UIHelper.COLORS.info, borderAlpha: 0.5, radius: 12,
+    });
+    panel.setDepth(101);
+
+    this.add.text(width / 2, height / 2 - 80, '战斗结束', {
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '28px',
+      color: '#38bdf8', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(102);
+
+    this.add.text(width / 2, height / 2 - 30, `${boss.name}恢复了理智，将真相告诉了你们`, {
+      fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '14px',
+      color: UIHelper.COLORS.textSecondary, align: 'center',
+    }).setOrigin(0.5).setDepth(102);
+
+    UIHelper.createButton(this, width / 2, height / 2 + 50, 140, 40, '继续', {}, () => {
+      this.clearUI();
+      if (this.onComplete) this.onComplete(this.gameState);
+      this.scene.start(this.returnScene, { gameState: this.gameState });
+    }).setDepth(102);
   }
 
   // ============================================================

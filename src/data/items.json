@@ -115,5 +115,23 @@
     "effect": {},
     "value": 0,
     "rarity": "legendary"
+  },
+  "oasis_key": {
+    "id": "oasis_key",
+    "name": "绿洲钥匙",
+    "type": "special",
+    "description": "刻着'绿洲'两个字的钥匙，据说可以打开西边安全区的大门。",
+    "effect": {},
+    "value": 0,
+    "rarity": "legendary"
+  },
+  "map_fragment": {
+    "id": "map_fragment",
+    "name": "地图碎片",
+    "type": "special",
+    "description": "标注着西边路线的地图碎片，上面标记着'绿洲'的位置。",
+    "effect": {},
+    "value": 0,
+    "rarity": "legendary"
   }
 }

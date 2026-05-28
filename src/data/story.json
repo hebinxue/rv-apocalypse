@@ -8,20 +8,98 @@
       "scene": "apartment",
       "sceneName": "公寓楼",
       "dialogues": [
-        { "speaker": "旁白", "text": "末日第七天。你躲在公寓楼的顶层，外面是无尽的丧尸嘶吼声。" },
-        { "speaker": "旁白", "text": "食物已经耗尽，水也只剩下最后一瓶。你必须做出选择——继续躲着等死，还是冲出去寻找生机。" },
-        { "speaker": "player", "text": "（看着窗外密密麻麻的丧尸）……不能再等了。" },
-        { "speaker": "旁白", "text": "你收拾好仅有的物资，推开门准备下楼。突然——" },
-        { "speaker": "旁白", "text": "一个男生从楼梯间冲了出来，手里拿着一根铁棍，身后还拖着一个背包。" },
-        { "speaker": "player", "text": "你是谁？！" },
-        { "speaker": "wangzai", "text": "别怕！我叫旺仔，我不是坏人！我在楼下发现了一辆车，跟我走！" },
-        { "speaker": "旁白", "text": "旺仔把你拉到地下车库，一辆破旧的房车停在那里，钥匙还插在车上。" },
-        { "speaker": "player", "text": "走吧，从现在起我们就是搭档了。" },
-        { "speaker": "wangzai", "text": "好！有我在，不会让你出事的！" }
+        { "speaker": "旁白", "text": "末日第七天。" },
+        { "speaker": "旁白", "text": "你躲在公寓楼的顶层，用衣柜和书桌堵住了门。窗外是灰蒙蒙的天，偶尔传来几声丧尸的嘶吼，像是什么东西在远处撕裂金属。" },
+        { "speaker": "旁白", "text": "桌上放着最后一瓶矿泉水，瓶身已经瘪了。旁边的罐头盒里残留着三天前的午餐肉味道。" },
+        { "speaker": "player", "text": "（看着窗外）第七天了……救援还会来吗？" },
+        { "speaker": "旁白", "text": "楼下传来玻璃碎裂的声音，紧接着是丧尸的嚎叫。你浑身一僵，屏住呼吸。" },
+        { "speaker": "旁白", "text": "声音渐渐远去。你松了口气，但心里清楚——这栋楼已经不安全了。食物耗尽，丧尸越来越多，再待下去只有死路一条。" },
+        { "speaker": "player", "text": "（攥紧拳头）……不能再等了。要么走出去，要么死在这里。" },
+        { "speaker": "旁白", "text": "你把最后半瓶水一饮而尽，捡起一根拖把棍，深吸一口气，推开了门。" },
+        { "speaker": "旁白", "text": "楼道里弥漫着腐臭味。你贴着墙，一步一步往下走。三楼的门敞开着，地上有干涸的血迹。" },
+        { "speaker": "旁白", "text": "走到二楼拐角时，你突然听到脚步声——从下面传来的，快速移动的脚步声。" },
+        { "speaker": "旁白", "text": "你本能地举起棍子，后背紧贴墙壁。心跳快得像要炸开。" },
+        { "speaker": "旁白", "text": "一个身影从楼梯间冲了出来——是个男生，看起来二十出头，满头大汗，手里攥着一根铁棍，背上斜挎着一个鼓鼓囊囊的背包。" },
+        { "speaker": "旁白", "text": "他看到你，先是一愣，然后猛地举起铁棍。" },
+        { "speaker": "player", "text": "别！我是活人！" },
+        { "speaker": "旁白", "text": "他停住了，喘着粗气，上下打量你。" },
+        { "speaker": "wangzai", "text": "……活人？（放下铁棍，擦了擦额头的汗）操，吓死我了。我还以为是丧尸。" },
+        { "speaker": "player", "text": "你是谁？怎么会在这里？" },
+        { "speaker": "wangzai", "text": "我叫旺仔，隔壁单元的。末日那天我刚好在家打游戏，听到外面不对劲就没敢出门。" },
+        { "speaker": "wangzai", "text": "撑了七天，吃的全没了。今天实在扛不住了，想出去碰碰运气。" },
+        { "speaker": "player", "text": "我也是……食物都吃完了。" },
+        { "speaker": "wangzai", "text": "（眼睛突然亮了）等等，你知不知道地下车库？我昨天从窗户看到——那里有一辆房车，车门是开着的！" },
+        { "speaker": "player", "text": "房车？你确定？" },
+        { "speaker": "wangzai", "text": "千真万确！我还看到车钥匙就插在上面。如果我们能冲到车库，就有车了！有车就能跑！" },
+        { "speaker": "旁白", "text": "你看着眼前这个素不相识的男生，犹豫了两秒。但在这个末日里，独自行动无异于送死。" },
+        { "speaker": "player", "text": "好。一起走。" },
+        { "speaker": "wangzai", "text": "（咧嘴一笑）够爽快！走，我带路！一楼有几只丧尸，我刚才绕过来的时候看到了。跟紧我！" },
+        { "speaker": "旁白", "text": "你们一前一后摸下楼梯。一楼大厅里，三只丧尸正在啃食一具尸体，发出令人作呕的咀嚼声。" },
+        { "speaker": "wangzai", "text": "（压低声音）从右边绕，别出声。" },
+        { "speaker": "旁白", "text": "你们屏住呼吸，贴着墙壁缓缓移动。一只丧尸突然抬起头，浑浊的眼球转向你们——" },
+        { "speaker": "wangzai", "text": "跑！！" },
+        { "speaker": "旁白", "text": "你们冲向地下车库入口，身后是丧尸的嘶吼和追赶的脚步声。" }
       ],
       "recruitNPCs": ["wangzai"],
+      "choices": [
+        {
+          "id": "search_pharmacy",
+          "text": "去一楼药店看看",
+          "next": "apartment_pharmacy",
+          "description": "旺仔说一楼有个小药店，可能有急救包"
+        },
+        {
+          "id": "skip_pharmacy",
+          "text": "直接去车库",
+          "next": "intro_battle",
+          "description": "太危险了，还是赶紧离开"
+        }
+      ],
+      "next": "intro_battle"
+    },
+    "apartment_pharmacy": {
+      "id": "apartment_pharmacy",
+      "scene": "apartment",
+      "sceneName": "公寓药店",
+      "dialogues": [
+        { "speaker": "wangzai", "text": "等等，一楼拐角有个小药店，我之前路过看到的。要不要去看看？" },
+        { "speaker": "player", "text": "药店？有急救包吗？" },
+        { "speaker": "wangzai", "text": "不确定，但总比没有强。" },
+        { "speaker": "旁白", "text": "你们悄悄摸到一楼拐角。药店的门半开着，里面一片漆黑。" },
+        { "speaker": "旁白", "text": "推开门，货架东倒西歪，地上散落着各种药品。柜台后面有一个金属急救箱。" },
+        { "speaker": "wangzai", "text": "看！那里有个急救箱！" },
+        { "speaker": "旁白", "text": "你打开急救箱——里面有两个完整的急救包，消毒液、纱布、止痛药一应俱全。" },
+        { "speaker": "player", "text": "太好了！这些在末日里比黄金还值钱。" },
+        { "speaker": "旁白", "text": "正准备离开时，药房深处传来低沉的呜咽声。两只丧尸从阴影中缓缓走出。" },
+        { "speaker": "wangzai", "text": "糟了……" },
+        { "speaker": "旁白", "text": "你们举起武器，准备迎战。但那两只丧尸却没有冲过来。" },
+        { "speaker": "旁白", "text": "它们站在原地，浑浊的眼睛盯着你们，身体在微微颤抖。穿着白大褂的那只缓缓举起手——不是攻击的姿势，更像是……害怕？" },
+        { "speaker": "wangzai", "text": "等等……它们好像在发抖？" },
+        { "speaker": "旁白", "text": "确实，那两只丧尸的身体在微微颤抖。它们后退了一步，然后又一步，最后转身跑进了药房深处，消失在黑暗中。" },
+        { "speaker": "player", "text": "（看着它们消失的方向）……算了，放过它们吧。它们没有攻击我们。" },
+        { "speaker": "wangzai", "text": "你这人心太软了。不过……我也不太想杀会害怕的东西。" },
+        { "speaker": "旁白", "text": "你们拿上急救包，悄悄离开了药店。" }
+      ],
+      "rewards": [
+        { "itemId": "first_aid_kit", "amount": 2 }
+      ],
+      "next": "intro_battle"
+    },
+    "intro_battle": {
+      "id": "intro_battle",
+      "scene": "apartment",
+      "sceneName": "公寓楼",
+      "dialogues": [
+        { "speaker": "旁白", "text": "你们回到楼梯口，准备前往地下车库。" },
+        { "speaker": "wangzai", "text": "走，车库就在下面。跟紧我！" },
+        { "speaker": "旁白", "text": "你们一前一后摸下楼梯。一楼大厅里，三只丧尸正在啃食一具尸体，发出令人作呕的咀嚼声。" },
+        { "speaker": "wangzai", "text": "（压低声音）从右边绕，别出声。" },
+        { "speaker": "旁白", "text": "你们屏住呼吸，贴着墙壁缓缓移动。一只丧尸突然抬起头，浑浊的眼球转向你们——" },
+        { "speaker": "wangzai", "text": "跑！！" },
+        { "speaker": "旁白", "text": "你们冲向地下车库入口，身后是丧尸的嘶吼和追赶的脚步声。" }
+      ],
       "forcedBattle": {
-        "description": "下楼时遭遇丧尸！",
+        "description": "逃离公寓楼！",
         "zombies": [
           { "type": "normal_zombie", "count": 2 }
         ]
@@ -33,18 +111,47 @@
       "scene": "gas_station",
       "sceneName": "加油站",
       "dialogues": [
-        { "speaker": "旁白", "text": "你开着从地下车库找到的房车，沿着公路行驶。油表指针已经快要到底了。" },
-        { "speaker": "player", "text": "前面有个加油站，希望能找到些汽油。" },
-        { "speaker": "旁白", "text": "加油站里一片狼藉，但你注意到角落里有两个人影。" },
-        { "speaker": "caoge", "text": "喂！别过来！再过来我就不客气了！" },
-        { "speaker": "player", "text": "我不是丧尸！我是活人！" },
-        { "speaker": "bingjie", "text": "……是活人。（冰姐放下手中的铁管）不过也快变成死人了，如果你再靠近的话。" },
-        { "speaker": "caoge", "text": "冰姐，别这么凶嘛。看他也是一脸倒霉相，估计跟我们差不多。" },
-        { "speaker": "bingjie", "text": "哼，又是一个拖后腿的。" },
-        { "speaker": "player", "text": "我有房车，可以带你们一起走。" },
-        { "speaker": "caoge", "text": "房车？！兄弟你太够意思了！走走走！" },
-        { "speaker": "bingjie", "text": "……随便。不过我可不会因为坐了你的车就对你客气。" },
-        { "speaker": "旁白", "text": "冰姐和草哥加入了你的队伍。加油站的储油罐还有一些汽油。" }
+        { "speaker": "旁白", "text": "你们跳上房车，旺仔猛踩油门，冲出了地下车库。" },
+        { "speaker": "旁白", "text": "阳光刺得你睁不开眼。七天了，你第一次看到外面的世界——街道上到处是废弃的车辆，远处有浓烟升起，空气中弥漫着焦糊和腐烂的味道。" },
+        { "speaker": "wangzai", "text": "往哪开？" },
+        { "speaker": "player", "text": "先离开城区。找个安全的地方，再想办法。" },
+        { "speaker": "旁白", "text": "房车沿着公路行驶了一个多小时。你们谁都没说话，只是默默看着窗外掠过的废墟。" },
+        { "speaker": "旁白", "text": "油表指针已经快到底了。" },
+        { "speaker": "wangzai", "text": "油不多了，得找个地方加油。" },
+        { "speaker": "旁白", "text": "前方出现了一个加油站。招牌歪歪斜斜，便利店的玻璃门碎了一半，但加油机看起来还算完好。" },
+        { "speaker": "player", "text": "停那里。小心点，可能有人。" },
+        { "speaker": "旁白", "text": "你们把房车停在加油机旁，小心翼翼地下了车。周围很安静，只有风吹过破损招牌的嘎吱声。" },
+        { "speaker": "旁白", "text": "你刚把手放在加油枪上，便利店方向突然传来一声金属撞击的巨响。" },
+        { "speaker": "旁白", "text": "你和旺仔同时举起武器，对准声音来源。" },
+        { "speaker": "旁白", "text": "便利店的门被踹开了。一个年轻男人跌跌撞撞地冲出来，手里握着一把生锈的菜刀，身后还跟着一个女人。" },
+        { "speaker": "旁白", "text": "那个男人看到你们，先是一愣，然后举起菜刀，挡在女人前面。" },
+        { "speaker": "caoge", "text": "别过来！" },
+        { "speaker": "player", "text": "我们不是丧尸！" },
+        { "speaker": "旁白", "text": "男人盯着你看了几秒，慢慢放下了刀。他身后的女人探出头来，冷冷地扫了你们一眼。" },
+        { "speaker": "caoge", "text": "（松了口气）操……吓死我了。我还以为又是那些东西。" },
+        { "speaker": "旁白", "text": "他擦了擦脸上的血——不知道是他的还是丧尸的——然后咧嘴笑了。" },
+        { "speaker": "caoge", "text": "我叫草哥。这是我……嗯，我姐，冰姐。" },
+        { "speaker": "bingjie", "text": "谁是你姐。（转向你们）我叫冰姐。别跟他一样叫我姐，听着烦。" },
+        { "speaker": "player", "text": "你们怎么会在这里？" },
+        { "speaker": "caoge", "text": "别提了。末日那天我在网吧打排位，打到一半突然停电了。出去一看，好家伙，整个街都是丧尸。" },
+        { "speaker": "caoge", "text": "我跑了三条街才甩掉它们，然后就遇到了冰姐。她当时一个人站在超市门口，特别冷静，我还以为她是NPC。" },
+        { "speaker": "bingjie", "text": "……闭嘴。" },
+        { "speaker": "caoge", "text": "后来我们就一直搭伙活着。找吃的、找地方躲，已经换了四五个据点了。" },
+        { "speaker": "caoge", "text": "今天本来想在加油站找点吃的，结果遇到一群丧尸。我们刚清理完，你们就来了。" },
+        { "speaker": "wangzai", "text": "你们清理了丧尸？就你们两个？" },
+        { "speaker": "caoge", "text": "（拍了拍菜刀）别小看我啊。我可是……曾经的网吧五杀王。" },
+        { "speaker": "bingjie", "text": "……白痴。那些丧尸是我引开的，他就负责在后面砍了几刀。" },
+        { "speaker": "caoge", "text": "冰姐你能不能给我留点面子！" },
+        { "speaker": "旁白", "text": "你看着这对奇怪的组合，忍不住笑了一下。末日里还能这样拌嘴的人，已经不多了。" },
+        { "speaker": "player", "text": "我们有房车。如果你们愿意，可以一起走。人多力量大。" },
+        { "speaker": "caoge", "text": "房车？！真的假的？！" },
+        { "speaker": "旁白", "text": "草哥跑到房车旁边，摸了摸车身，眼睛放光。" },
+        { "speaker": "caoge", "text": "卧槽！还是房车！有床有厨房！这比我们之前住的地方好一万倍！" },
+        { "speaker": "bingjie", "text": "（看了你一眼）……你确定？带上我们，你的物资消耗会更快。" },
+        { "speaker": "player", "text": "物资可以再找。但活着的人，死了就没了。" },
+        { "speaker": "bingjie", "text": "（沉默了一会儿）……随便你。不过我可不会因为坐了你的车就对你客气。" },
+        { "speaker": "caoge", "text": "冰姐你就是嘴硬！走走走，上车！" },
+        { "speaker": "旁白", "text": "就这样，你的队伍从两个人变成了四个人。加油站的储油罐还有一些汽油，你们把房车加满了油。" }
       ],
       "recruitNPCs": ["bingjie", "caoge"],
       "choices": [
@@ -61,21 +168,214 @@
       ],
       "next": "supermarket"
     },
+    "gas_station_explore": {
+      "id": "gas_station_explore",
+      "scene": "gas_station",
+      "sceneName": "加油站便利店",
+      "dialogues": [
+        { "speaker": "旁白", "text": "你推开便利店残破的玻璃门，货架东倒西歪，地上散落着零食包装袋和碎玻璃。" },
+        { "speaker": "caoge", "text": "我来翻这边！你们去那边！" },
+        { "speaker": "bingjie", "text": "别大喊大叫，万一还有丧尸呢。" },
+        { "speaker": "旁白", "text": "你们分头搜索。在货架后面，你发现了一些被压在倒塌架子下面的食物——几包方便面和两瓶矿泉水，包装还算完好。" },
+        { "speaker": "wangzai", "text": "这里还有！角落里有一箱没开封的水！" },
+        { "speaker": "player", "text": "都带上，不知道下次什么时候能补给了。" }
+      ],
+      "rewards": [
+        { "itemId": "instant_noodles", "amount": 2 },
+        { "itemId": "water", "amount": 2 }
+      ],
+      "next": "gas_station_rescue"
+    },
+    "gas_station_rescue": {
+      "id": "gas_station_rescue",
+      "scene": "gas_station",
+      "sceneName": "加油站外",
+      "dialogues": [
+        { "speaker": "旁白", "text": "你们把物资搬上车，正准备发动引擎离开。" },
+        { "speaker": "旁白", "text": "旺仔突然指着前方。" },
+        { "speaker": "wangzai", "text": "你们看……那边是不是有人？" },
+        { "speaker": "旁白", "text": "公路尽头，两个人影正朝加油站走来。其中一个摇摇晃晃，像是受了伤，另一个人搀扶着他，边走边朝你们挥手。" },
+        { "speaker": "旁白", "text": "远远地能听到喊声——『求求你们，救救我们！』" },
+        { "speaker": "wangzai", "text": "他们受伤了……我们要不要帮忙？" },
+        { "speaker": "bingjie", "text": "等等。（眯起眼睛）你们看那个人的走路姿势——不对劲。" },
+        { "speaker": "caoge", "text": "怎么了？" },
+        { "speaker": "bingjie", "text": "受了重伤的人，不可能走得那么稳。而且……你们看'受伤'那个人的手，颜色不对。" },
+        { "speaker": "旁白", "text": "你仔细看去——那个人的皮肤确实泛着不正常的灰青色，和丧尸一模一样。" },
+        { "speaker": "bingjie", "text": "是伪装的。末日里有些丧尸会模仿人类的动作，引诱活人靠近。我之前就遇到过一次。" },
+        { "speaker": "caoge", "text": "那怎么办？装没看见？" }
+      ],
+      "choices": [
+        {
+          "id": "rescue_save",
+          "text": "停车救人",
+          "next": "gas_station_trap",
+          "description": "也许冰姐看错了？万一真的是受伤的人呢"
+        },
+        {
+          "id": "rescue_ignore",
+          "text": "听冰姐的，假装没看见",
+          "next": "gas_station_engine",
+          "description": "冰姐的经验应该不会错"
+        },
+        {
+          "id": "rescue_observe",
+          "text": "先观察一下再做决定",
+          "next": "gas_station_engine",
+          "description": "谨慎行事"
+        }
+      ],
+      "next": "gas_station_engine"
+    },
+    "gas_station_trap": {
+      "id": "gas_station_trap",
+      "scene": "gas_station",
+      "sceneName": "加油站外",
+      "dialogues": [
+        { "speaker": "player", "text": "停车！万一是真的呢？我们不能见死不救。" },
+        { "speaker": "bingjie", "text": "你——" },
+        { "speaker": "旁白", "text": "你跳下车，朝那两个人跑去。" },
+        { "speaker": "旁白", "text": "『受伤』的人听到脚步声，缓缓抬起头。你看到他的脸——半边已经腐烂，露出森森白骨，嘴角咧到耳根，发出低沉的嘶嘶声。" },
+        { "speaker": "旁白", "text": "是陷阱。" },
+        { "speaker": "旁白", "text": "那个『求救』的人也松开了手——他的眼睛是浑浊的白色，指甲又长又尖。两只伪装丧尸同时朝你扑来！" },
+        { "speaker": "caoge", "text": "小心！！" },
+        { "speaker": "旁白", "text": "你被扑倒在地，丧尸的牙齿狠狠咬进了你的肩膀。你感到一阵剧痛，温热的血顺着胳膊流下来。" },
+        { "speaker": "player", "text": "呃啊！！" },
+        { "speaker": "旁白", "text": "旺仔和草哥冲过来把丧尸拉开，但更多的丧尸从路边的草丛里涌出——这是一个完整的伏击圈套。" },
+        { "speaker": "旁白", "text": "你咬着牙站起来，肩膀上的伤口火辣辣地疼。但你没时间管了——它们围上来了。" }
+      ],
+      "forcedBattle": {
+        "description": "带伤迎战伪装丧尸！",
+        "gameOver": true,
+        "zombies": [
+          { "type": "normal_zombie", "count": 3 }
+        ]
+      },
+      "next": "gas_station_engine"
+    },
+    "gas_station_engine": {
+      "id": "gas_station_engine",
+      "scene": "highway",
+      "sceneName": "公路上",
+      "dialogues": [
+        { "speaker": "旁白", "text": "你们继续上路。房车在空旷的公路上行驶，两旁是荒芜的田野和废弃的农舍。" },
+        { "speaker": "旁白", "text": "草哥在后座翻找着什么，冰姐靠在窗边闭目养神，旺仔握着方向盘，眼睛盯着前方。" },
+        { "speaker": "旁白", "text": "突然，引擎发出一阵刺耳的异响，车身剧烈抖动了一下。仪表盘上的温度指针猛地窜到红色区域。" },
+        { "speaker": "旁白", "text": "白烟从引擎盖缝隙里冒了出来。" },
+        { "speaker": "wangzai", "text": "怎么回事？！" },
+        { "speaker": "旁白", "text": "房车慢慢停在了路中间。旺仔试着重新打火，只听到咔咔咔的空转声。" },
+        { "speaker": "player", "text": "该死，引擎出问题了。" },
+        { "speaker": "caoge", "text": "怎么办？这前不着村后不着店的……" },
+        { "speaker": "bingjie", "text": "冷静。（下车打开引擎盖）让我看看。" },
+        { "speaker": "旁白", "text": "冰姐检查了一会儿，皱起了眉头。" },
+        { "speaker": "bingjie", "text": "有几个关键零件坏了。如果能找到替换件，应该能修好。但如果硬修，可能会让情况更糟。" },
+        { "speaker": "caoge", "text": "附近好像有几辆废弃的车，要不去翻翻？" },
+        { "speaker": "bingjie", "text": "也可以。或者……（看了看远处）步行的话，天黑前应该能走到下一个镇子。但没有车的保护，很危险。" }
+      ],
+      "choices": [
+        {
+          "id": "engine_fix",
+          "text": "自己动手修理",
+          "next": "gas_station_fix_self",
+          "description": "试试看能不能修好"
+        },
+        {
+          "id": "engine_search",
+          "text": "在附近废弃车辆里找零件",
+          "next": "gas_station_search_parts",
+          "description": "翻翻看有没有能用的"
+        },
+        {
+          "id": "engine_walk",
+          "text": "步行前进",
+          "next": "gas_station_walk",
+          "description": "放弃房车，徒步前往下一个镇子"
+        }
+      ],
+      "next": "gas_station_search_parts"
+    },
+    "gas_station_fix_self": {
+      "id": "gas_station_fix_self",
+      "scene": "highway",
+      "sceneName": "公路上",
+      "dialogues": [
+        { "speaker": "player", "text": "我来试试修一下。" },
+        { "speaker": "旁白", "text": "你打开引擎盖，对照着冰姐指出的位置检查。确实有几个零件松动了，但需要螺丝来固定。" },
+        { "speaker": "bingjie", "text": "你确定你会修？别越修越坏。" },
+        { "speaker": "player", "text": "让我试试。" }
+      ],
+      "requireItem": { "itemId": "screws", "amount": 2 },
+      "consumeItem": { "itemId": "screws", "amount": 2 },
+      "failDialogue": [
+        { "speaker": "旁白", "text": "你翻遍了工具箱，发现螺丝不够。硬修的话可能会让情况更糟。" },
+        { "speaker": "bingjie", "text": "别逞强了。没有零件，光靠蛮力是修不好的。我们还是在附近找找吧。" }
+      ],
+      "next": "gas_station_search_parts"
+    },
+    "gas_station_search_parts": {
+      "id": "gas_station_search_parts",
+      "scene": "highway",
+      "sceneName": "废弃车辆旁",
+      "dialogues": [
+        { "speaker": "旁白", "text": "你们在附近的一辆废弃汽车里翻找。草哥钻进车底，旺仔撬开后备箱，冰姐在驾驶室里翻找工具箱。" },
+        { "speaker": "caoge", "text": "找到了！这个螺丝看起来能用！" },
+        { "speaker": "wangzai", "text": "后备箱里还有一卷铁丝和几根钢管。" },
+        { "speaker": "bingjie", "text": "够了。这些东西应该能修好。" },
+        { "speaker": "旁白", "text": "你们回到房车旁。冰姐指挥，你和旺仔动手，草哥在旁边递工具。经过半个多小时的修理，引擎终于恢复了运转。" },
+        { "speaker": "caoge", "text": "冰姐你也太厉害了吧？你以前是不是修车的？" },
+        { "speaker": "bingjie", "text": "……我以前是机械工程师。" },
+        { "speaker": "caoge", "text": "怪不得！" },
+        { "speaker": "player", "text": "走吧，天快黑了。" }
+      ],
+      "rewards": [
+        { "itemId": "scrap_metal", "amount": 2 },
+        { "itemId": "screws", "amount": 3 }
+      ],
+      "next": "supermarket"
+    },
+    "gas_station_walk": {
+      "id": "gas_station_walk",
+      "scene": "highway",
+      "sceneName": "荒废公路",
+      "dialogues": [
+        { "speaker": "player", "text": "车修不了了。我们步行吧，天黑前应该能走到下一个镇子。" },
+        { "speaker": "bingjie", "text": "你确定？没有车的保护——" },
+        { "speaker": "player", "text": "没有别的选择了。走吧。" },
+        { "speaker": "旁白", "text": "你们背上背包，沿着公路步行。太阳渐渐西沉，你们的影子被拉得很长。" },
+        { "speaker": "旁白", "text": "走了大约一个小时，天色越来越暗。周围的气氛变得诡异起来——太安静了，连虫鸣声都消失了。" },
+        { "speaker": "wangzai", "text": "（压低声音）你们有没有觉得……周围太安静了？" },
+        { "speaker": "旁白", "text": "话音未落，公路两侧的草丛突然剧烈晃动。一个、两个、五个……十几个身影从黑暗中涌出，朝你们包围过来。" },
+        { "speaker": "旁白", "text": "是丧尸群。密密麻麻，根本数不清有多少。" },
+        { "speaker": "caoge", "text": "跑！！往回跑！！" },
+        { "speaker": "旁白", "text": "但你们已经被包围了。退路也被封死了。" },
+        { "speaker": "bingjie", "text": "该死……太多了。" },
+        { "speaker": "旁白", "text": "丧尸群像潮水一样涌来。你们拼命反抗，但数量差距太大了。" },
+        { "speaker": "旁白", "text": "你最后看到的，是旺仔挡在你前面的背影，和他手中挥舞的铁棍。" },
+        { "speaker": "旁白", "text": "然后，一切都陷入了黑暗。" }
+      ],
+      "gameOver": "你们在荒废公路上被丧尸群吞噬了……\n没有车的庇护，步行穿越末日公路无异于自杀。"
+    },
     "supermarket": {
       "id": "supermarket",
       "scene": "supermarket",
       "sceneName": "废弃超市",
       "dialogues": [
-        { "speaker": "旁白", "text": "房车沿着公路行驶，你远远看到了一家大型超市。" },
-        { "speaker": "caoge", "text": "超市！里面肯定有吃的！冲！" },
-        { "speaker": "bingjie", "text": "白痴，超市是丧尸聚集最多的地方之一。" },
-        { "speaker": "player", "text": "冰姐说得对，但我们确实需要物资。大家小心点。" },
-        { "speaker": "旁白", "text": "你们小心翼翼地进入超市。货架东倒西歪，地上散落着各种商品。" },
-        { "speaker": "wangzai", "text": "（旺仔突然压低身体，发出低沉的呜咽声）呜……" },
-        { "speaker": "player", "text": "旺仔发现了什么……大家戒备！" },
-        { "speaker": "旁白", "text": "从超市深处传来密集的脚步声——一大波丧尸正在涌来！" },
-        { "speaker": "caoge", "text": "来啊！今天就让你们见识见识草の意志！" },
-        { "speaker": "bingjie", "text": "……白痴。不过这次我同意，打吧。" }
+        { "speaker": "旁白", "text": "房车沿着公路继续行驶。天色渐暗，你们需要找一个地方过夜。" },
+        { "speaker": "旁白", "text": "前方出现了一家大型超市。招牌歪歪斜斜，但建筑结构还算完整。" },
+        { "speaker": "caoge", "text": "超市！里面肯定有吃的！" },
+        { "speaker": "bingjie", "text": "白痴，超市是丧尸聚集最多的地方之一。人多的地方，丧尸就多。" },
+        { "speaker": "player", "text": "冰姐说得对。但我们的物资确实不多了，而且需要一个能过夜的地方。" },
+        { "speaker": "wangzai", "text": "要不……我先进去探探路？" },
+        { "speaker": "player", "text": "不，一起进去。互相照应。" },
+        { "speaker": "旁白", "text": "你们小心翼翼地推开超市大门。里面一片漆黑，只有应急灯发出微弱的红光。" },
+        { "speaker": "旁白", "text": "货架东倒西歪，地上散落着各种商品。空气中弥漫着腐烂食物的味道。" },
+        { "speaker": "旁白", "text": "你们蹑手蹑脚地往里走。旺仔突然停住了，拽了一下你的袖子，用几乎听不见的声音说——" },
+        { "speaker": "wangzai", "text": "（颤抖）别动……那边有东西在动……" },
+        { "speaker": "player", "text": "（压低声音）大家戒备。" },
+        { "speaker": "旁白", "text": "从超市深处传来密集的脚步声——不是一两个，而是一大群。" },
+        { "speaker": "旁白", "text": "黑暗中，无数双泛着红光的眼睛亮了起来。" },
+        { "speaker": "caoge", "text": "卧槽……这也太多了吧？" },
+        { "speaker": "bingjie", "text": "准备战斗。别让它们包围我们。" },
+        { "speaker": "player", "text": "所有人背靠背！不要分散！" }
       ],
       "forcedBattle": {
         "description": "超市丧尸围攻！",
@@ -92,30 +392,93 @@
       "scene": "apartment",
       "sceneName": "居民楼",
       "dialogues": [
-        { "speaker": "旁白", "text": "超市一战后，你们带着物资继续前进。傍晚时分，你们在一栋居民楼前停下休息。" },
-        { "speaker": "player", "text": "今晚就在这里过夜吧。大家轮流守夜。" },
-        { "speaker": "旁白", "text": "深夜，你被一阵微弱的敲击声惊醒。" },
-        { "speaker": "旁白", "text": "隔壁房间里，一个中年男人正用椅子顶着门，外面是丧尸的抓挠声。" },
-        { "speaker": "laojing", "text": "请帮帮我……我一个人实在撑不住了。" },
-        { "speaker": "player", "text": "冰姐、草哥，帮忙清理门口的丧尸！" },
-        { "speaker": "旁白", "text": "你们合力清理了丧尸，救出了这个中年男人。" },
-        { "speaker": "laojing", "text": "谢谢你们。我叫老晶，以前是大学教授。末日后一直躲在这里。" },
-        { "speaker": "bingjie", "text": "教授？在这种世道有什么用？" },
-        { "speaker": "laojing", "text": "也许没有用。但我知道一些关于这场灾难的信息——它不是天灾，是人祸。" },
-        { "speaker": "player", "text": "什么意思？" },
-        { "speaker": "laojing", "text": "医院。市立医院的地下实验室。那里是这一切的源头。如果想结束这场灾难，我们必须去那里。" },
-        { "speaker": "caoge", "text": "医院？那不就是丧尸窝？太刺激了！" },
-        { "speaker": "laojing", "text": "请让我加入你们。我知道怎么进去。" }
+        { "speaker": "旁白", "text": "超市一战后，你们带着搜刮到的物资继续前进。" },
+        { "speaker": "旁白", "text": "天已经完全黑了。房车的车灯在黑暗中划出两道光柱，照着空无一人的公路。" },
+        { "speaker": "旁白", "text": "傍晚时分，你们在一栋居民楼前停下。楼里一片漆黑，看起来已经被遗弃了。" },
+        { "speaker": "player", "text": "今晚就在这里过夜吧。轮流守夜，别睡太死。" },
+        { "speaker": "caoge", "text": "我先守前半夜！你们睡吧。" },
+        { "speaker": "bingjie", "text": "你守夜？你怕不是第一个睡着的。" },
+        { "speaker": "caoge", "text": "冰姐你也太看不起我了！" },
+        { "speaker": "旁白", "text": "你们在二楼找了一间还算完整的房间，用家具堵住门，轮流休息。" },
+        { "speaker": "旁白", "text": "深夜。你被一阵微弱的声音惊醒——不是丧尸的嘶吼，而是敲击声。很有节奏的敲击声。" },
+        { "speaker": "旁白", "text": "笃、笃笃、笃。像是在敲墙。" },
+        { "speaker": "旁白", "text": "你竖起耳朵听了一会儿。声音是从隔壁传来的。" },
+        { "speaker": "player", "text": "（推醒旺仔）你听到了吗？" },
+        { "speaker": "wangzai", "text": "（揉眼睛）嗯……好像是敲墙的声音？" },
+        { "speaker": "旁白", "text": "你们对视了一眼。在这个末日里，能发出有节奏敲击声的，只有活人。" },
+        { "speaker": "旁白", "text": "你蹑手蹑脚地走到隔壁房间门口。门是从里面反锁的，但门板已经被丧尸抓得千疮百孔。" },
+        { "speaker": "旁白", "text": "你透过门上的裂缝往里看——一个年轻女人正用椅子顶着门，手里握着一把美工刀。她看起来很疲惫，但眼神很冷静。" },
+        { "speaker": "旁白", "text": "门外，两只丧尸正在抓挠门板。它们听到你的脚步声，转过头来。" },
+        { "speaker": "player", "text": "冰姐、草哥！这里有丧尸！" },
+        { "speaker": "旁白", "text": "你们合力清理了那两只丧尸。门里的女人听到动静，犹豫了一会儿，才把门打开。" },
+        { "speaker": "旁白", "text": "她站在门口，打量着你们。大约二十七八岁，戴着一副细框眼镜，穿着一件沾满灰尘的白衬衫。看起来像是科研人员。" },
+        { "speaker": "laojing", "text": "……谢谢你们。" },
+        { "speaker": "player", "text": "你一个人？" },
+        { "speaker": "laojing", "text": "是。末日那天我在实验室加班，听到外面不对劲就躲了起来。一直躲到现在。" },
+        { "speaker": "caoge", "text": "一个人活了七天？你也太猛了吧？" },
+        { "speaker": "laojing", "text": "（淡淡地）习惯了。做科研的人，耐得住寂寞。" },
+        { "speaker": "bingjie", "text": "你说的实验室……是哪里的？" },
+        { "speaker": "laojing", "text": "市立医院。地下二层的生物工程实验室。" },
+        { "speaker": "旁白", "text": "冰姐和你对视了一眼。" },
+        { "speaker": "player", "text": "你知道这场灾难是怎么回事吗？" },
+        { "speaker": "laojing", "text": "（沉默了一会儿）……知道。" },
+        { "speaker": "laojing", "text": "这不是天灾。是人祸。" },
+        { "speaker": "laojing", "text": "市立医院的地下实验室，一直在进行非法的基因改造实验。他们想制造出超级士兵，但实验失控了——病毒泄露，感染了整座城市。" },
+        { "speaker": "wangzai", "text": "你怎么知道这些？" },
+        { "speaker": "laojing", "text": "因为……我就是那个实验室的研究员。" },
+        { "speaker": "旁白", "text": "空气凝固了几秒。" },
+        { "speaker": "caoge", "text": "等等……你是说，这场丧尸末日是你们搞出来的？！" },
+        { "speaker": "laojing", "text": "是。但不是我一个人的决定。我只是执行者，不是决策者。" },
+        { "speaker": "laojing", "text": "病毒泄露后，实验室的高层都跑了。他们带走了核心数据，留下我们这些底层研究员等死。" },
+        { "speaker": "laojing", "text": "但我知道怎么进去。实验室的备用服务器里还有完整的病毒数据——包括基因序列和可能的解药配方。" },
+        { "speaker": "player", "text": "你是说……有解药？" },
+        { "speaker": "laojing", "text": "理论上是有的。但需要拿到数据，交给有能力的科研团队来研制。" },
+        { "speaker": "laojing", "text": "请让我加入你们。我知道实验室的布局，知道怎么避开丧尸密集区域。没有我，你们进不去。" }
       ],
-      "recruitNPCs": ["laojing"],
       "choices": [
         {
           "id": "accept_laojing",
           "text": "接受老晶加入",
-          "next": "hospital"
+          "next": "hospital",
+          "result": {
+            "recruitNPCs": ["laojing"]
+          }
+        },
+        {
+          "id": "reject_laojing",
+          "text": "我们不需要累赘",
+          "next": "laojing_rejected",
+          "description": "拒绝老晶加入队伍"
         }
       ],
       "next": "hospital"
+    },
+    "laojing_rejected": {
+      "id": "laojing_rejected",
+      "scene": "apartment",
+      "sceneName": "居民楼",
+      "dialogues": [
+        { "speaker": "player", "text": "不好意思，我们自己的物资都不够，没办法再带一个人了。" },
+        { "speaker": "laojing", "text": "……是吗。" },
+        { "speaker": "旁白", "text": "老晶沉默了。她的表情没什么变化，但你注意到她的手指微微颤抖了一下。" },
+        { "speaker": "laojing", "text": "我理解。末日里，每个人都自顾不暇。" },
+        { "speaker": "旁白", "text": "她低下头，沉默了很久。" },
+        { "speaker": "laojing", "text": "那……让我最后帮你们做一件事吧。我去烧点热水，你们路上喝。" },
+        { "speaker": "caoge", "text": "哎，这姐姐还挺好的嘛。" },
+        { "speaker": "bingjie", "text": "……随你便。" },
+        { "speaker": "旁白", "text": "老晶转身走进了厨房。你没有注意到，她背对你们时，嘴角浮起一丝诡异的微笑。" },
+        { "speaker": "旁白", "text": "她从口袋里掏出一个小瓶子，将里面的液体无声地倒进了你们的水壶。" },
+        { "speaker": "laojing", "text": "（低声自语）不要我……那就谁也别想活。" },
+        { "speaker": "旁白", "text": "第二天清晨，你们醒来后喝了水壶里的水，准备出发。" },
+        { "speaker": "旁白", "text": "半小时后，旺仔突然捂住肚子，脸色发青。" },
+        { "speaker": "wangzai", "text": "肚子……好痛……怎么回事……" },
+        { "speaker": "旁白", "text": "紧接着，冰姐和草哥也相继倒下，口吐白沫。" },
+        { "speaker": "bingjie", "text": "水……水里有毒……" },
+        { "speaker": "旁白", "text": "你感觉五脏六腑像被火烧一样，视线开始模糊。最后看到的，是老晶站在门口的身影。" },
+        { "speaker": "laojing", "text": "末日里，没有人可以拒绝我。没有人。" },
+        { "speaker": "旁白", "text": "你们四个人的意识逐渐消散，再也没有醒来。" }
+      ],
+      "gameOver": "你们被老晶毒杀了……\n末日之中，一个被拒绝的求救者，比丧尸更加致命。"
     },
     "hospital": {
       "id": "hospital",
@@ -123,21 +486,32 @@
       "sceneName": "市立医院",
       "dialogues": [
         { "speaker": "旁白", "text": "市立医院。曾经救死扶伤的地方，如今变成了丧尸的巢穴。" },
-        { "speaker": "laojing", "text": "地下实验室在B栋负二层。我们需要穿过门诊大厅。" },
+        { "speaker": "旁白", "text": "你们站在医院大门前。玻璃门早已碎裂，大厅里一片漆黑，偶尔传来几声丧尸的嘶吼。" },
+        { "speaker": "laojing", "text": "地下实验室在B栋负二层。我们需要穿过门诊大厅，从后面的电梯井下去。" },
         { "speaker": "bingjie", "text": "门诊大厅……那里丧尸最多。" },
-        { "speaker": "caoge", "text": "怕什么！有我在！" },
-        { "speaker": "wangzai", "text": "说得对！（旺仔也表示赞同）" },
-        { "speaker": "player", "text": "大家准备好。这次可能是一场硬仗。" },
-        { "speaker": "旁白", "text": "你们推开医院大门，迎面而来的是浓烈的腐臭味和无尽的黑暗。" },
-        { "speaker": "旁白", "text": "大厅深处，一个巨大的身影缓缓站起——" },
-        { "speaker": "旁白", "text": "那是一个身高超过两米的丧尸，全身布满黑色的血管，双眼泛着红光。" },
-        { "speaker": "laojing", "text": "这就是……丧尸之王。实验体零号。" },
+        { "speaker": "laojing", "text": "我知道一条备用通道。从药房后面的安全楼梯可以直接下到地下一层，绕过大厅。" },
+        { "speaker": "caoge", "text": "那还等什么？冲！" },
+        { "speaker": "bingjie", "text": "白痴，先侦察一下再行动。" },
+        { "speaker": "player", "text": "冰姐说得对。老晶，你带路。其他人跟紧，保持安静。" },
+        { "speaker": "旁白", "text": "你们跟着老晶，从侧面的消防通道进入了医院。走廊里弥漫着浓烈的消毒水和腐烂混合的气味。" },
+        { "speaker": "旁白", "text": "老晶对这里了如指掌。她带着你们避开了丧尸密集的区域，穿过药房，来到了安全楼梯口。" },
+        { "speaker": "旁白", "text": "下到地下一层时，你们看到了一扇厚重的金属门。门上贴着『生物安全等级4——授权人员专用』的标签。" },
+        { "speaker": "laojing", "text": "就是这里。穿过这扇门，就是实验室的外围区域。" },
+        { "speaker": "旁白", "text": "老晶刷了门禁卡，金属门缓缓打开。一股冰冷的空气扑面而来。" },
+        { "speaker": "旁白", "text": "实验室的走廊里，灯光忽明忽暗。墙壁上布满了抓痕和干涸的血迹。" },
+        { "speaker": "旁白", "text": "走廊尽头，一个巨大的身影缓缓站起——" },
+        { "speaker": "旁白", "text": "那是一个身高超过两米的丧尸，全身布满黑色的血管，双眼泛着红光。它的体型是普通丧尸的两倍，肌肉扭曲隆起，像是被什么东西强行改造过。" },
+        { "speaker": "laojing", "text": "这就是……实验体零号。丧尸之王。" },
+        { "speaker": "laojing", "text": "它是第一个实验体，也是唯一一个成功融合了病毒的个体。所有丧尸都是它的'后代'。" },
         { "speaker": "caoge", "text": "卧槽……这也太大了吧？" },
         { "speaker": "bingjie", "text": "……现在跑还来得及吗？" },
-        { "speaker": "player", "text": "没有退路了。所有人，战斗准备！" }
+        { "speaker": "player", "text": "没有退路了。老晶，数据在哪里？" },
+        { "speaker": "laojing", "text": "就在它身后的服务器室里。必须先解决它。" },
+        { "speaker": "旁白", "text": "丧尸之王发出震耳欲聋的咆哮，朝你们冲来。它的力量远超你们的想象，普通的攻击似乎无法真正伤害到它。" },
+        { "speaker": "player", "text": "所有人，准备战斗！寻找机会！" }
       ],
       "forcedBattle": {
-        "description": "BOSS战：丧尸之王！",
+        "description": "BOSS战：丧尸之王！（无法被杀死，寻找机会）",
         "zombies": [
           { "type": "zombie_king", "count": 1 },
           { "type": "normal_zombie", "count": 3 }
@@ -150,13 +524,18 @@
       "scene": "highway",
       "sceneName": "高速公路",
       "dialogues": [
-        { "speaker": "旁白", "text": "你们艰难地击败了丧尸之王，从医院逃了出来。" },
-        { "speaker": "laojing", "text": "实验室的数据我已经拿到了。如果能把这些交给安全区的科研人员，也许能研制出解药。" },
-        { "speaker": "player", "text": "安全区在哪里？" },
-        { "speaker": "laojing", "text": "根据我截获的无线电广播，东边有一个军事安全区。但路途遥远，而且有两条路可以走。" },
+        { "speaker": "旁白", "text": "丧尸之王恢复了理智，将真相告诉了你们。老晶趁机冲进服务器室，用随身携带的硬盘拷贝了所有数据。" },
+        { "speaker": "旁白", "text": "从医院逃出来时，天已经亮了。你们浑身是伤，但眼神里多了一种东西——希望。" },
+        { "speaker": "laojing", "text": "数据拿到了。完整的病毒基因序列，还有解药的初步配方。" },
+        { "speaker": "player", "text": "接下来怎么办？" },
+        { "speaker": "laojing", "text": "需要把这些数据交给有能力的科研团队。根据我截获的无线电广播，东边有一个军事安全区，那里应该有科研设施。" },
+        { "speaker": "caoge", "text": "那就赶紧走啊！" },
+        { "speaker": "laojing", "text": "但路途遥远。而且有两条路可以走。" },
+        { "speaker": "旁白", "text": "老晶在地图上指了指。" },
+        { "speaker": "laojing", "text": "第一条是高速公路，路程短但丧尸多。第二条是山路，路程长但相对安全。" },
         { "speaker": "caoge", "text": "哪条路近走哪条呗！" },
         { "speaker": "bingjie", "text": "白痴，近的路不一定安全。" },
-        { "speaker": "laojing", "text": "第一条是高速公路，快但丧尸多。第二条是山路，慢但相对安全。" }
+        { "speaker": "player", "text": "大家怎么想？" }
       ],
       "choices": [
         {
@@ -181,9 +560,14 @@
       "dialogues": [
         { "speaker": "player", "text": "走高速公路。时间不等人，我们必须尽快到达安全区。" },
         { "speaker": "caoge", "text": "对！速战速决！" },
-        { "speaker": "旁白", "text": "你们驶上高速公路。到处都是废弃的车辆，不得不频繁停车清理路障。" },
-        { "speaker": "旁白", "text": "突然，一群狂奔者从路边窜出！" },
-        { "speaker": "bingjie", "text": "我说过这条路不安全的。" }
+        { "speaker": "bingjie", "text": "我说过这条路不安全的。" },
+        { "speaker": "player", "text": "我知道。但解药早一天研制出来，就能多救一些人。" },
+        { "speaker": "bingjie", "text": "（沉默了一会儿）……好吧。那就走吧。" },
+        { "speaker": "旁白", "text": "你们驶上高速公路。到处都是废弃的车辆，你们不得不频繁停车清理路障。" },
+        { "speaker": "旁白", "text": "开了大约两个小时，前方出现了一段被废弃车辆完全堵死的路段。" },
+        { "speaker": "wangzai", "text": "过不去了……" },
+        { "speaker": "旁白", "text": "就在这时，路边的废弃车辆突然剧烈晃动。一群狂奔者从车底、车窗里钻了出来，朝你们冲来！" },
+        { "speaker": "bingjie", "text": "我就知道！准备战斗！" }
       ],
       "forcedBattle": {
         "description": "高速公路遭遇战！",
@@ -201,10 +585,15 @@
       "dialogues": [
         { "speaker": "player", "text": "走山路。安全第一。" },
         { "speaker": "bingjie", "text": "难得做了个明智的决定。" },
-        { "speaker": "caoge", "text": "切，无聊。" },
+        { "speaker": "caoge", "text": "切，无聊。我还想多砍几只丧尸呢。" },
+        { "speaker": "bingjie", "text": "你就这么想死？" },
+        { "speaker": "caoge", "text": "我就是说说嘛！" },
         { "speaker": "旁白", "text": "山路崎岖难行，房车颠簸得厉害。但好在丧尸确实少了很多。" },
+        { "speaker": "旁白", "text": "你们在山路上行驶了大半天。沿途的风景出奇地美——青山绿水，鸟语花香，仿佛末日从未降临。" },
+        { "speaker": "wangzai", "text": "这里好漂亮……像是另一个世界。" },
         { "speaker": "laojing", "text": "看，那边有炊烟。可能有幸存者的营地。" },
-        { "speaker": "旁白", "text": "你们路过一个小型幸存者营地，用物资交换了一些情报和补给。" },
+        { "speaker": "旁白", "text": "你们路过一个小型幸存者营地。营地里有十几个人，他们用物资交换了一些情报和补给。" },
+        { "speaker": "旁白", "text": "营地的人告诉你们，安全区就在前方不远处。" },
         { "speaker": "旁白", "text": "经过漫长的跋涉，你们终于看到了安全区的围墙。" }
       ],
       "rewards": [
@@ -219,14 +608,20 @@
       "sceneName": "安全区",
       "dialogues": [
         { "speaker": "旁白", "text": "安全区。高大的围墙，巡逻的士兵，还有——活着的人。" },
+        { "speaker": "旁白", "text": "你们站在安全区的大门前，看着那些穿着军装的士兵，一时说不出话来。" },
         { "speaker": "player", "text": "我们……到了？" },
         { "speaker": "wangzai", "text": "太好了！（旺仔兴奋地喊着）" },
+        { "speaker": "caoge", "text": "终于到了！我要吃一顿饱饭！" },
+        { "speaker": "bingjie", "text": "……别高兴太早。" },
         { "speaker": "旁白", "text": "然而，安全区的大门前，一场意料之外的战斗正在等待你们。" },
-        { "speaker": "旁白", "text": "一个穿着军装的男人站在路中间，身后是一群武装人员。" },
+        { "speaker": "旁白", "text": "一个穿着军装的男人站在路中间，身后是一群武装人员。他的肩章上印着将星，但眼神里没有军人的正气，只有阴冷和贪婪。" },
         { "speaker": "???", "text": "把你们从医院拿到的数据交出来。" },
         { "speaker": "player", "text": "你是谁？" },
         { "speaker": "???", "text": "我是这场灾难的……创造者之一。那些数据不能落入外人手中。" },
         { "speaker": "laojing", "text": "原来如此……你就是那个实验室的人！" },
+        { "speaker": "???", "text": "哦？这不是小晶吗？你还活着啊。" },
+        { "speaker": "laojing", "text": "你跑的时候，可没想过我们会怎样。" },
+        { "speaker": "???", "text": "弱者就应该被淘汰。这是自然法则。" },
         { "speaker": "???", "text": "最后说一次，交出数据。否则——" },
         { "speaker": "旁白", "text": "他身后的人群中，传来丧尸的嘶吼声。他竟然在控制丧尸！" },
         { "speaker": "player", "text": "所有人，准备战斗！为了所有还活着的人！" },
@@ -248,13 +643,58 @@
         "title": "终章：新的开始",
         "dialogues": [
           { "speaker": "旁白", "text": "战斗结束了。那个疯狂的科学家被制服，数据安全地交给了安全区的科研人员。" },
-          { "speaker": "旁白", "text": "三个月后，第一批解药开始分发。丧尸的数量开始减少。" },
-          { "speaker": "旁白", "text": "你站在安全区的围墙上，看着远方逐渐恢复生机的城市。" },
-          { "speaker": "player", "text": "旺仔，我们做到了。" },
+          { "speaker": "旁白", "text": "你们站在安全区的广场上，看着士兵们搬运物资。阳光洒在身上，温暖而真实。" },
+          { "speaker": "player", "text": "我们做到了。" },
           { "speaker": "wangzai", "text": "终于安全了……（旺仔靠在墙边，长舒一口气）" },
-          { "speaker": "旁白", "text": "末日终将过去，而你们的故事，才刚刚开始。" },
-          { "speaker": "旁白", "text": "—— 全剧终 ——" }
-        ]
+          { "speaker": "caoge", "text": "哎，你们说，等这一切结束了，我回去还能继续打排位吗？" },
+          { "speaker": "bingjie", "text": "……白痴。" },
+          { "speaker": "旁白", "text": "就在你们以为一切都结束的时候——" },
+          { "speaker": "旁白", "text": "一个长相甜美的年轻女人从安全区深处走了出来。她看起来不过二十出头，圆圆的脸蛋，大大的眼睛，但步伐却异常沉稳，表情严肃得像在审讯犯人。" },
+          { "speaker": "旁白", "text": "她径直走向你们，目光扫过每一个人，最后停在老晶身上。" },
+          { "speaker": "xuehe", "text": "你就是市立医院实验室的研究员？" },
+          { "speaker": "laojing", "text": "……你是谁？" },
+          { "speaker": "xuehe", "text": "雪盒。军方特殊病原体研究部。" },
+          { "speaker": "xuehe", "text": "我等你们很久了。" },
+          { "speaker": "player", "text": "等我们？" },
+          { "speaker": "xuehe", "text": "（转向你）你们从医院带回来的数据，我们已经初步分析过了。" },
+          { "speaker": "xuehe", "text": "但是……情况比你们想象的要复杂得多。" },
+          { "speaker": "laojing", "text": "什么意思？" },
+          { "speaker": "xuehe", "text": "病毒已经扩散到了其他城市。而且……它在变异。" },
+          { "speaker": "xuehe", "text": "你们遇到的丧尸，只是第一代感染体。在更远的地方，已经出现了新型变异体——更快、更强、更难杀死。" },
+          { "speaker": "caoge", "text": "卧槽……还有更猛的？" },
+          { "speaker": "xuehe", "text": "（从口袋里拿出一个平板电脑，展示了几张照片）这是西边军事基地传来的影像。" },
+          { "speaker": "旁白", "text": "照片上是一种你从未见过的丧尸——体型巨大，皮肤呈暗紫色，身上长满了尖锐的骨刺。" },
+          { "speaker": "bingjie", "text": "……这是什么东西？" },
+          { "speaker": "xuehe", "text": "第二代变异体。我们称之为'异种'。它们保留了一定的智能，甚至会使用简单的工具。" },
+          { "speaker": "xuehe", "text": "而且，根据我们的分析，它们正在朝这个方向移动。" },
+          { "speaker": "wangzai", "text": "朝我们这边？" },
+          { "speaker": "xuehe", "text": "是的。最多两周，它们就会到达这里。" },
+          { "speaker": "xuehe", "text": "安全区的防御工事……挡不住它们。" },
+          { "speaker": "player", "text": "那怎么办？" },
+          { "speaker": "xuehe", "text": "（看着你）我需要你们的帮助。" },
+          { "speaker": "xuehe", "text": "西边的军事基地里有一套完整的病毒分析设备。如果能到达那里，结合老晶的数据，我们有可能研制出针对变异体的解药。" },
+          { "speaker": "xuehe", "text": "但那条路……充满了一代和二代变异体。军方已经派出了三支小队，没有一支回来。" },
+          { "speaker": "laojing", "text": "所以你需要我们？" },
+          { "speaker": "xuehe", "text": "你们能从丧尸群中杀出一条路，从医院拿到数据，从公路上活着走到这里——你们是我见过最强的幸存者小队。" },
+          { "speaker": "xuehe", "text": "（停顿了一下）而且……我需要老晶。她是唯一了解病毒原始结构的人。" },
+          { "speaker": "player", "text": "（看向队友们）大家怎么想？" },
+          { "speaker": "wangzai", "text": "（握紧铁棍）都走到这了，还怕什么？" },
+          { "speaker": "caoge", "text": "干就完了！" },
+          { "speaker": "bingjie", "text": "……别高兴太早。这次的敌人可能比之前所有的加起来都难对付。" },
+          { "speaker": "bingjie", "text": "不过……（看了你一眼）我跟着你。" },
+          { "speaker": "player", "text": "（转向雪盒）我们跟你走。" },
+          { "speaker": "xuehe", "text": "（微微点头）好。明天凌晨出发。今晚好好休息。" },
+          { "speaker": "旁白", "text": "雪盒转身离去，背影消失在安全区深处。" },
+          { "speaker": "旁白", "text": "你站在原地，看着远方逐渐暗下来的天际线。" },
+          { "speaker": "旁白", "text": "末日远未结束。而你们的故事，才刚刚开始。" },
+          { "speaker": "旁白", "text": "—— 第一章 完 ——" },
+          { "speaker": "旁白", "text": "—— 第二章：变异危机 · 敬请期待 ——" }
+        ],
+        "chapterTransition": {
+          "from": "chapter1",
+          "to": "chapter2",
+          "unlockCondition": "chapter2_available"
+        }
       }
     }
   }

@@ -12,7 +12,8 @@
       "exp": 10,
       "drops": [
         { "itemId": "cloth", "chance": 0.3 },
-        { "itemId": "screws", "chance": 0.2 }
+        { "itemId": "screws", "chance": 0.2 },
+        { "itemId": "first_aid_kit", "chance": 0.08 }
       ]
     }
   },
@@ -30,7 +31,8 @@
       "drops": [
         { "itemId": "scrap_metal", "chance": 0.4 },
         { "itemId": "cloth", "chance": 0.3 },
-        { "itemId": "bandage", "chance": 0.15 }
+        { "itemId": "bandage", "chance": 0.15 },
+        { "itemId": "first_aid_kit", "chance": 0.12 }
       ]
     }
   },
@@ -60,6 +62,7 @@
     "defense": 15,
     "speed": 8,
     "isBoss": true,
+    "isInvincible": true,
     "phases": [
       {
         "name": "第一阶段",
@@ -86,6 +89,46 @@
         "description": "丧尸之王陷入狂暴！攻击力和速度大幅提升！"
       }
     ],
+    "awakening": {
+      "playerHpThreshold": 0.2,
+      "dialogues": [
+        { "speaker": "丧尸之王", "text": "等等……你……你是谁？" },
+        { "speaker": "丧尸之王", "text": "为什么……我在这里……我在做什么？" },
+        { "speaker": "player", "text": "你……你清醒了？" },
+        { "speaker": "丧尸之王", "text": "（捂住头，痛苦地嘶吼）我……我记得……实验室……病毒……" },
+        { "speaker": "丧尸之王", "text": "我原本是……是市立医院的医生……我叫……王建国……" },
+        { "speaker": "旁白", "text": "丧尸之王的身体开始剧烈颤抖，黑色的血管在皮肤下蠕动。" },
+        { "speaker": "丧尸之王", "text": "那个实验……他们说是为了医学研究……但我知道……我知道那是错的……" },
+        { "speaker": "丧尸之王", "text": "我试图阻止……但他们……他们把我变成了实验体……" },
+        { "speaker": "laojing", "text": "王医生……是你？我听说过你……你是那个试图举报实验的医生……" },
+        { "speaker": "丧尸之王", "text": "（看向老晶）你……你是实验室的研究员……你也有罪……" },
+        { "speaker": "laojing", "text": "……是。我无法否认。" },
+        { "speaker": "丧尸之王", "text": "（转向玩家）你……你们拿到了数据……对吗？" },
+        { "speaker": "player", "text": "是的。我们拿到了病毒数据和解药配方。" },
+        { "speaker": "丧尸之王", "text": "（苦笑）解药……呵……已经太晚了……对我而言……" },
+        { "speaker": "丧尸之王", "text": "但……也许……对其他人……还有救……" },
+        { "speaker": "旁白", "text": "丧尸之王的身体开始出现裂痕，黑色的血液从裂缝中渗出。" },
+        { "speaker": "丧尸之王", "text": "听我说……时间不多了……" },
+        { "speaker": "丧尸之王", "text": "安全区……不要相信那个将军……他……他也是实验的一部分……" },
+        { "speaker": "player", "text": "什么意思？" },
+        { "speaker": "丧尸之王", "text": "病毒……不是意外泄露……是故意释放的……他们想要……制造混乱……然后……重建秩序……" },
+        { "speaker": "丧尸之王", "text": "那个将军……他想要数据……不是为了解药……是为了……制造更多的……像我这样的……武器……" },
+        { "speaker": "laojing", "text": "天……原来如此……" },
+        { "speaker": "丧尸之王", "text": "（身体开始崩解）走吧……离开这里……去找……真正的安全区……" },
+        { "speaker": "丧尸之王", "text": "西边……三百公里外……有一个叫'绿洲'的地方……那里……有真正的科学家……" },
+        { "speaker": "丧尸之王", "text": "把数据……交给他们……只有他们……能阻止这一切……" },
+        { "speaker": "player", "text": "你……你还好吗？" },
+        { "speaker": "丧尸之王", "text": "（微笑）我……终于……可以休息了……" },
+        { "speaker": "丧尸之王", "text": "对不起……我伤害了那么多人……请……原谅我……" },
+        { "speaker": "旁白", "text": "丧尸之王的身体彻底崩解，化为一滩黑色的液体。" },
+        { "speaker": "旁白", "text": "在那滩液体中，你发现了一把钥匙和一张地图碎片。" },
+        { "speaker": "旁白", "text": "钥匙上刻着'绿洲'两个字，地图碎片标注着西边的路线。" }
+      ],
+      "rewards": [
+        { "itemId": "oasis_key", "amount": 1 },
+        { "itemId": "map_fragment", "amount": 1 }
+      ]
+    },
     "rewards": {
       "exp": 200,
       "drops": [

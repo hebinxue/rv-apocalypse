@@ -9,10 +9,12 @@ class Zombie {
         this.defense = data.defense;
         this.speed = data.speed;
         this.isBoss = data.isBoss || false;
+        this.isInvincible = data.isInvincible || false;
         this.phases = data.phases || [];
         this.drops = data.rewards ? (data.rewards.drops || []) : [];
         this.currentPhase = 0;
         this.summonCooldown = 0;
+        this.awakening = data.awakening || null;
     }
 
     takeDamage(amount) {
