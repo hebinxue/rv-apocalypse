@@ -166,13 +166,18 @@ class SoundManager {
     return new Blob([arrayBuffer], { type: 'audio/wav' });
   }
 
-  // 加载所有音频（在 BootScene preload 中调用）
+  // BGM文件映射（按需加载用）
+  static _bgmFiles = {
+    bgm_menu: 'assets/audio/bgm_menu.mp3',
+    bgm_map: 'assets/audio/bgm_map.mp3',
+    bgm_battle: 'assets/audio/bgm_battle.mp3',
+    bgm_campfire: 'assets/audio/bgm_campfire.mp3',
+  };
+
+  // 启动时只加载菜单BGM和小音效文件
   static preloadAll(scene) {
     const audioFiles = [
       { key: 'bgm_menu', file: 'assets/audio/bgm_menu.mp3' },
-      { key: 'bgm_map', file: 'assets/audio/bgm_map.mp3' },
-      { key: 'bgm_battle', file: 'assets/audio/bgm_battle.mp3' },
-      { key: 'bgm_campfire', file: 'assets/audio/bgm_campfire.mp3' },
       { key: 'sfx_click', file: 'assets/audio/click.mp3' },
       { key: 'sfx_hit', file: 'assets/audio/hit.mp3' },
       { key: 'sfx_heal', file: 'assets/audio/heal.mp3' },
@@ -195,6 +200,14 @@ class SoundManager {
     });
   }
 
+  // 按需加载BGM（首次使用时调用）
+  static _loadBGM(scene, key) {
+    const file = SoundManager._bgmFiles[key];
+    if (!file || scene.cache.audio.exists(key)) return;
+    scene.load.audio(key, file);
+    scene.load.start();
+  }
+
   // 生成缺失的音效（在 BootScene create 中调用）
   static generateMissing(scene) {
     const sfxMap = {
@@ -215,13 +228,25 @@ class SoundManager {
     });
   }
 
-  // 播放背景音乐
+  // 播放背景音乐（按需加载）
   static playBGM(scene, key) {
     if (SoundManager._bgmKey === key && SoundManager._bgmPlaying) return;
     SoundManager.stopBGM();
 
-    if (!scene.cache.audio.exists(key)) return;
+    if (!scene.cache.audio.exists(key)) {
+      // 没加载过，按需加载后再播放
+      SoundManager._loadBGM(scene, key);
+      scene.load.once('filecomplete-audio-' + key, () => {
+        SoundManager._playBGMInternal(scene, key);
+      });
+      return;
+    }
 
+    SoundManager._playBGMInternal(scene, key);
+  }
+
+  static _playBGMInternal(scene, key) {
+    if (!scene.cache.audio.exists(key)) return;
     try {
       const bgm = scene.sound.add(key, { loop: true, volume: SoundManager._bgmVolume });
       bgm.play();
