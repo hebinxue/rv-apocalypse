@@ -459,7 +459,7 @@ class MapScene extends Phaser.Scene {
             if (storyNode.next) {
               this.gameState.currentStoryNode = storyNode.next;
               SaveLoad.save(this.gameState);
-              this.scene.restart({ gameState: this.gameState, autoEnter: false });
+              this.scene.restart({ gameState: this.gameState, autoEnter: true });
             }
           });
         } else {
@@ -467,7 +467,7 @@ class MapScene extends Phaser.Scene {
           if (storyNode.next) {
             this.gameState.currentStoryNode = storyNode.next;
             SaveLoad.save(this.gameState);
-            this.scene.restart({ gameState: this.gameState, autoEnter: false });
+            this.scene.restart({ gameState: this.gameState, autoEnter: true });
           }
         }
         return;
@@ -646,7 +646,7 @@ class MapScene extends Phaser.Scene {
       if (selected.next) {
         this.gameState.currentStoryNode = selected.next;
         SaveLoad.save(this.gameState);
-        this.scene.restart({ gameState: this.gameState, autoEnter: false });
+        this.scene.restart({ gameState: this.gameState, autoEnter: true });
       } else {
         // Fall through to default next
         this.advanceStory(storyNode.id);
@@ -747,7 +747,7 @@ class MapScene extends Phaser.Scene {
       this.gameState.player.isSick = false;
       this.gameState.player.sickDays = 0;
       SaveLoad.save(this.gameState);
-      this.scene.restart({ gameState: this.gameState, autoEnter: false });
+      this.scene.restart({ gameState: this.gameState, autoEnter: true });
       return;
     }
 
@@ -757,7 +757,7 @@ class MapScene extends Phaser.Scene {
       this.gameState.player.isSick = false;
       this.gameState.player.sickDays = 0;
       SaveLoad.save(this.gameState);
-      this.scene.restart({ gameState: this.gameState, autoEnter: false });
+      this.scene.restart({ gameState: this.gameState, autoEnter: true });
       return;
     }
 
@@ -773,7 +773,7 @@ class MapScene extends Phaser.Scene {
 
       SaveLoad.save(this.gameState);
       this.time.delayedCall(1500, () => {
-        this.scene.restart({ gameState: this.gameState, autoEnter: false });
+        this.scene.restart({ gameState: this.gameState, autoEnter: true });
       });
     });
   }
