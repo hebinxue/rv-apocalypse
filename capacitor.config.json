@@ -1,0 +1,9 @@
+{
+  "appId": "com.example.doomsdayrv",
+  "appName": "末日房车逃生",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": true,
+    "backgroundColor": "#0a0a0a"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "rv-apocalypse",
+  "version": "1.0.0",
+  "description": "**扫码即玩：**",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hebinxue/rv-apocalypse.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/hebinxue/rv-apocalypse/issues"
+  },
+  "homepage": "https://github.com/hebinxue/rv-apocalypse#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.3.4",
+    "@capacitor/cli": "^8.3.4",
+    "@capacitor/core": "^8.3.4",
+    "phaser": "^3.60.0"
+  }
+}
