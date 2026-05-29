@@ -25,6 +25,8 @@ class MapScene extends Phaser.Scene {
       gas_station_fix_self: 'gas_station',
       gas_station_search_parts: 'gas_station',
       gas_station_walk: 'gas_station',
+      apartment_pharmacy: 'intro',
+      intro_battle: 'intro',
       laojing_rejected: 'apartment_laojing',
       boss_appear: 'hospital',
       highway_fast_path: 'highway',
