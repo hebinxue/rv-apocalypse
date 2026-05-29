@@ -4,7 +4,7 @@
 
 ![二维码](qrcode.png)
 
-👉 **在线体验：** https://rv-apocalypse.vercel.app/
+👉 **在线体验：** https://6a1974cdfc416c04934b84dc--glowing-pudding-7779f5.netlify.app/
 
 ---
 
@@ -29,7 +29,7 @@
 
 - **引擎：** Phaser 3.60.0
 - **语言：** JavaScript (原生)
-- **部署：** Vercel
+- **部署：** Netlify
 
 ## 📁 项目结构
 
