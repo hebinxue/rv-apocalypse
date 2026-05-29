@@ -75,7 +75,7 @@
     },
     "apartment_pharmacy": {
       "id": "apartment_pharmacy",
-      "scene": "apartment_zombies",
+      "scene": "apartment",
       "sceneName": "公寓药店",
       "dialogues": [
         { "speaker": "wangzai", "text": "等等，一楼拐角有个小药店，我之前路过看到的。要不要去看看？", "expression": 4 },
@@ -123,7 +123,7 @@
     },
     "gas_station": {
       "id": "gas_station",
-      "scene": "gas_station_meet",
+      "scene": "gas_station",
       "sceneName": "加油站",
       "dialogues": [
         { "speaker": "旁白", "text": "你们跳上房车，旺仔猛踩油门，冲出了地下车库。" },
@@ -517,7 +517,7 @@
     },
     "hospital": {
       "id": "hospital",
-      "scene": "hospital_laojing",
+      "scene": "hospital",
       "sceneName": "市立医院",
       "dialogues": [
         { "speaker": "旁白", "text": "市立医院。曾经救死扶伤的地方，如今变成了丧尸的巢穴。" },
@@ -533,15 +533,7 @@
         { "speaker": "旁白", "text": "下到地下一层时，你们看到了一扇厚重的金属门。门上贴着『生物安全等级4——授权人员专用』的标签。" },
         { "speaker": "laojing", "text": "就是这里。穿过这扇门，就是实验室的外围区域。", "expression": 4 },
         { "speaker": "旁白", "text": "老晶刷了门禁卡，金属门缓缓打开。一股冰冷的空气扑面而来。" },
-        { "speaker": "旁白", "text": "实验室的走廊里，灯光忽明忽暗。墙壁上布满了抓痕和干涸的血迹。" }
-      ],
-      "next": "boss_appear"
-    },
-    "boss_appear": {
-      "id": "boss_appear",
-      "scene": "boss_appear",
-      "sceneName": "实验室深处",
-      "dialogues": [
+        { "speaker": "旁白", "text": "实验室的走廊里，灯光忽明忽暗。墙壁上布满了抓痕和干涸的血迹。" },
         { "speaker": "旁白", "text": "走廊尽头，一个巨大的身影缓缓站起——" },
         { "speaker": "旁白", "text": "那是一个身高超过两米的丧尸，全身布满黑色的血管，双眼泛着红光。它的体型是普通丧尸的两倍，肌肉扭曲隆起，像是被什么东西强行改造过。" },
         { "speaker": "laojing", "text": "这就是……实验体零号。丧尸之王。", "expression": 2 },
@@ -647,7 +639,7 @@
     },
     "safe_zone": {
       "id": "safe_zone",
-      "scene": "safe_zone_xuehe",
+      "scene": "safe_zone",
       "sceneName": "安全区",
       "dialogues": [
         { "speaker": "旁白", "text": "安全区。高大的围墙，巡逻的士兵，还有——活着的人。" },
