@@ -166,27 +166,40 @@ class SoundManager {
     return new Blob([arrayBuffer], { type: 'audio/wav' });
   }
 
+  // CDN加速（jsDelivr国内有节点）
+  static _cdn = 'https://cdn.jsdelivr.net/gh/hebinxue/rv-apocalypse@main/assets/audio/';
+
+  // 本地路径（开发用）
+  static _local = 'assets/audio/';
+
+  // 判断是否线上环境
+  static get _base() {
+    return (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1')
+      ? SoundManager._cdn : SoundManager._local;
+  }
+
   // BGM文件映射（按需加载用）
   static _bgmFiles = {
-    bgm_menu: 'assets/audio/bgm_menu.mp3',
-    bgm_map: 'assets/audio/bgm_map.mp3',
-    bgm_battle: 'assets/audio/bgm_battle.mp3',
-    bgm_campfire: 'assets/audio/bgm_campfire.mp3',
+    bgm_menu: 'bgm_menu.mp3',
+    bgm_map: 'bgm_map.mp3',
+    bgm_battle: 'bgm_battle.mp3',
+    bgm_campfire: 'bgm_campfire.mp3',
   };
 
   // 启动时只加载菜单BGM和小音效文件
   static preloadAll(scene) {
+    const base = SoundManager._base;
     const audioFiles = [
-      { key: 'bgm_menu', file: 'assets/audio/bgm_menu.mp3' },
-      { key: 'sfx_click', file: 'assets/audio/click.mp3' },
-      { key: 'sfx_hit', file: 'assets/audio/hit.mp3' },
-      { key: 'sfx_heal', file: 'assets/audio/heal.mp3' },
-      { key: 'sfx_victory', file: 'assets/audio/victory.mp3' },
-      { key: 'sfx_defeat', file: 'assets/audio/defeat.mp3' },
-      { key: 'sfx_dialogue', file: 'assets/audio/dialogue.mp3' },
-      { key: 'sfx_reward', file: 'assets/audio/reward.mp3' },
-      { key: 'sfx_alert', file: 'assets/audio/alert.mp3' },
-      { key: 'sfx_boss_intro', file: 'assets/audio/boss_intro.mp3' },
+      { key: 'bgm_menu', file: base + 'bgm_menu.mp3' },
+      { key: 'sfx_click', file: base + 'click.mp3' },
+      { key: 'sfx_hit', file: base + 'hit.mp3' },
+      { key: 'sfx_heal', file: base + 'heal.mp3' },
+      { key: 'sfx_victory', file: base + 'victory.mp3' },
+      { key: 'sfx_defeat', file: base + 'defeat.mp3' },
+      { key: 'sfx_dialogue', file: base + 'dialogue.mp3' },
+      { key: 'sfx_reward', file: base + 'reward.mp3' },
+      { key: 'sfx_alert', file: base + 'alert.mp3' },
+      { key: 'sfx_boss_intro', file: base + 'boss_intro.mp3' },
     ];
 
     audioFiles.forEach(a => {
@@ -204,7 +217,7 @@ class SoundManager {
   static _loadBGM(scene, key) {
     const file = SoundManager._bgmFiles[key];
     if (!file || scene.cache.audio.exists(key)) return;
-    scene.load.audio(key, file);
+    scene.load.audio(key, SoundManager._base + file);
     scene.load.start();
   }
 
