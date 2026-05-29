@@ -80,15 +80,11 @@ class BattleScene extends Phaser.Scene {
     this.renderAllies();
     this.renderBattleLog();
 
-    // Boss出场音效，然后播放战斗BGM
+    // Boss战：用boss音效当战斗BGM循环播放
     const hasBoss = this.enemies.some(e => e.isBoss);
     if (hasBoss) {
       SoundManager.stopBGM();
-      SoundManager.playSFX(this, 'sfx_boss_intro');
-      // Boss音效播完后切换到战斗BGM（即使boss已清醒也继续播放）
-      this.time.delayedCall(2000, () => {
-        SoundManager.playBGM(this, 'bgm_battle');
-      });
+      SoundManager.playBGM(this, 'sfx_boss_intro');
     } else {
       SoundManager.playBGM(this, 'bgm_battle');
     }
@@ -1306,6 +1302,9 @@ class BattleScene extends Phaser.Scene {
   triggerBossAwakening(boss, awakening) {
     this.battleOver = true;
     this.clearUI();
+
+    // 切换到地图BGM
+    SoundManager.playBGM(this, 'bgm_map');
 
     // 停止所有战斗动作
     this.addLog(`${boss.name} 突然停止了攻击...`);
