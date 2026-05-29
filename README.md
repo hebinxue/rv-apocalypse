@@ -4,7 +4,7 @@
 
 ![二维码](qrcode.png)
 
-👉 **在线体验：** https://hebinxue.github.io/rv-apocalypse/
+👉 **在线体验：** https://rv-apocalypse.vercel.app/
 
 ---
 
@@ -29,7 +29,7 @@
 
 - **引擎：** Phaser 3.60.0
 - **语言：** JavaScript (原生)
-- **部署：** GitHub Pages
+- **部署：** Vercel
 
 ## 📁 项目结构
 
