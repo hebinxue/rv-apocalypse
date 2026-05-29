@@ -25,8 +25,16 @@ jobs:
       - name: Build www directory
         run: node build-android.js
 
+      - name: Debug info
+        run: |
+          echo "Node: $(node -v)"
+          echo "npm: $(npm -v)"
+          echo "Java: $(java -version 2>&1 || echo 'not found')"
+          ls -la www/ 2>/dev/null || echo "www/ not found"
+          npx cap --version
+
       - name: Add Android platform
-        run: npx --yes @capacitor/cli add android
+        run: npx --yes @capacitor/cli add android --verbose
 
       - name: Sync to Android
         run: npx --yes @capacitor/cli copy android
