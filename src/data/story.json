@@ -21,7 +21,7 @@
     },
     "intro": {
       "id": "intro",
-      "scene": "apartment_wangzai",
+      "scene": "apartment",
       "sceneName": "公寓楼",
       "dialogues": [
         { "speaker": "旁白", "text": "末日第七天。" },
