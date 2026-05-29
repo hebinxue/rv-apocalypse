@@ -26,6 +26,7 @@ class MapScene extends Phaser.Scene {
       gas_station_search_parts: 'gas_station',
       gas_station_walk: 'gas_station',
       laojing_rejected: 'apartment_laojing',
+      boss_appear: 'hospital',
       highway_fast_path: 'highway',
       highway_mountain_path: 'highway',
     };
@@ -456,7 +457,7 @@ class MapScene extends Phaser.Scene {
             if (storyNode.next) {
               this.gameState.currentStoryNode = storyNode.next;
               SaveLoad.save(this.gameState);
-              this.scene.restart({ gameState: this.gameState, autoEnter: true });
+              this.scene.restart({ gameState: this.gameState, autoEnter: false });
             }
           });
         } else {
@@ -464,7 +465,7 @@ class MapScene extends Phaser.Scene {
           if (storyNode.next) {
             this.gameState.currentStoryNode = storyNode.next;
             SaveLoad.save(this.gameState);
-            this.scene.restart({ gameState: this.gameState, autoEnter: true });
+            this.scene.restart({ gameState: this.gameState, autoEnter: false });
           }
         }
         return;
@@ -643,7 +644,7 @@ class MapScene extends Phaser.Scene {
       if (selected.next) {
         this.gameState.currentStoryNode = selected.next;
         SaveLoad.save(this.gameState);
-        this.scene.restart({ gameState: this.gameState, autoEnter: true });
+        this.scene.restart({ gameState: this.gameState, autoEnter: false });
       } else {
         // Fall through to default next
         this.advanceStory(storyNode.id);
@@ -701,7 +702,7 @@ class MapScene extends Phaser.Scene {
       }
 
       SaveLoad.save(this.gameState);
-      this.scene.restart({ gameState: this.gameState, autoEnter: true });
+      this.scene.restart({ gameState: this.gameState });
     } else {
       SaveLoad.save(this.gameState);
     }
@@ -744,7 +745,7 @@ class MapScene extends Phaser.Scene {
       this.gameState.player.isSick = false;
       this.gameState.player.sickDays = 0;
       SaveLoad.save(this.gameState);
-      this.scene.restart({ gameState: this.gameState, autoEnter: true });
+      this.scene.restart({ gameState: this.gameState, autoEnter: false });
       return;
     }
 
@@ -754,7 +755,7 @@ class MapScene extends Phaser.Scene {
       this.gameState.player.isSick = false;
       this.gameState.player.sickDays = 0;
       SaveLoad.save(this.gameState);
-      this.scene.restart({ gameState: this.gameState, autoEnter: true });
+      this.scene.restart({ gameState: this.gameState, autoEnter: false });
       return;
     }
 
@@ -770,7 +771,7 @@ class MapScene extends Phaser.Scene {
 
       SaveLoad.save(this.gameState);
       this.time.delayedCall(1500, () => {
-        this.scene.restart({ gameState: this.gameState, autoEnter: true });
+        this.scene.restart({ gameState: this.gameState, autoEnter: false });
       });
     });
   }

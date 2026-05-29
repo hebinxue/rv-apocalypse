@@ -80,11 +80,15 @@ class BattleScene extends Phaser.Scene {
     this.renderAllies();
     this.renderBattleLog();
 
-    // Boss出场音效，不播战斗BGM
+    // Boss出场音效，然后播放战斗BGM
     const hasBoss = this.enemies.some(e => e.isBoss);
     if (hasBoss) {
       SoundManager.stopBGM();
       SoundManager.playSFX(this, 'sfx_boss_intro');
+      // Boss音效播完后切换到战斗BGM（即使boss已清醒也继续播放）
+      this.time.delayedCall(2000, () => {
+        SoundManager.playBGM(this, 'bgm_battle');
+      });
     } else {
       SoundManager.playBGM(this, 'bgm_battle');
     }
