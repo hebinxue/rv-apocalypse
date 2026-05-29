@@ -46,6 +46,69 @@ class Dialogue {
         this.showNext();
     }
 
+    // 橙光式CG大图展示：全屏显示图片，点击后继续对话
+    showCG(cgKey, onDismiss) {
+        const { width, height } = this.scene.cameras.main;
+        const cgContainer = this.scene.add.container(0, 0).setDepth(10002);
+
+        // 黑色背景
+        const bg = this.scene.add.rectangle(width / 2, height / 2, width, height, 0x000000, 1);
+        cgContainer.add(bg);
+
+        // 查找CG图片纹理
+        const imageKey = SceneBackgrounds.findTexture(this.scene, cgKey);
+        if (imageKey) {
+            const img = this.scene.add.image(width / 2, height / 2, imageKey);
+            // 保持比例铺满，裁剪溢出
+            const tex = this.scene.textures.get(imageKey);
+            const frame = tex.getSourceImage();
+            const imgW = frame.width || frame.naturalWidth || 1;
+            const imgH = frame.height || frame.naturalHeight || 1;
+            const scaleX = width / imgW;
+            const scaleY = height / imgH;
+            const fillScale = Math.max(scaleX, scaleY);
+            img.setScale(fillScale);
+            const cropW = Math.min(imgW, width / fillScale);
+            const cropH = Math.min(imgH, height / fillScale);
+            const cropX = (imgW - cropW) / 2;
+            const cropY = (imgH - cropH) / 2;
+            img.setCrop(cropX, cropY, cropW, cropH);
+            cgContainer.add(img);
+        }
+
+        // 底部提示
+        const hint = this.scene.add.text(width / 2, height - 40, '点击继续...', {
+            fontFamily: 'Microsoft YaHei, sans-serif',
+            fontSize: '14px',
+            color: '#8899aa',
+        }).setOrigin(0.5);
+        cgContainer.add(hint);
+        this.scene.tweens.add({
+            targets: hint, alpha: 0.3, duration: 800, yoyo: true, repeat: -1,
+        });
+
+        // 淡入
+        cgContainer.setAlpha(0);
+        this.scene.tweens.add({
+            targets: cgContainer, alpha: 1, duration: 400, ease: 'Sine.easeIn',
+        });
+
+        // 点击关闭
+        const hitArea = this.scene.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.001)
+            .setInteractive({ useHandCursor: true })
+            .setDepth(10003);
+        hitArea.on('pointerdown', () => {
+            hitArea.destroy();
+            this.scene.tweens.add({
+                targets: cgContainer, alpha: 0, duration: 300, ease: 'Sine.easeOut',
+                onComplete: () => {
+                    cgContainer.destroy();
+                    if (onDismiss) onDismiss();
+                },
+            });
+        });
+    }
+
     showNext() {
         if (this.currentHitArea) {
             this.currentHitArea.removeAllListeners('pointerdown');
@@ -66,7 +129,13 @@ class Dialogue {
             return;
         }
         const line = this.dialogueQueue.shift();
-        this.renderLine(line);
+
+        // 如果该行带有cg属性，先展示CG大图，点击后再显示对话
+        if (line.cg) {
+            this.showCG(line.cg, () => this.renderLine(line));
+        } else {
+            this.renderLine(line);
+        }
     }
 
     renderLine(line) {

@@ -62,10 +62,16 @@ class BootScene extends Phaser.Scene {
     this.load.json('specialEventsData', 'src/data/special_events.json');
 
     // Load background images (PNG or JPG, missing files silently skipped)
-    const bgScenes = ['apartment', 'gas_station', 'supermarket', 'hospital', 'highway', 'mountain', 'safe_zone', 'battlefield', 'campfire', 'apartment_wangzai', 'gas_station_meet', 'hospital_laojing', 'apartment_zombies', 'safe_zone_xuehe', 'boss_appear'];
+    const bgScenes = ['apartment', 'gas_station', 'supermarket', 'hospital', 'highway', 'mountain', 'safe_zone', 'battlefield', 'campfire'];
+    // CG event images (橙光式剧情大图)
+    const cgImages = ['cg_wangzai_intro', 'cg_gas_station_meet', 'cg_apartment_zombies', 'cg_hospital_laojing', 'cg_boss_appear', 'cg_safe_zone_xuehe'];
     bgScenes.forEach(name => {
       this.load.image(`bg_${name}_png`, `src/assets/bg/${name}.png`);
       this.load.image(`bg_${name}_jpg`, `src/assets/bg/${name}.jpg`);
+    });
+    cgImages.forEach(name => {
+      this.load.image(`${name}_png`, `src/assets/bg/${name}.png`);
+      this.load.image(`${name}_jpg`, `src/assets/bg/${name}.jpg`);
     });
     // Character portraits (PNG or JPG, with expression variants)
     const characters = ['player', 'wangzai', 'bingjie', 'caoge', 'laojing', 'xuehe', 'boss', 'sangshi'];
