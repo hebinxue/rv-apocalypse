@@ -704,7 +704,7 @@ class MapScene extends Phaser.Scene {
       }
 
       SaveLoad.save(this.gameState);
-      this.scene.restart({ gameState: this.gameState });
+      this.scene.restart({ gameState: this.gameState, autoEnter: true });
     } else {
       SaveLoad.save(this.gameState);
     }
