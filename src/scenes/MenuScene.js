@@ -95,8 +95,12 @@ class MenuScene extends Phaser.Scene {
       letterSpacing: 3,
     }).setOrigin(0.5);
 
+    // --- BGM ---
+    SoundManager.playBGM(this, 'bgm_menu');
+
     // --- New Game button ---
     UIHelper.createButton(this, width / 2, height / 2 + 140, 220, 44, '新 游 戏', { isPrimary: true, fontSize: '18px' }, () => {
+      SoundManager.playSFX(this, 'sfx_click');
       SaveLoad.deleteSave();
       const gameState = SaveLoad.getDefaultState();
       SaveLoad.save(gameState);
@@ -108,13 +112,20 @@ class MenuScene extends Phaser.Scene {
 
     // --- Continue button ---
     if (SaveLoad.hasSave()) {
-      UIHelper.createButton(this, width / 2, height / 2 + 195, 220, 44, '继续游戏', { fontSize: '18px' }, () => {
-        const gameState = SaveLoad.load();
-        this.cameras.main.fadeOut(500, 0, 0, 0);
-        this.time.delayedCall(500, () => {
-          this.scene.start('MapScene', { gameState });
+      const savedState = SaveLoad.load();
+      if (savedState && savedState.gameCompleted) {
+        UIHelper.createButton(this, width / 2, height / 2 + 195, 220, 44, '等待第二章...', { fontSize: '18px' }, () => {
+          // 不进入游戏
         });
-      });
+      } else {
+        UIHelper.createButton(this, width / 2, height / 2 + 195, 220, 44, '继续游戏', { fontSize: '18px' }, () => {
+          SoundManager.playSFX(this, 'sfx_click');
+          this.cameras.main.fadeOut(500, 0, 0, 0);
+          this.time.delayedCall(500, () => {
+            this.scene.start('MapScene', { gameState: savedState });
+          });
+        });
+      }
     }
 
     // --- Floating particles ---

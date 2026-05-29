@@ -104,10 +104,18 @@ class Dialogue {
         const boxH = 155;
 
         // Character portrait (if image loaded, PNG or JPG)
-        const portraitBase = `char_${line.speaker}`;
-        const imageKey = SceneBackgrounds.findTexture(this.scene, portraitBase);
-        const hasPortrait = !isNarrator && imageKey;
-        const portraitW = hasPortrait ? 90 : 0;
+        // Support expression variants: line.expression (1-4) selects char_speaker-N
+        let portraitBase = `char_${line.speaker}`;
+        let imageKey = null;
+        if (line.expression) {
+          imageKey = SceneBackgrounds.findTexture(this.scene, `${portraitBase}-${line.expression}`);
+        }
+        if (!imageKey) {
+          imageKey = SceneBackgrounds.findTexture(this.scene, portraitBase);
+        }
+        const hasPortrait = !isNarrator && imageKey && line.speaker !== 'player';
+        // 雪盒立绘单独放大，其他NPC保持原始比例
+        const portraitW = hasPortrait ? (line.speaker === 'xuehe' ? 144 : 90) : 0;
         const portraitGap = hasPortrait ? 10 : 0;
         const boxLeft = 15 + portraitW + portraitGap;
 
@@ -210,6 +218,7 @@ class Dialogue {
         const fullText = this.wrapText(line.text, maxW, 16);
         let charIndex = 0;
         let typewriterDone = false;
+        let _sfxTick = 0;
         const timer = this.scene.time.addEvent({
             delay: 28,
             callback: () => {
@@ -219,6 +228,7 @@ class Dialogue {
                     return;
                 }
                 text.setText(fullText.substring(0, charIndex));
+                if (++_sfxTick % 3 === 0) SoundManager.playSFX(this.scene, 'sfx_dialogue');
                 charIndex++;
             },
             loop: true,

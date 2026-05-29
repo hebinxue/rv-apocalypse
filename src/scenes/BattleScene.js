@@ -80,6 +80,15 @@ class BattleScene extends Phaser.Scene {
     this.renderAllies();
     this.renderBattleLog();
 
+    // Boss出场音效，不播战斗BGM
+    const hasBoss = this.enemies.some(e => e.isBoss);
+    if (hasBoss) {
+      SoundManager.stopBGM();
+      SoundManager.playSFX(this, 'sfx_boss_intro');
+    } else {
+      SoundManager.playBGM(this, 'bgm_battle');
+    }
+
     // Fade in
     this.cameras.main.fadeIn(400, 0, 0, 0);
     this.time.delayedCall(500, () => this.startBattle());
@@ -188,26 +197,36 @@ class BattleScene extends Phaser.Scene {
           this.enemyContainer.add(emojiText);
         }
       } else {
-        // 普通敌人emoji
-        const emojiBg = this.add.graphics();
-        emojiBg.fillStyle(0x330000, 0.4);
-        emojiBg.fillCircle(x, y, 28);
-        emojiBg.lineStyle(1.5, 0xe94560, 0.3);
-        emojiBg.strokeCircle(x, y, 28);
-        this.enemyContainer.add(emojiBg);
+        // 普通敌人：优先使用立绘，fallback到emoji
+        const zombieKey = SceneBackgrounds.findTexture(this, 'char_sangshi');
+        if (zombieKey) {
+          const zombieImg = this.add.image(x, y, zombieKey);
+          zombieImg.setDisplaySize(70, 70);
+          zombieImg.setOrigin(0.5);
+          this.enemyContainer.add(zombieImg);
+        } else {
+          const emojiBg = this.add.graphics();
+          emojiBg.fillStyle(0x330000, 0.4);
+          emojiBg.fillCircle(x, y, 28);
+          emojiBg.lineStyle(1.5, 0xe94560, 0.3);
+          emojiBg.strokeCircle(x, y, 28);
+          this.enemyContainer.add(emojiBg);
 
-        const emojiText = this.add.text(x, y, enemy.emoji, { fontSize: '36px' }).setOrigin(0.5);
-        this.enemyContainer.add(emojiText);
+          const emojiText = this.add.text(x, y, enemy.emoji, { fontSize: '36px' }).setOrigin(0.5);
+          this.enemyContainer.add(emojiText);
+        }
       }
 
-      const nameText = this.add.text(x, y + 34, enemy.name, {
+      // 根据立绘大小调整名字和血条位置
+      const portraitH = enemy.isBoss ? 120 : 70;
+      const nameText = this.add.text(x, y + portraitH / 2 + 6, enemy.name, {
         fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px', color: '#e94560',
       }).setOrigin(0.5);
       this.enemyContainer.add(nameText);
 
       // HP bar with rounded corners
       const barW = 72, barH = 7;
-      const barY = y + 48;
+      const barY = y + portraitH / 2 + 20;
       const barBg = this.add.graphics();
       barBg.fillStyle(0x1a1a22, 1);
       barBg.fillRoundedRect(x - barW / 2, barY, barW, barH, 3);
@@ -230,7 +249,7 @@ class BattleScene extends Phaser.Scene {
       this.enemyContainer.add(hpText);
 
       if (enemy.isBoss) {
-        const bossTag = this.add.text(x, y - 38, '💀 BOSS', {
+        const bossTag = this.add.text(x, y - portraitH / 2 - 8, '💀 BOSS', {
           fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '11px',
           color: '#ff6600', fontStyle: 'bold',
         }).setOrigin(0.5);
@@ -260,17 +279,26 @@ class BattleScene extends Phaser.Scene {
 
       const barColorHex = ally.isPlayer ? 0x00c8ff : 0x44aa66;
 
-      // Emoji background circle
-      const emojiBg = this.add.graphics();
-      emojiBg.fillStyle(ally.isPlayer ? 0x002233 : 0x002211, 0.4);
-      emojiBg.fillCircle(x, y, 25);
-      emojiBg.lineStyle(1.5, barColorHex, 0.3);
-      emojiBg.strokeCircle(x, y, 25);
-      this.allyContainer.add(emojiBg);
+      // 立绘显示
+      const portraitKey = SceneBackgrounds.findTexture(this, `char_${ally.id}`);
+      if (portraitKey) {
+        const portrait = this.add.image(x, y, portraitKey);
+        portrait.setDisplaySize(60, 60);
+        portrait.setOrigin(0.5);
+        this.allyContainer.add(portrait);
+      } else {
+        const emojiBg = this.add.graphics();
+        emojiBg.fillStyle(ally.isPlayer ? 0x002233 : 0x002211, 0.4);
+        emojiBg.fillCircle(x, y, 25);
+        emojiBg.lineStyle(1.5, barColorHex, 0.3);
+        emojiBg.strokeCircle(x, y, 25);
+        this.allyContainer.add(emojiBg);
 
-      const emojiText = this.add.text(x, y, ally.emoji, { fontSize: '32px' }).setOrigin(0.5);
-      this.allyContainer.add(emojiText);
-      const nameText = this.add.text(x, y + 30, ally.name, {
+        const emojiText = this.add.text(x, y, ally.emoji, { fontSize: '32px' }).setOrigin(0.5);
+        this.allyContainer.add(emojiText);
+      }
+
+      const nameText = this.add.text(x, y + 35, ally.name, {
         fontFamily: 'Microsoft YaHei, sans-serif', fontSize: '12px',
         color: ally.isPlayer ? '#00c8ff' : '#77aa88',
       }).setOrigin(0.5);
@@ -278,7 +306,7 @@ class BattleScene extends Phaser.Scene {
 
       // HP bar
       const barW = 72, barH = 7;
-      const barY = y + 44;
+      const barY = y + 49;
       const barBg = this.add.graphics();
       barBg.fillStyle(0x1a1a22, 1);
       barBg.fillRoundedRect(x - barW / 2, barY, barW, barH, 3);
@@ -300,7 +328,7 @@ class BattleScene extends Phaser.Scene {
       this.allyContainer.add(hpText);
 
       if (ally.defending) {
-        const shieldText = this.add.text(x + 28, y - 8, '🛡️', { fontSize: '16px' }).setOrigin(0.5);
+        const shieldText = this.add.text(x + 28, y - 25, '🛡️', { fontSize: '16px' }).setOrigin(0.5);
         this.allyContainer.add(shieldText);
       }
 
@@ -387,6 +415,9 @@ class BattleScene extends Phaser.Scene {
         const target = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
         const damage = this.calculateDamage(combo.power, target.defense);
         target.hp = Math.max(0, target.hp - damage);
+        if (target.hp <= 0 && target.isBoss && target.isInvincible && !this._awakeningTriggered) {
+          target.hp = 1;
+        }
 
         this.addLog(`【${combo.name}】${combo.desc}`);
         this.addLog(`合击对 ${target.name} 造成 ${damage} 点额外伤害！`);
@@ -732,6 +763,7 @@ class BattleScene extends Phaser.Scene {
     const player = this.allies.find(a => a.isPlayer);
     if (!player) { this.advanceTurn(); return; }
     this._npcsActedThisRound.add('player');
+    SoundManager.playSFX(this, 'sfx_heal');
 
     if (def.effect.hp) {
       const healed = Math.min(def.effect.hp, player.maxHp - player.hp);
@@ -758,9 +790,9 @@ class BattleScene extends Phaser.Scene {
   //  TRY ESCAPE
   // ============================================================
   tryEscape() {
-    const baseChance = 0.3;
-    const rvSpeedBonus = (this.gameState.rv && this.gameState.rv.speed) ? this.gameState.rv.speed * 0.05 : 0;
-    const escapeChance = Math.min(0.9, baseChance + rvSpeedBonus);
+    const baseChance = 0.15;
+    const rvSpeedBonus = (this.gameState.rv && this.gameState.rv.speed) ? this.gameState.rv.speed * 0.03 : 0;
+    const escapeChance = Math.min(0.6, baseChance + rvSpeedBonus);
 
     if (Math.random() < escapeChance) {
       this.addLog('逃跑成功！你们迅速撤退了。');
@@ -805,8 +837,7 @@ class BattleScene extends Phaser.Scene {
       if (player && player.hp > 0) {
         const boss = this.enemies.find(e => e.isBoss && e.hp > 0 && e.zombieRef);
         if (boss && boss.zombieRef && boss.zombieRef.awakening) {
-          const playerHpPercent = player.hp / player.maxHp;
-          if (playerHpPercent <= boss.zombieRef.awakening.playerHpThreshold) {
+          if (player.hp <= 10) {
             // 触发boss清醒，停止自动战斗
             this._awakeningTriggered = true;
             this.addLog(`${boss.name} 突然停止了攻击...`);
@@ -835,6 +866,9 @@ class BattleScene extends Phaser.Scene {
               for (const e of this.enemies.filter(e => e.hp > 0)) {
                 const d = this.calculateDamage(ally.attack + attackSkill.power, e.defense);
                 e.hp = Math.max(0, e.hp - d);
+                if (e.hp <= 0 && e.isBoss && e.isInvincible && !this._awakeningTriggered) {
+                  e.hp = 1;
+                }
               }
               continue;
             }
@@ -952,6 +986,9 @@ class BattleScene extends Phaser.Scene {
             for (const enemy of aliveEnemies) {
               const damage = this.calculateDamage(ally.attack + skill.power, enemy.defense);
               enemy.hp = Math.max(0, enemy.hp - damage);
+              if (enemy.hp <= 0 && enemy.isBoss && enemy.isInvincible && !this._awakeningTriggered) {
+                enemy.hp = 1;
+              }
               const dead = enemy.hp <= 0;
               this.showDamageNumber(enemy._displayX, enemy._displayY, damage);
               if (dead) {
@@ -963,7 +1000,10 @@ class BattleScene extends Phaser.Scene {
             const target = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
             const damage = this.calculateDamage(ally.attack + skill.power, target.defense);
             target.hp = Math.max(0, target.hp - damage);
-      const dead = target.hp <= 0;
+            if (target.hp <= 0 && target.isBoss && target.isInvincible && !this._awakeningTriggered) {
+              target.hp = 1;
+            }
+            const dead = target.hp <= 0;
             this.addLog(`${ally.name} 使用 ${skill.name} 攻击 ${target.name}，造成 ${damage} 点伤害！`);
             this.showDamageNumber(target._displayX, target._displayY, damage);
             if (dead) {
@@ -1095,7 +1135,14 @@ class BattleScene extends Phaser.Scene {
     const target = aliveAllies.reduce((min, a) => a.defense < min.defense ? a : min, aliveAllies[0]);
     const damage = this.calculateDamage(enemy.attack, target.defense);
     const finalDamage = target.defending ? Math.floor(damage / 2) : damage;
-    target.hp = Math.max(0, target.hp - finalDamage);
+
+    // Boss攻击不会打死玩家（留给清醒剧情）
+    const isBossWithAwakening = zombie && zombie.isBoss && zombie.awakening;
+    if (isBossWithAwakening && target.isPlayer && target.hp - finalDamage <= 0) {
+      target.hp = 1;
+    } else {
+      target.hp = Math.max(0, target.hp - finalDamage);
+    }
 
     const defendMsg = target.defending ? '（防御减半）' : '';
     this.addLog(`${enemy.name} 攻击了 ${target.name}，造成 ${finalDamage} 点伤害！${defendMsg}`);
@@ -1151,15 +1198,15 @@ class BattleScene extends Phaser.Scene {
 
     // Background pill
     const pill = this.add.graphics();
-    pill.fillStyle(isHeal ? 0x004422 : 0x440000, 0.7);
-    pill.fillRoundedRect(x - 28 + offsetX, y - 22, 56, 22, 6);
+    pill.fillStyle(isHeal ? 0x004422 : 0x440000, 0.85);
+    pill.fillRoundedRect(x - 32 + offsetX, y - 24, 64, 26, 6);
     pill.setAlpha(0);
     pill.setScale(0.5);
 
     const text = this.add.text(x + offsetX, y - 11, `${isHeal ? '+' : '-'}${amount}`, {
-      fontFamily: 'Consolas, monospace', fontSize: '16px',
+      fontFamily: 'Consolas, monospace', fontSize: '20px',
       color: colorStr, fontStyle: 'bold',
-      stroke: '#000000', strokeThickness: 2,
+      stroke: '#000000', strokeThickness: 4,
     }).setOrigin(0.5).setAlpha(0).setScale(0.5);
 
     // Pop-in animation with bounce
@@ -1184,6 +1231,7 @@ class BattleScene extends Phaser.Scene {
   // Slash attack effect
   showSlashEffect(x, y, color) {
     const slashColor = color || 0xe94560;
+    SoundManager.playSFX(this, 'sfx_hit');
     // Flash burst
     const burst = this.add.graphics();
     burst.fillStyle(slashColor, 0.6);
@@ -1241,9 +1289,8 @@ class BattleScene extends Phaser.Scene {
     const awakening = zombie.awakening;
     if (!awakening) return false;
 
-    // 检查玩家HP是否低于阈值
-    const playerHpPercent = player.hp / player.maxHp;
-    if (playerHpPercent <= awakening.playerHpThreshold) {
+    // 检查玩家HP是否降至10以下（boss意识到玩家快死了）
+    if (player.hp <= 10) {
       this._awakeningTriggered = true;
       this.triggerBossAwakening(boss, awakening);
       return true;
@@ -1344,6 +1391,7 @@ class BattleScene extends Phaser.Scene {
     }
 
     if (won) {
+      SoundManager.playSFX(this, 'sfx_victory');
       this.addLog('战斗胜利！');
       this.collectDrops();
       if (this.gameState.npcs) {
@@ -1358,6 +1406,7 @@ class BattleScene extends Phaser.Scene {
       SaveLoad.save(this.gameState);
       this.time.delayedCall(1000, () => this.showVictoryScreen());
     } else {
+      SoundManager.playSFX(this, 'sfx_defeat');
       this.addLog('战斗失败...');
       SaveLoad.save(this.gameState);
       this.time.delayedCall(1500, () => {

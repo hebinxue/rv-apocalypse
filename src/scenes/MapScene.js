@@ -20,6 +20,7 @@ class MapScene extends Phaser.Scene {
       gas_station_explore: 'gas_station',
       gas_station_rescue: 'gas_station',
       gas_station_trap: 'gas_station',
+      gas_station_observe: 'gas_station',
       gas_station_engine: 'gas_station',
       gas_station_fix_self: 'gas_station',
       gas_station_search_parts: 'gas_station',
@@ -136,6 +137,9 @@ class MapScene extends Phaser.Scene {
         UIHelper.showToast(this, '饱食度过低！记得进食，否则会生病', 'warning');
       }
     });
+
+    // --- BGM ---
+    SoundManager.playBGM(this, 'bgm_map');
 
     // --- Fade in ---
     this.cameras.main.fadeIn(400, 0, 0, 0);
@@ -398,6 +402,12 @@ class MapScene extends Phaser.Scene {
     UIHelper.createButton(this, 80, height - 50, 140, 36, '🚐 进入房车', { fontSize: '15px' }, () => {
       SaveLoad.save(this.gameState);
       this.scene.start('RVScene', { gameState: this.gameState });
+    });
+
+    // 存档按钮
+    UIHelper.createButton(this, 240, height - 50, 120, 36, '💾 存档', { fontSize: '15px' }, () => {
+      SaveLoad.save(this.gameState);
+      UIHelper.showToast(this, '存档成功！', 'reward');
     });
   }
 
@@ -861,6 +871,7 @@ class MapScene extends Phaser.Scene {
   // ============================================================
   giveRewards(rewards) {
     const itemsData = this.cache.json.get('itemsData');
+    SoundManager.playSFX(this, 'sfx_reward');
 
     rewards.forEach((reward) => {
       const existing = this.gameState.inventory.find((i) => i.id === reward.itemId);
@@ -902,25 +913,71 @@ class MapScene extends Phaser.Scene {
       // Clear the map visuals
       this.children.removeAll(true);
 
-      // Full black background
-      const endBg = this.add.graphics();
-      endBg.fillStyle(0x000000, 1);
-      endBg.fillRect(0, 0, width, height);
+      // BGM
+      SoundManager.playBGM(this, 'bgm_campfire');
+
+      // Campfire background
+      const campfireKey = SceneBackgrounds.findTexture(this, 'bg_campfire');
+      if (campfireKey) {
+        SceneBackgrounds.drawImage(this, campfireKey, width, height);
+      } else {
+        SceneBackgrounds.drawCampfire(this, width, height);
+      }
+
+      // Fire flicker glow
+      const fireGlow = this.add.graphics();
+      fireGlow.fillStyle(0xff8800, 0.04);
+      fireGlow.fillCircle(width / 2, height - 160, 120);
+      this.tweens.add({
+        targets: fireGlow,
+        alpha: 0.6,
+        duration: 800 + Math.random() * 400,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+      });
+
+      // Floating embers
+      for (let i = 0; i < 15; i++) {
+        const ex = width / 2 + (Math.random() - 0.5) * 40;
+        const ey = height - 170;
+        const ember = this.add.graphics();
+        ember.fillStyle(0xffaa22, 0.4 + Math.random() * 0.3);
+        ember.fillCircle(0, 0, 1 + Math.random() * 1.5);
+        ember.setPosition(ex, ey);
+        this.tweens.add({
+          targets: ember,
+          y: ey - 80 - Math.random() * 120,
+          x: ex + (Math.random() - 0.5) * 60,
+          alpha: 0,
+          duration: 2000 + Math.random() * 2000,
+          delay: Math.random() * 2000,
+          repeat: -1,
+          onRepeat: () => {
+            ember.setPosition(width / 2 + (Math.random() - 0.5) * 40, height - 170);
+            ember.setAlpha(1);
+          },
+        });
+      }
 
       // Ending title
-      this.add.text(width / 2, height / 2 - 160, ending.title || '结局', {
+      this.add.text(width / 2, 60, ending.title || '结局', {
         fontFamily: 'Microsoft YaHei, sans-serif',
         fontSize: '32px',
         color: '#e94560',
         fontStyle: 'bold',
+        stroke: '#000000',
+        strokeThickness: 3,
       }).setOrigin(0.5);
 
       // Chapter transition subtitle
       if (ending.chapterTransition) {
-        this.add.text(width / 2, height / 2 - 120, '第二章即将开启', {
+        this.add.text(width / 2, 100, '第二章即将开启', {
           fontFamily: 'Microsoft YaHei, sans-serif',
           fontSize: '16px',
           color: '#8892b0',
+          stroke: '#000000',
+          strokeThickness: 2,
         }).setOrigin(0.5);
       }
 
@@ -928,7 +985,10 @@ class MapScene extends Phaser.Scene {
       const dialogueSystem = new Dialogue(this);
       dialogueSystem.show(ending.dialogues, () => {
         const buttonLabel = ending.chapterTransition ? '等待第二章...' : '返回主菜单';
-        UIHelper.createButton(this, width / 2, height / 2 + 100, 180, 44, buttonLabel, { fontSize: '18px' }, () => {
+        UIHelper.createButton(this, width / 2, height - 50, 180, 44, buttonLabel, { fontSize: '18px' }, () => {
+          if (ending.chapterTransition) {
+            this.gameState.gameCompleted = true;
+          }
           SaveLoad.save(this.gameState);
           this.scene.start('MenuScene');
         });

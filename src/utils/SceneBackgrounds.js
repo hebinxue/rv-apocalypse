@@ -457,6 +457,140 @@ class SceneBackgrounds {
     bg.fillPath();
   }
 
+  // Campfire night scene (for ending)
+  static drawCampfire(scene, width, height) {
+    const bg = scene.add.graphics();
+
+    // Night sky gradient
+    bg.fillGradientStyle(0x060810, 0x060810, 0x101520, 0x101520, 1);
+    bg.fillRect(0, 0, width, height);
+
+    // Stars
+    for (let i = 0; i < 80; i++) {
+      const sx = Math.random() * width;
+      const sy = Math.random() * height * 0.45;
+      const size = Math.random() * 1.8 + 0.3;
+      const alpha = Math.random() * 0.5 + 0.15;
+      bg.fillStyle(0xffffff, alpha);
+      bg.fillCircle(sx, sy, size);
+    }
+
+    // Moon (upper right)
+    bg.fillStyle(0xddd8c4, 0.2);
+    bg.fillCircle(width - 90, 55, 22);
+    bg.fillStyle(0x060810, 1);
+    bg.fillCircle(width - 82, 50, 20);
+
+    // Distant treeline silhouette
+    for (let tx = 0; tx < width; tx += 30 + Math.random() * 25) {
+      const th = 60 + Math.random() * 80;
+      bg.fillStyle(0x080c14, 0.9);
+      bg.beginPath();
+      bg.moveTo(tx, height - 200);
+      bg.lineTo(tx - 12, height - 200 + th);
+      bg.lineTo(tx + 12, height - 200 + th);
+      bg.closePath();
+      bg.fillPath();
+    }
+
+    // Ground
+    bg.fillStyle(0x121610, 1);
+    bg.fillRect(0, height - 200, width, 200);
+
+    // Grass tufts
+    for (let gx = 10; gx < width; gx += 15 + Math.random() * 20) {
+      const gh = 4 + Math.random() * 8;
+      bg.fillStyle(0x1a2218, 0.6);
+      bg.fillRect(gx, height - 200 - gh, 2, gh);
+    }
+
+    // Campfire glow (large warm circle)
+    const cx = width / 2;
+    const fy = height - 160;
+
+    // Outer glow
+    bg.fillStyle(0xff6600, 0.02);
+    bg.fillCircle(cx, fy, 200);
+    bg.fillStyle(0xff6600, 0.03);
+    bg.fillCircle(cx, fy, 140);
+    bg.fillStyle(0xff8800, 0.04);
+    bg.fillCircle(cx, fy, 90);
+    bg.fillStyle(0xffaa22, 0.06);
+    bg.fillCircle(cx, fy, 55);
+
+    // Fire base (logs)
+    bg.fillStyle(0x3a2010, 0.9);
+    bg.fillRect(cx - 25, fy + 5, 50, 8);
+    bg.fillRect(cx - 20, fy + 2, 40, 6);
+    // Log details
+    bg.fillStyle(0x2a1808, 0.8);
+    bg.fillRect(cx - 28, fy + 8, 18, 5);
+    bg.fillRect(cx + 10, fy + 8, 18, 5);
+
+    // Fire core
+    bg.fillStyle(0xffcc44, 0.5);
+    bg.beginPath();
+    bg.moveTo(cx - 12, fy + 2);
+    bg.lineTo(cx, fy - 30);
+    bg.lineTo(cx + 12, fy + 2);
+    bg.closePath();
+    bg.fillPath();
+
+    bg.fillStyle(0xff8800, 0.6);
+    bg.beginPath();
+    bg.moveTo(cx - 8, fy + 2);
+    bg.lineTo(cx - 2, fy - 20);
+    bg.lineTo(cx + 8, fy + 2);
+    bg.closePath();
+    bg.fillPath();
+
+    bg.fillStyle(0xffaa22, 0.7);
+    bg.beginPath();
+    bg.moveTo(cx - 5, fy + 2);
+    bg.lineTo(cx + 1, fy - 12);
+    bg.lineTo(cx + 5, fy + 2);
+    bg.closePath();
+    bg.fillPath();
+
+    // Embers floating up
+    for (let i = 0; i < 12; i++) {
+      const ex = cx + (Math.random() - 0.5) * 30;
+      const ey = fy - 15 - Math.random() * 40;
+      bg.fillStyle(0xffaa22, 0.2 + Math.random() * 0.3);
+      bg.fillCircle(ex, ey, 1 + Math.random() * 1.5);
+    }
+
+    // Silhouettes of people sitting around fire
+    const silhouetteColor = 0x0a0e14;
+    // Left person (sitting)
+    bg.fillStyle(silhouetteColor, 0.8);
+    bg.fillCircle(cx - 100, fy - 25, 10); // head
+    bg.fillRect(cx - 106, fy - 15, 12, 25); // body
+    bg.fillRect(cx - 110, fy + 10, 20, 8); // legs
+
+    // Right person (sitting)
+    bg.fillStyle(silhouetteColor, 0.8);
+    bg.fillCircle(cx + 100, fy - 25, 10);
+    bg.fillRect(cx + 94, fy - 15, 12, 25);
+    bg.fillRect(cx + 90, fy + 10, 20, 8);
+
+    // Far left person
+    bg.fillStyle(silhouetteColor, 0.6);
+    bg.fillCircle(cx - 170, fy - 20, 8);
+    bg.fillRect(cx - 175, fy - 12, 10, 22);
+
+    // Far right person
+    bg.fillStyle(silhouetteColor, 0.6);
+    bg.fillCircle(cx + 170, fy - 20, 8);
+    bg.fillRect(cx + 165, fy - 12, 10, 22);
+
+    // Warm light reflection on ground near fire
+    bg.fillStyle(0xff8800, 0.03);
+    bg.fillCircle(cx, fy + 30, 120);
+    bg.fillStyle(0xffaa22, 0.02);
+    bg.fillCircle(cx, fy + 20, 70);
+  }
+
   // Find texture key, trying PNG then JPG
   static findTexture(scene, baseKey) {
     if (scene.textures.exists(`${baseKey}_png`)) return `${baseKey}_png`;

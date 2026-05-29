@@ -169,6 +169,7 @@ class UIHelper {
 
     // Press: scale down → bounce back → callback
     hitArea.on('pointerdown', () => {
+      SoundManager.playSFX(scene, 'sfx_click');
       drawBg(bgPress, 1);
       container.setScale(0.95);
       scene.time.delayedCall(80, () => {
@@ -196,6 +197,14 @@ class UIHelper {
       info:    { bg: 0x0a1a2a, border: UIHelper.COLORS.info, icon: 'i' },
     };
     const cfg = typeConfigs[type] || typeConfigs.info;
+
+    // 警告/危险提示音效
+    if (type === 'danger' || type === 'warning') {
+      SoundManager.playSFX(scene, 'sfx_alert');
+    }
+    if (type === 'reward') {
+      SoundManager.playSFX(scene, 'sfx_reward');
+    }
 
     // Measure text to determine toast width
     const maxTextW = width - 120;

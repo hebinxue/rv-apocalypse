@@ -64,6 +64,7 @@ class RVUpgrade {
         'gas_station_explore',
         'gas_station_rescue',
         'gas_station_trap',
+        'gas_station_observe',
         'gas_station_engine',
         'gas_station_fix_self',
         'gas_station_search_parts',

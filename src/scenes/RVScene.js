@@ -948,37 +948,35 @@ class RVScene extends Phaser.Scene {
 
   triggerUpgradeEvent(upgradeId) {
     const specialEventsData = this.cache.json.get('specialEventsData');
+
+    // 立即刷新升级面板
+    this.renderTab('upgrades');
+
     if (!specialEventsData || !specialEventsData.rv_upgrade_events) {
-      this.time.delayedCall(800, () => { this.renderTab('upgrades'); });
+      console.warn('specialEventsData not loaded');
       return;
     }
 
     const upgradeEvents = specialEventsData.rv_upgrade_events[upgradeId];
     if (!upgradeEvents) {
-      this.time.delayedCall(800, () => { this.renderTab('upgrades'); });
+      console.warn('No upgrade events for:', upgradeId);
       return;
     }
 
     // 随机选择一个已招募的NPC
     const recruitedNpcs = Object.keys(this.gameState.npcs).filter(
-      npcId => this.gameState.npcs[npcId].recruited
+      npcId => this.gameState.npcs[npcId] && this.gameState.npcs[npcId].recruited
     );
 
-    if (recruitedNpcs.length === 0) {
-      this.time.delayedCall(800, () => { this.renderTab('upgrades'); });
-      return;
-    }
+    if (recruitedNpcs.length === 0) return;
 
     const randomNpcId = recruitedNpcs[Math.floor(Math.random() * recruitedNpcs.length)];
     const dialogues = upgradeEvents[randomNpcId];
 
-    if (!dialogues) {
-      this.time.delayedCall(800, () => { this.renderTab('upgrades'); });
-      return;
-    }
+    if (!dialogues) return;
 
-    // 延迟一下再显示剧情
-    this.time.delayedCall(1000, () => {
+    // 延迟显示剧情
+    this.time.delayedCall(800, () => {
       const dialogueSystem = new Dialogue(this);
       dialogueSystem.show(dialogues, () => {
         // 剧情结束，增加NPC好感度

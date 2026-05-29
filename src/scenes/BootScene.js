@@ -62,17 +62,25 @@ class BootScene extends Phaser.Scene {
     this.load.json('specialEventsData', 'src/data/special_events.json');
 
     // Load background images (PNG or JPG, missing files silently skipped)
-    const bgScenes = ['apartment', 'gas_station', 'supermarket', 'hospital', 'highway', 'mountain', 'safe_zone', 'battlefield'];
+    const bgScenes = ['apartment', 'gas_station', 'supermarket', 'hospital', 'highway', 'mountain', 'safe_zone', 'battlefield', 'campfire', 'apartment_wangzai', 'gas_station_meet', 'hospital_laojing', 'apartment_zombies', 'safe_zone_xuehe', 'boss_appear'];
     bgScenes.forEach(name => {
       this.load.image(`bg_${name}_png`, `src/assets/bg/${name}.png`);
       this.load.image(`bg_${name}_jpg`, `src/assets/bg/${name}.jpg`);
     });
-    // Character portraits (PNG or JPG)
-    const characters = ['player', 'wangzai', 'bingjie', 'caoge', 'laojing', 'xuehe', 'boss'];
+    // Character portraits (PNG or JPG, with expression variants)
+    const characters = ['player', 'wangzai', 'bingjie', 'caoge', 'laojing', 'xuehe', 'boss', 'sangshi'];
     characters.forEach(name => {
       this.load.image(`char_${name}_png`, `src/assets/characters/${name}.png`);
       this.load.image(`char_${name}_jpg`, `src/assets/characters/${name}.jpg`);
+      // Load expression variants (1-4)
+      for (let i = 1; i <= 4; i++) {
+        this.load.image(`char_${name}-${i}_png`, `src/assets/characters/${name}-${i}.png`);
+        this.load.image(`char_${name}-${i}_jpg`, `src/assets/characters/${name}-${i}.jpg`);
+      }
     });
+
+    // 音频加载（文件不存在时自动跳过）
+    SoundManager.preloadAll(this);
 
     // Silently skip missing image files — remove broken texture entries
     this.load.on('loaderror', (file) => {
@@ -83,6 +91,9 @@ class BootScene extends Phaser.Scene {
   }
 
   create() {
+    // 生成缺失的音效（文件不存在时自动用代码生成）
+    SoundManager.generateMissing(this);
+
     this.cameras.main.fadeOut(300, 0, 0, 0);
     this.time.delayedCall(300, () => {
       this.scene.start('MenuScene');
